@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopping Cart</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    /* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    margin-top: 4em;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container */
+.container {
+    
+    width: 90%;
+    max-width: 900px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+h2, h3 {
+    text-align: center;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+/* Address Section */
+.address-section, .summary-section, .payment-section, .final-summary {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.address-item {
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+    transition: 0.3s;
+}
+
+.address-item.default-address {
+    border-color: #007bff;
+    background: #e6f0ff;
+}
+
+.address-item p {
+    margin: 5px 0;
+}
+
+.edit-address-btn {
+    background: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.edit-address-btn:hover {
+    background: #0056b3;
+}
+
+.add-address-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.add-address-btn:hover {
+    background: #218838;
+}
+
+/* Checkout Products */
+.checkout-item {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+}
+
+.checkout-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 10px;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details p {
+    margin: 4px 0;
+}
+
+/* Payment Section */
+.payment-section label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.payment-section label:hover {
+    border-color: #007bff;
+}
+
+/* Final Summary */
+.final-summary {
+    text-align: center;
+    font-size: 18px;
+}
+
+.final-summary p {
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+.final-summary span {
+    color: #007bff;
+}
+
+/* Place Order Button */
+.place-order-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.place-order-btn:hover {
+    background: #e64a19;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .checkout-image {
+        width: 100%;
+        height: auto;
+        margin-bottom: 10px;
+    }
+
+    .item-details {
+        width: 100%;
+    }
+}
+
+</style>
+<link rel="icon" type="image/png" href="images/icons/favicon.png" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
+<!--===============================================================================================-->
+<link rel="stylesheet" type="text/css" href="/css/user/util.css" />
+<link rel="stylesheet" type="text/css" href="/css/user/main.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+
+<!-- checkout.ejs -->
+<body>
+    <%- include('./partials/header.ejs') %>
+
+    <div class="container" style="margin-top: 34em;">
+        <h2>Checkout</h2>
+    
+        <!-- Address Section -->
+        <div class="address-section">
+            <h3>Select Address</h3>
+            <div id="addresses">
+                <!-- Addresses will be dynamically inserted here -->
+            </div>
+            <button class="add-address-btn" onclick="openAddressModal('add')">Add New Address</button>
+        </div>
+    
+        <!-- Product Summary -->
+        <div class="summary-section">
+            <h3>Order Summary</h3>
+            <div id="checkoutProducts">
+                <!-- Checkout products will be dynamically inserted here -->
+            </div>
+        </div>
+    
+        <!-- Payment Section -->
+        <div class="payment-section">
+            <h3>Payment Method</h3>
+            <label>
+                <input type="radio" name="paymentMethod" value="Cash on Delivery" checked> Cash on Delivery
+            </label>
+            <label>
+                <input type="radio" name="paymentMethod" value="Razorpay"> Razorpay
+            </label>
+        </div>
+    
+        <!-- Final Summary and Place Order -->
+        <div class="final-summary">
+            <p>Subtotal: <span id="subtotal">₹0</span></p>
+            <p>Discount: <span id="discount">₹0</span></p>
+            <p>Shipping: <span id="shipping">₹50</span></p>
+            <p><strong>Total: <span id="total">₹0</strong></p>
+            <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+        </div>
+    </div>
+    
+    <!-- Address Modal -->
+    <div id="addressModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddressModal()">×</span>
+            <h2 id="modalTitle">Add New Address</h2>
+            <form id="addressForm">
+                <input type="hidden" id="addressId" name="addressId">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="lastName">
+                </div>
+                <div class="form-group">
+                    <label for="phoneNumber">Phone Number:</label>
+                    <input type="text" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <div class="form-group">
+                    <label for="street">Street:</label>
+                    <input type="text" id="street" name="street" required>
+                </div>
+                <div class="form-group">
+                    <label for="city">City:</label>
+                    <input type="text" id="city" name="city" required>
+                </div>
+                <div class="form-group">
+                    <label for="state">State:</label>
+                    <input type="text" id="state" name="state" required>
+                </div>
+                <div class="form-group">
+                    <label for="postalCode">Postal Code:</label>
+                    <input type="text" id="postalCode" name="postalCode" required>
+                </div>
+                <div class="form-group">
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" name="country" required>
+                </div>
+                <div class="form-group">
+                    <label for="additionalInfo">Additional Info:</label>
+                    <textarea id="additionalInfo" name="additionalInfo"></textarea>
+                </div>
+                <div class="form-group">
+                    <label><input type="checkbox" id="isDefault" name="isDefault"> Set as Default</label>
+                </div>
+                <button type="submit" class="save-address-btn">Save Address</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Razorpay Checkout.js -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadAddresses();
+            await loadCheckoutProducts();
+        });
+    
+        async function loadAddresses() {
+            const response = await fetch("/checkout/addresses");
+            const result = await response.json();
+            const addresses = result.addresses;
+            const addressContainer = document.getElementById("addresses");
+            addressContainer.innerHTML = "";
+    
+            addresses.forEach(address => {
+                const addressHTML = `
+                    <div class="address-item ${address.isDefault ? 'default-address' : ''}">
+                        <p><strong>${address.firstName} ${address.lastName}</strong></p>
+                        <p>${address.street}, ${address.city}, ${address.state} - ${address.postalCode}, ${address.country}</p>
+                        <p>Phone: ${address.phoneNumber}</p>
+                        <button class="edit-address-btn" onclick="editAddress('${address._id}')">Edit</button>
+                        <input type="radio" name="selectedAddress" value="${address._id}" ${address.isDefault ? 'checked' : ''}>
+                    </div>
+                `;
+                addressContainer.innerHTML += addressHTML;
+            });
+        }
+    
+        async function loadCheckoutProducts() {
+            const response = await fetch("/checkout/cart-data");
+            const result = await response.json();
+            const checkoutProducts = result.checkoutProducts;
+            const productsContainer = document.getElementById("checkoutProducts");
+            productsContainer.innerHTML = "";
+            let subtotal = 0, totalDiscount = 0;
+    
+            checkoutProducts.forEach(product => {
+                subtotal += product.productTotal;
+                totalDiscount += product.offerDiscount || 0;
+    
+                const productHTML = `
+                    <div class="checkout-item">
+                        <img src="/uploads/${product.image}" alt="${product.name}" class="checkout-image">
+                        <div class="item-details">
+                            <p><strong>${product.name}</strong></p>
+                            <p>Price: ₹${product.price} x ${product.quantity}</p>
+                            <p>Discount: ₹${product.offerDiscount || 0}</p>
+                            <p><strong>Total: ₹${product.productTotal - (product.offerDiscount || 0)}</strong></p>
+                        </div>
+                    </div>
+                `;
+                productsContainer.innerHTML += productHTML;
+            });
+    
+            const shipping = subtotal > 1000 ? 0 : 50;
+            document.getElementById("subtotal").innerText = `₹${subtotal}`;
+            document.getElementById("discount").innerText = `₹${totalDiscount}`;
+            document.getElementById("shipping").innerText = `₹${shipping}`;
+            document.getElementById("total").innerText = `₹${subtotal - totalDiscount + shipping}`;
+        }
+    
+        function openAddressModal(mode = 'add', address = null) {
+            const modal = document.getElementById("addressModal");
+            const form = document.getElementById("addressForm");
+            const title = document.getElementById("modalTitle");
+    
+            modal.style.display = "block";
+            title.innerText = mode === 'add' ? "Add New Address" : "Edit Address";
+    
+            if (mode === 'edit' && address) {
+                document.getElementById("addressId").value = address._id;
+                document.getElementById("firstName").value = address.firstName;
+                document.getElementById("lastName").value = address.lastName || '';
+                document.getElementById("phoneNumber").value = address.phoneNumber;
+                document.getElementById("street").value = address.street;
+                document.getElementById("city").value = address.city;
+                document.getElementById("state").value = address.state;
+                document.getElementById("postalCode").value = address.postalCode;
+                document.getElementById("country").value = address.country;
+                document.getElementById("additionalInfo").value = address.additionalInfo || '';
+                document.getElementById("isDefault").checked = address.isDefault;
+            } else {
+                form.reset();
+                document.getElementById("addressId").value = '';
+            }
+        }
+    
+        function closeAddressModal() {
+            document.getElementById("addressModal").style.display = "none";
+        }
+    
+        async function editAddress(addressId) {
+            const response = await fetch(`/checkout/address/${addressId}`);
+            const result = await response.json();
+            const address = result.address;
+            openAddressModal('edit', address);
+        }
+    
+        document.getElementById("addressForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const addressData = Object.fromEntries(formData);
+    
+            addressData.isDefault = addressData.isDefault === "on" ? true : false;
+    
+            const method = addressData.addressId ? 'PUT' : 'POST';
+            const url = addressData.addressId ? `/checkout/address/${addressData.addressId}` : '/checkout/add-address';
+    
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(addressData)
+                });
+    
+                const result = await response.json();
+                if (result.success) {
+                    closeAddressModal();
+                    await loadAddresses();
+                } else {
+                    alert(result.message || "Failed to save address");
+                }
+            } catch (error) {
+                console.error("Error saving address:", error);
+                alert("An error occurred while saving the address");
+            }
+        });
+    
+        async function applyCoupon() {
+            const couponCode = document.getElementById("couponCode").value.trim();
+            if (!couponCode) {
+                Swal.fire({ icon: "warning", title: "Empty Coupon", text: "Please enter a coupon code!" });
+                return;
+            }
+
+            try {
+                const response = await fetch('/checkout/apply-coupon', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ couponCode })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Coupon Applied",
+                        text: result.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+
+                    document.getElementById("subtotal").innerText = `₹${result.subtotal.toFixed(2)}`;
+                    document.getElementById("offerDiscount").innerText = `₹${result.totalDiscount.toFixed(2)}`;
+                    document.getElementById("couponDiscount").innerText = `₹${result.couponDiscount.toFixed(2)}`;
+                    document.getElementById("shipping").innerText = `₹${result.shippingCharge.toFixed(2)}`;
+                    document.getElementById("total").innerText = `₹${result.finalTotal.toFixed(2)}`;
+                    document.getElementById("couponCode").disabled = true;
+
+                    const couponSection = document.querySelector('.coupon-section');
+                    couponSection.innerHTML = `
+                        <input type="text" id="couponCode" class="coupon-input" placeholder="Enter Coupon Code" disabled value="${result.appliedCoupon}">
+                        <button class="remove-coupon-btn" onclick="removeCoupon()">Remove Coupon</button>
+                    `;
+                } else {
+                    Swal.fire({ icon: "error", title: "Error", text: result.message });
+                }
+            } catch (error) {
+                console.error("Error applying coupon:", error);
+                Swal.fire({ icon: "error", title: "Error", text: "Failed to apply coupon" });
+            }
+        }
+
+        async function removeCoupon() {
+            const confirmation = await Swal.fire({
+                title: 'Confirm Removal',
+                text: 'Are you sure you want to remove this coupon?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2563eb',
+                cancelButtonColor: '#ff3a30',
+                confirmButtonText: 'Yes, remove it!'
+            });
+
+            if (confirmation.isConfirmed) {
+                try {
+                    const response = await fetch('/checkout/remove-coupon', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Coupon Removed",
+                            text: result.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+
+                        document.getElementById("subtotal").innerText = `₹${result.subtotal.toFixed(2)}`;
+                        document.getElementById("offerDiscount").innerText = `₹${result.totalDiscount.toFixed(2)}`;
+                        document.getElementById("couponDiscount").innerText = `₹${result.couponDiscount.toFixed(2)}`;
+                        document.getElementById("shipping").innerText = `₹${result.shippingCharge.toFixed(2)}`;
+                        document.getElementById("total").innerText = `₹${result.finalTotal.toFixed(2)}`;
+                        document.getElementById("couponCode").disabled = false;
+
+                        const couponSection = document.querySelector('.coupon-section');
+                        couponSection.innerHTML = `
+                            <input type="text" id="couponCode" class="coupon-input" placeholder="Enter Coupon Code">
+                            <button class="apply-coupon-btn" onclick="applyCoupon()">Apply Coupon</button>
+                        `;
+                    } else {
+                        Swal.fire({ icon: "error", title: "Error", text: result.message });
+                    }
+                } catch (error) {
+                    console.error("Error removing coupon:", error);
+                    Swal.fire({ icon: "error", title: "Error", text: "Failed to remove coupon" });
+                }
+            }
+        }
+
+        async function placeOrder() {
+            const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+            const couponCode = document.getElementById("couponCode")?.value || null;
+
+            if (!selectedAddress) {
+                Swal.fire({
+                    icon: "error",
+                    title: "No Address Selected",
+                    text: "Please select an address!"
+                });
+                return;
+            }
+
+            if (!paymentMethod) {
+                Swal.fire({
+                    icon: "error",
+                    title: "No Payment Method",
+                    text: "Please select a payment method!"
+                });
+                return;
+            }
+
+            const orderData = {
+                selectedAddress: selectedAddress.value,
+                paymentMethod,
+                couponCode
+            };
+
+            if (paymentMethod === "Razorpay") {
+                await initiateRazorpayPayment(selectedAddress.value, orderData);
+            } else {
+                try {
+                    const response = await fetch("/checkout/place-order", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Order Failed!",
+                            text: result.message || "Failed to place the order."
+                        });
+                    }
+                } catch (error) {
+                    console.error("Error placing order:", error);
+                    Swal.fire({
+                        icon: "error",
+                        title: "Order Failed!",
+                        text: error.message || "Failed to place the order."
+                    });
+                }
+            }
+        }
+
+        async function initiateRazorpayPayment(selectedAddress, orderData) {
+            const orderResponse = await fetch('/checkout/create-razorpay-order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+            });
+            const razorpayData = await orderResponse.json();
+
+            if (!razorpayData.success) {
+                Swal.fire({ icon: "error", title: "Order Creation Failed", text: razorpayData.message });
+                return;
+            }
+
+            const options = {
+                key: razorpayData.key,
+                amount: razorpayData.amount,
+                currency: razorpayData.currency,
+                order_id: razorpayData.razorpayOrderId,
+                name: 'Bitwise',
+                description: 'Order Payment',
+                handler: async function (response) {
+                    orderData.razorpayOrderId = response.razorpay_order_id;
+                    orderData.paymentId = response.razorpay_payment_id;
+                    orderData.razorpaySignature = response.razorpay_signature;
+
+                    const placeOrderResponse = await fetch('/checkout/place-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(orderData),
+                    });
+                    const result = await placeOrderResponse.json();
+
+                    if (result.success) {
+                        window.location.href = `/checkout/order-success?orderId=${result.orderId}`;
+                    } else {
+                        Swal.fire({ icon: "error", title: "Payment Failed", text: result.message });
+                    }
+                },
+                prefill: {
+                    name: '<%= user?.firstName || "User" %> <%= user?.lastName || "" %>',
+                    email: '<%= user?.email || "" %>',
+                    contact: '<%= user?.phone || "" %>'
+                },
+                theme: { color: '#2563eb' }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                Swal.fire({ icon: "error", title: "Payment Failed", text: response.error.description || "Payment failed. Please try again." });
+            });
+            rzp.open();
+        
+}
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .save-address-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .save-address-btn:hover {
+            background-color: #218838;
+        }
+        .address-item { padding: 10px; border: 1px solid #ddd; margin-bottom: 10px; }
+        .default-address { border-color: #28a745; background-color: #f8fff8; }
+        .checkout-item { display: flex; margin-bottom: 15px; }
+        .checkout-image { width: 50px; height: 50px; margin-right: 10px; }
+        .item-details { flex: 1; }
+    </style>
+</body>
+
+
+</html>

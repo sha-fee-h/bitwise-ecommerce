@@ -1,0 +1,524 @@
+/* CSS styles remain unchanged */
+:root {
+    --primary-color: #00a8e8; /* Cool cyan for a futuristic touch */
+    --secondary-color: #ff006e; /* Vibrant pink for contrast */
+    --bg-color: #0d1117; /* Deep black-blue for a true dark mode */
+    --sidebar-bg: #161b22; /* Slightly lighter for distinction */
+    --table-bg: #1f2937; /* Darker table background for a subtle contrast */
+    --text-color: #e0e0e0; /* Soft white for comfortable reading */
+    --header-bg: #21262d; /* A bit lighter than bg for a smooth gradient */
+    --low-stock-color: #ffcc00; /* Bright yellow for high visibility */
+    --active-status: #00ff44; /* Neon green for an eye-catching active status */
+    --blocked-status: #ff3a30; /* Bright red for clear blocked indication */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.unique-sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+}
+
+.unique-sidebar-header h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.unique-sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.unique-sidebar-menu li {
+    margin: 10px 0;
+}
+
+.unique-sidebar-menu li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.unique-sidebar-menu li a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+}
+
+.unique-sidebar-menu li.active a {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Main Content */
+.product-list-container {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.product-list-container h1 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.breadcrumbs a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    margin-right: 5px;
+}
+
+.product-search-filter {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-div {
+    display: flex;
+}
+
+.search-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 60%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-product-btn {
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.add-product-btn:hover {
+    background-color: #4e54d4;
+    transform: scale(1.05);
+}
+
+.product-table {
+    width: 100%;
+    background-color: var(--table-bg);
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.product-table th,
+.product-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.product-table th {
+    background-color: #414d71;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.product-table td {
+    color: var(--text-color);
+}
+
+.action-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+}
+
+.edit-btn {
+    background-color: var(--low-stock-color);
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #cd820b;
+    transform: scale(1.05);
+
+}
+
+.delete-btn {
+    background-color: red;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: rgb(203, 0, 0);
+    transform: scale(1.05);
+}
+
+.view-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #3e3cc1;
+    transform: scale(1.05);
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pagination span {
+    color: var(--text-color);
+}
+
+.pagination-buttons {
+    display: flex;
+}
+
+.page-btn {
+    padding: 10px 15px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: var(--text-color);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.page-btn.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Common styles for the status buttons */
+.status-btn {
+    padding: 8px 16px;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Block button (red) */
+.block-btn {
+    background-color: #c21000;
+}
+
+/* Unblock button (green) */
+.unblock-btn {
+    background-color: #148800;
+}
+
+/* Hover effect for Block button */
+.block-btn:hover {
+    background-color: #a40e00;
+    transform: scale(1.05);
+}
+
+/* Hover effect for Unblock button */
+.unblock-btn:hover {
+    background-color: #0e6d00;
+    transform: scale(1.05);
+}
+
+/* Optional: Add a focus effect for better accessibility */
+.status-btn:focus {
+    outline: 2px solid #5c59e8;
+}
+
+
+/* Error message styling */
+.error-message {
+    font-size: 0.9rem;
+    color: red;
+    margin-top: -10px;
+    /* Space above error message */
+    margin-bottom: 10px;
+    /* Space below error message */
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    background-color: #5c59e8;
+    /* Primary color */
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.pagination a.active {
+    background-color: #c21000;
+    /* Secondary color */
+}
+
+.pagination a:hover {
+    background-color: #333;
+    /* Darken on hover */
+}
+
+
+/* Style for the 'List' button (Green) */
+.list-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+
+}
+
+/* Style for the 'Unlist' button (Red) */
+.unlist-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s;
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Hover effect */
+.list-btn:hover,
+.unlist-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
+
+}
+
+/* Modal styles */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: white;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    /* Could be more or less, depending on screen size */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+#cat-name,
+#cat-description {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input[type="file"] {
+    display: block;
+    /* Ensure it behaves like a block element */
+    width: 95%;
+    /* Full width */
+    padding: 8px;
+    /* Padding for a better look */
+    border: 1px solid #ccc;
+    /* Match border with other inputs */
+    border-radius: 4px;
+    /* Rounded corners */
+    background-color: white;
+    /* Background color */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+}
+
+.form-group select {
+    width: 99%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+}
+
+.updateCategory-btn {
+    background-color: #5c59e8;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.updateCategory-btn:hover {
+    background-color: #4b4acc;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#add-cat-name,
+#add-cat-description,
+#add-image {
+    /* Ensure these IDs match your HTML */
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#edit-cat-name,
+#edit-cat-description,
+#edit-image {
+    /* Ensure these IDs match your HTML */
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#add-status {
+    width: 99%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.error-message {
+
+    background-color: #f8d7da;
+    /* Light red background */
+    color: #721c24;
+    /* Dark red text color */
+    border: 1px solid #f5c6cb;
+    /* Border matching the background color */
+    padding: 10px 15px;
+    /* Padding for spacing inside the box */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    font-weight: bold;
+    /* Bold text */
+    margin: 10px 0;
+    /* Margin to separate from other elements */
+    text-align: center;
+    /* Center the text */
+    max-width: 400px;
+    /* Optional: to control the width */
+    margin-left: auto;
+    /* Optional: center the box horizontally */
+    margin-right: auto;
+    /* Optional: center the box horizontally */
+}
+
+.success-message {
+    background-color: #d4edda;
+    /* Light green background */
+    color: #155724;
+    /* Dark green text color */
+    border: 1px solid #c3e6cb;
+    /* Border matching the background color */
+    padding: 10px 15px;
+    /* Padding for spacing inside the box */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    font-weight: bold;
+    /* Bold text */
+    margin: 10px 0;
+    /* Margin to separate from other elements */
+    text-align: center;
+    /* Center the text */
+    max-width: 400px;
+    /* Optional: to control the width */
+    margin-left: auto;
+    /* Optional: center the box horizontally */
+    margin-right: auto;
+    /* Optional: center the box horizontally */
+}

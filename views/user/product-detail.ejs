@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        <%= product.name %> - Product Details
+    </title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/css/user/util.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/main.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+
+    <!--===============================================================================================-->
+</head>
+<style>
+    header {
+        position: static;
+        /* Ensure the header is static */
+        width: 100%;
+        /* Full width */
+        /* Add any additional styling */
+    }
+</style>
+
+<body class="animsition">
+    <!-- Header -->
+    <%- include('./partials/header.ejs') %>
+
+
+        <!-- breadcrumb -->
+        <div style="margin-top: 2em;" class="container">
+            <div class="bread-crumb flex-w p-l-25 p-r-15 p-t-30 p-lr-0-lg">
+                <a href="/" class="stext-109 cl8 hov-cl1 trans-04">
+                    Home
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+
+                <a href="/products/shop" class="stext-109 cl8 hov-cl1 trans-04">
+                    shop
+                    <i class="fa fa-angle-right m-l-9 m-r-10" aria-hidden="true"></i>
+                </a>
+
+                <span class="stext-109 cl4"> Product detail page </span>
+            </div>
+        </div>
+
+        <!-- Product Detail -->
+        <section class="sec-product-detail bg0 p-t-65 p-b-60">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-lg-7 p-b-30">
+                        <div class="p-l-25 p-r-30 p-lr-0-lg">
+                            <div class="wrap-slick3 flex-sb flex-w">
+                                <div class="wrap-slick3-dots"></div>
+                                <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
+
+                                <div class="slick3 gallery-lb">
+                                    <% product.images.forEach((image)=> { %>
+                                        <div class="item-slick3" data-thumb="/uplaods/<%= image %>">
+                                            <div class="wrap-pic-w pos-relative">
+                                                <img src="/uploads/<%= image %>" alt="IMG-PRODUCT" />
+                                                <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04"
+                                                    href="/uploads/<%= image %>">
+                                                    <i class="fa fa-expand"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-5 p-b-30">
+                        <div class="p-r-50 p-t-5 p-lr-0-lg">
+                            <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                                <%= product.name %>
+                            </h4>
+
+                            <!-- Display Price and Offer -->
+                            <% if (product.bestOffer) { %>
+                                <div class="d-flex align-items-center">
+                                    <!-- Original Price (Strikethrough) -->
+                                    <span class="mtext-106 cl2" style="text-decoration: line-through; color: grey;">
+                                        ₹<%= product.price.toFixed(2) %>
+                                    </span>
+                        
+                                    <!-- Offer Price -->
+                                    <span class="mtext-106 cl2 ml-2" style="color: #5c59e8;">
+                                        ₹<%= (product.price - product.bestOffer.discountAmount).toFixed(2) %>
+                                    </span>
+                                </div>
+                        
+                                <!-- Savings -->
+                                <span class="stext-102 cl2" style="color: green; font-size: 0.9rem;">
+                                    (You save ₹<%= product.bestOffer.discountAmount.toFixed(2) %>)
+                                </span>
+                            <% } else { %>
+                                <!-- Display only the price if no offer -->
+                                <span class="mtext-106 cl2">₹<%= product.price.toFixed(2) %></span>
+                            <% } %>
+                                        </div>
+
+                                        <!-- Stock Status -->
+                                        <div class="mt-4">
+                                            <% if (product.status==="unlisted" ) { %>
+                                                <p class="text-red-600 font-semibold">This product is unavailable.</p>
+                                                <% } else if (product.stock <=0) { %>
+                                                    <p class="text-red-600 font-semibold">Out of stock!</p>
+                                                    <% } else { %>
+                                                        <p class="text-green-600 font-semibold">In Stock: <%=
+                                                                product.stock %> available</p>
+                                                        <% } %>
+                                        </div>
+
+                                        <div class="p-t-33">
+                                            <div class="flex-w flex-r-m p-b-10">
+                                                <div class="size-203 flex-c-m respon6">Category</div>
+                                                <div class="size-204 respon6-next">
+                                                    <span class="stext-102 cl6">
+                                                        <%= product.category.name %>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-w flex-r-m p-b-10">
+                                                <div class="size-203 flex-c-m respon6">Brand</div>
+                                                <div class="size-204 respon6-next">
+                                                    <span class="stext-102 cl6">
+                                                        <%= product.brand %>
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="flex-w flex-r-m p-b-10">
+                                                <div class="size-203 flex-c-m respon6">Stock</div>
+                                                <div class="size-204 respon6-next">
+                                                    <span class="stext-102 cl6">
+                                                        <%= product.stock %> units
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add to Cart Button -->
+                                        <div class="flex-w flex-r-m p-b-10">
+                                            <div class="size-204 flex-column flex-m respon6-next align-items-center">
+                                                <div class="mt-3 d-flex flex-column">
+                                                    <% if (product && product.status==="listed" ) { %>
+                                                        <% if (product.stock> 0) { %>
+                                                            <% if (product.stock <=5) { %>
+                                                                <p
+                                                                    style="color: red; text-align: center; margin-bottom: 15px;">
+                                                                    Only <%= product.stock %> left in stock! Hurry up!
+                                                                </p>
+                                                                <% } %>
+                                                                    <!-- Add to Cart Button -->
+                                                                    <button class="btn btn-success add-to-cart-btn"
+                                                                        data-product-id="<%= product._id %>"
+                                                                        data-stock="<%= product.stock %>"
+                                                                        <%=product.stock> 0 ? '' : 'disabled' %>>
+                                                                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                                                                    </button>
+
+                                                                    <!-- Add to Wishlist Button -->
+                                                                    <button
+                                                                        class="btn btn-outline-danger add-to-wishlist-btn"
+                                                                        onclick="addToWishlist('<%= product._id %>')">
+                                                                        <i class="fas fa-heart"></i> Add to Wishlist
+                                                                    </button>
+                                                                    <% } else { %>
+                                                                        <p
+                                                                            style="color: red; font-size: 1rem; text-align: center;">
+                                                                            Out of stock</p>
+                                                                        <% } %>
+                                                                            <% } else { %>
+                                                                                <p
+                                                                                    style="color: red; font-size: 1rem; text-align: center;">
+                                                                                    Product is unavailable</p>
+                                                                                <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="bor10 m-t-50 p-t-43 p-b-40">
+                    <!-- Tabs -->
+                    <div class="tab01">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item p-b-10">
+                                <a class="nav-link active" data-toggle="tab" href="#description"
+                                    role="tab">Description</a>
+                            </li>
+
+                            <li class="nav-item p-b-10">
+                                <a class="nav-link" data-toggle="tab" href="#information" role="tab">Additional
+                                    information</a>
+                            </li>
+
+                            <li class="nav-item p-b-10">
+                                <a class="nav-link" data-toggle="tab" href="#reviews" role="tab">Reviews</a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content p-t-43">
+                            <div class="tab-pane fade show active" id="description" role="tabpanel">
+                                <p class="stext-102 cl6">
+                                    <%= product.description
+                                        || "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
+                                        %>
+                                </p>
+                            </div>
+
+                            <div class="tab-pane fade" id="information" role="tabpanel">
+                                <div class="m-l-25 m-r--5 m-lr-0-lg">
+                                    <ul>
+
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Processor Brand</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.processor.brand || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Processor Model</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.processor.model || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Processor Cores</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.processor.cores || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Processor Speed</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.processor.speed || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">RAM Size</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.ram.size || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">RAM Type</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.ram.type || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Storage Type</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.storage.type || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Storage Capacity</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.storage.capacity || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Display Size</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.display.size || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Display Resolution</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.display.resolution || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Graphics Brand</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.graphics.brand || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Graphics Model</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.graphics.model || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Graphics Memory</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.graphics.memory || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Battery Type</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.battery.type || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Battery Capacity</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.battery.capacity || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Operating System</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.os || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Weight</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.weight || "Not specified" %>
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7">
+                                            <span class="stext-102 cl3 size-205">Dimensions</span>
+                                            <span class="stext-102 cl6 size-206">
+                                                <%= product.specifications.dimensions.width %> x <%=
+                                                        product.specifications.dimensions.height %> x <%=
+                                                            product.specifications.dimensions.depth %> cm
+                                            </span>
+                                        </li>
+                                        <li class="flex-w flex-t p-b-7"></li>
+                                        <span class="stext-102 cl3 size-205">Warranty</span>
+                                        <span class="stext-102 cl6 size-206">
+                                            <%= product.warranty || "Not specified" %>
+                                        </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Reviews -->
+                            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-sm-10 col-md-8 col-lg-6 m-lr-auto">
+                                        <div class="review">
+                                            <div class="mt-4">
+                                                <p class="text-yellow-500 text-lg">⭐ <%= product.ratings
+                                                        || "No ratings yet" %>
+                                                </p>
+                                            </div>
+
+                                            <div class="mt-4">
+                                                <h3 class="text-lg font-semibold">Customer Reviews:</h3>
+                                                <% if (product.reviews && product.reviews.length> 0) { %>
+                                                    <ul class="list-disc pl-6 mt-2">
+                                                        <% product.reviews.forEach(review=> { %>
+                                                            <li class="text-gray-700"><strong>
+                                                                    <%= review.user %>:
+                                                                </strong>
+                                                                <%= review.comment %>
+                                                            </li>
+                                                            <% }); %>
+                                                    </ul>
+                                                    <% } else { %>
+                                                        <p class="text-gray-500">No reviews yet.</p>
+                                                        <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- Related Products Section -->
+        <div class="related-products-section container">
+            <h4 class="mtext-105 cl2 p-b-14">Related Products</h4>
+            <div class="row">
+                <% relatedProducts.forEach(product=> { %>
+                    <div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item <%= product.category %>">
+                        <div class="unique-container">
+                            <a href="/shop/product-detail/<%= product._id %>" class="unique-product-card">
+                                <!-- Link to product detail page -->
+                                <div class="unique-product-image">
+                                    <img src="/uploads/<%= product.images[0] %>" alt="Product Image" />
+                                    <button class="unique-wishlist-btn" aria-label="Add to wishlist">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path
+                                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </a>
+                            <div class="unique-product-info">
+                                <h3 class="unique-product-title">
+                                    <%= product.name %>
+                                </h3>
+                                <div class="unique-product-price-rating">
+                                    <p class="unique-product-price">₹<%= product.price.toFixed(2) %>
+                                    </p>
+                                    <div class="unique-product-rating">
+                                        <span class="unique-rating-star">★</span>
+                                        <span class="unique-rating-star">★</span>
+                                        <span class="unique-rating-star">★</span>
+                                        <span class="unique-rating-star">★</span>
+                                        <span class="unique-rating-value">(4.5)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Add to Cart Button -->
+                                <button class="btn btn-success add-to-cart-btn" data-product-id="<%= product._id %>"
+                                    data-stock="<%= product.stock %>" <%=product.stock> 0 ? '' : 'disabled' %>>
+                                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                                </button>
+
+                                <!-- Add to Wishlist Button -->
+                                <button class="btn btn-outline-danger add-to-wishlist-btn"
+                                    onclick="addToWishlist('<%= product._id %>')">
+                                    <i class="fas fa-heart"></i> Add to Wishlist
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <% }) %>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+
+
+
+        <!--===============================================================================================-->
+        <script src="/vendor/jquery/jquery-3.2.1.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="/vendor/animsition/js/animsition.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="/vendor/bootstrap/js/popper.js"></script>
+        <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="/vendor/select2/select2.min.js"></script>
+        <script>
+            $(".js-select2").each(function () {
+                $(this).select2({
+                    minimumResultsForSearch: 20,
+                    dropdownParent: $(this).next(".dropDownSelect2"),
+                });
+            });
+        </script>
+        <!--===============================================================================================-->
+        <script src="/vendor/daterangepicker/moment.min.js"></script>
+        <script src="/vendor/daterangepicker/daterangepicker.js"></script>
+        <!--===============================================================================================-->
+        <script src="/vendor/slick/slick.min.js"></script>
+        <script src="/js/slick-custom.js"></script>
+        <!--===============================================================================================-->
+        <script src="/vendor/parallax100/parallax100.js"></script>
+        <script>
+            $(".parallax100").parallax100();
+        </script>
+        <!--===============================================================================================-->
+        <script src="/vendor/MagnificPopup/jquery.magnific-popup.min.js"></script>
+        <script>
+            $(".gallery-lb").each(function () {
+                // the containers for all your galleries
+                $(this).magnificPopup({
+                    delegate: "a", // the selector for gallery item
+                    type: "image",
+                    gallery: {
+                        enabled: true,
+                    },
+                    mainClass: "mfp-fade",
+                });
+            });
+        </script>
+        <!--===============================================================================================-->
+        <script src="/vendor/isotope/isotope.pkgd.min.js"></script>
+        <!--===============================================================================================-->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            $(".js-addwish-b2, .js-addwish-detail").on("click", function (e) {
+                e.preventDefault();
+            });
+
+            $(".js-addwish-b2").each(function () {
+                var nameProduct = $(this).parent().parent().find(".js-name-b2").html();
+                $(this).on("click", function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
+
+                    $(this).addClass("js-addedwish-b2");
+                    $(this).off("click");
+                });
+            });
+
+            $(".js-addwish-detail").each(function () {
+                var nameProduct = $(this).parent().parent().parent().find(".js-name-detail").html();
+
+                $(this).on("click", function () {
+                    swal(nameProduct, "is added to wishlist !", "success");
+
+                    $(this).addClass("js-addedwish-detail");
+                    $(this).off("click");
+                });
+            });
+
+            /*---------------------------------------------*/
+
+            $(".js-addcart-detail").each(function () {
+                var nameProduct = $(this).parent().parent().parent().parent().find(".js-name-detail").html();
+                $(this).on("click", function () {
+                    swal(nameProduct, "is added to cart !", "success");
+                });
+            });
+        </script>
+        <!--===============================================================================================-->
+        <script src="/vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
+        <script>
+            $(".js-pscroll").each(function () {
+                $(this).css("position", "relative");
+                $(this).css("overflow", "hidden");
+                var ps = new PerfectScrollbar(this, {
+                    wheelSpeed: 1,
+                    scrollingThreshold: 1000,
+                    wheelPropagation: false,
+                });
+
+                $(window).on("resize", function () {
+                    ps.update();
+                });
+            });
+        </script>
+        <!--===============================================================================================-->
+        <script src="/js/main.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(".wrap-pic-w").on("mouseenter", function (e) {
+                    var $img = $(this).find("img");
+                    var magnifier = $('<div class="img-magnifier"></div>').appendTo(this);
+
+                    // Set magnifier size and position
+                    magnifier.css({
+                        width: "150px", // Increased size of the magnifying glass
+                        height: "150px",
+                        background: "rgba(255, 255, 255, 0.5)",
+                        borderRadius: "50%",
+                        position: "absolute",
+                        display: "none",
+                        zIndex: 10,
+                    });
+
+                    // Show magnifier on mouse enter
+                    $(this).on("mousemove", function (e) {
+                        var x = e.pageX - $(this).offset().left;
+                        var y = e.pageY - $(this).offset().top;
+
+                        magnifier.css({
+                            left: x - 75 + "px", // Center the magnifier (adjusted for increased size)
+                            top: y - 75 + "px",  // Center the magnifier (adjusted for increased size)
+                            display: "block",
+                            backgroundImage: "url(" + $img.attr("src") + ")",
+                            backgroundRepeat: "no-repeat",
+                            backgroundSize: $img.width() * 2 + "px " + $img.height() * 2 + "px", // Double the image size for magnification
+                            backgroundPosition: "-" + (x * 2 - 75) + "px -" + (y * 2 - 75) + "px" // Adjust for new size
+                        });
+                    });
+
+                    // Hide magnifier on mouse leave
+                    $(this).on("mouseleave", function () {
+                        magnifier.remove();
+                    });
+                });
+            });
+
+
+            document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+                button.addEventListener('click', async function () {
+                    const productId = this.getAttribute('data-product-id');
+                    const stock = parseInt(this.getAttribute('data-stock'), 10);
+
+                    if (stock <= 0) {
+                        Swal.fire({
+                            icon: "warning",
+                            title: "Out of Stock",
+                            text: "This product is currently unavailable.",
+                        });
+                        return;
+                    }
+
+                    try {
+                        console.log('adding to cart')
+                        const response = await fetch("/cart/add", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ productId, quantity: 1 })
+                        });
+                        console.log('response recieved ', response)
+
+                        const result = await response.json();
+
+                        if (response.ok && result.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Added to Cart",
+                                text: "Product has been added to your cart!",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                        } else {
+                            throw new Error(result.error || "Failed to add to cart.");
+                        }
+                    } catch (error) {
+                        console.log("Error in add to cart", error)
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: error.message || "Something went wrong.",
+                        });
+                    }
+                });
+            });
+
+            async function addToWishlist(productId) {
+                try {
+                    const response = await fetch("/wishlist/add", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ productId })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Added to Wishlist",
+                            text: "Product has been added to your wishlist!",
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    } else {
+                        throw new Error(result.error || "Failed to add to wishlist.");
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error!",
+                        text: error.message || "Something went wrong.",
+                    });
+                }
+            }
+
+        </script>
+
+
+</body>
+
+</html>

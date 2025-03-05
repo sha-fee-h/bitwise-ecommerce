@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitwise | Dashboard</title>
+    <link rel="stylesheet" href="/css/admin/dashboard.css">
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Inherit styles from dashboard.css and add custom styles */
+        :root {
+            --primary-color: #00a8e8; /* Cool cyan */
+            --secondary-color: #ff006e; /* Vibrant pink */
+            --bg-color: #0d1117; /* Deep black-blue for dark mode */
+            --container-bg: #161b22; /* Sidebar-like background */
+            --text-color: #e0e0e0; /* Soft white */
+            --input-bg: #1f2937; /* Dark input field */
+            --border-color: #5c59e8; /* Purple border highlight */
+            --error-color: #ff3a30; /* Bright red for errors */
+            --success-color: #00ff44; /* Neon green for success */
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .chart-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 10px;
+            border: none;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        select:focus {
+            border: 2px solid var(--border-color);
+            outline: none;
+        }
+
+        canvas {
+            max-width: 100%;
+            background: var(--input-bg);
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        /* Top Selling Sections */
+        .top-selling-section {
+            background: var(--container-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .top-selling-section h2 {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .top-selling-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .top-selling-item {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .top-selling-item:last-child {
+            border-bottom: none;
+        }
+
+        .top-selling-item span {
+            color: var(--text-color);
+        }
+
+        .top-selling-item .revenue {
+            color: var(--success-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .filter-form {
+                flex-direction: column;
+            }
+            .top-selling-section h2 {
+                font-size: 1.3rem;
+            }
+            .top-selling-item {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>Dashboard</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>></span>
+            </nav>
+
+            <div class="product-search-filter">
+                <div style="display: flex">
+                    Sales
+                </div>
+                <form action="/admin/dashboard/logout" method="post">
+                    <button class="logout-btn">Logout</button>
+                </form>
+            </div>
+
+            <!-- Sales Chart Section -->
+            <div class="chart-section">
+                <h2>Sales Overview</h2>
+                <form class="filter-form" action="/admin/dashboard" method="GET">
+                    <select name="filterType" onchange="this.form.submit()">
+                        <option value="daily" <%= filterType === 'daily' ? 'selected' : '' %>>Daily</option>
+                        <option value="weekly" <%= filterType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                        <option value="monthly" <%= filterType === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                        <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                    </select>
+                </form>
+                <canvas id="salesChart"></canvas>
+            </div>
+
+            <!-- Top 10 Best-Selling Products -->
+            <div class="top-selling-section">
+                <h2>Top 10 Best-Selling Products</h2>
+                <% if (topProducts.length > 0) { %>
+                    <ul class="top-selling-list">
+                        <% topProducts.forEach(product => { %>
+                            <li class="top-selling-item">
+                                <span><%= product.product.name %> (Sold: <%= product.totalSold %>)</span>
+                                <span class="revenue">₹<%= product.totalRevenue.toFixed(2) %></span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p style="color: var(--error-color); text-align: center;">No products sold yet.</p>
+                <% } %>
+            </div>
+
+            <!-- Top 10 Best-Selling Categories -->
+            <div class="top-selling-section">
+                <h2>Top 10 Best-Selling Categories</h2>
+                <% if (topCategories.length > 0) { %>
+                    <ul class="top-selling-list">
+                        <% topCategories.forEach(category => { %>
+                            <li class="top-selling-item">
+                                <span><%= category.category.name %> (Sold: <%= category.totalSold %>)</span>
+                                <span class="revenue">₹<%= category.totalRevenue.toFixed(2) %></span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p style="color: var(--error-color); text-align: center;">No categories sold yet.</p>
+                <% } %>
+            </div>
+
+            <!-- Top 10 Best-Selling Brands -->
+            <div class="top-selling-section">
+                <h2>Top 10 Best-Selling Brands</h2>
+                <% if (topBrands.length > 0) { %>
+                    <ul class="top-selling-list">
+                        <% topBrands.forEach(brand => { %>
+                            <li class="top-selling-item">
+                                <span><%= brand._id %> (Sold: <%= brand.totalSold %>)</span>
+                                <span class="revenue">₹<%= brand.totalRevenue.toFixed(2) %></span>
+                            </li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p style="color: var(--error-color); text-align: center;">No brands sold yet.</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sales Chart using Chart.js
+        const ctx = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: <%- salesLabels %>,
+                datasets: [{
+                    label: 'Sales (₹)',
+                    data: <%- salesValues %>,
+                    borderColor: 'rgba(0, 168, 232, 1)',
+                    backgroundColor: 'rgba(0, 168, 232, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date',
+                            color: '#e0e0e0'
+                        },
+                        ticks: {
+                            color: '#e0e0e0'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Sales Amount (₹)',
+                            color: '#e0e0e0'
+                        },
+                        ticks: {
+                            color: '#e0e0e0'
+                        },
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#e0e0e0'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

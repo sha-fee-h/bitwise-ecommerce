@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bitwise | User-management</title>
+    <link rel="stylesheet" href="/css/admin/user-management.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>Category-Management</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>&gt;</span>
+                <a href="#">Category-Management</a>
+            </nav>
+
+            <div class="product-search-filter">
+                <div class="search-div">
+                    <form action="/admin/category-management" method="get">
+                        <input type="text" name="search" placeholder="Search Category..." class="search-input"
+                            value="<%= search %>" />
+                        <button class="add-product-btn" type="submit">Search</button>
+                    </form>
+                    <% if (search) { %>
+                        <form action="/admin/category-management" method="GET" style="margin-left: 10px">
+                            <input type="hidden" name="search" value="" />
+                            <button type="submit" class="add-product-btn">Show All</button>
+                        </form>
+                        <% } %>
+                </div>
+                <button class="add-product-btn" id="addCategoryBtn">+Add Category</button>
+            </div>
+
+            <% if (error.length>0) { %>
+                <div class="error-message" id="error">
+                    <%= error %>
+                </div>
+                <% } %>
+                    <% if (success.length>0) { %>
+                        <div class="success-message" id="error">
+                            <%= success %>
+                        </div>
+                        <% } %>
+
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>SI No</th>
+                                        <!-- <th>Image</th> -->
+                                        <th>Category Name</th>
+
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% category.forEach(function(category, index) { %>
+                                        <tr>
+                                            <td>
+                                                <%= (currentPage - 1) * 10 + index + 1 %>
+                                            </td>
+                                            <td>
+                                                <%= category.name %>
+                                            </td>
+                                            <td>
+                                                <form id="status-form-<%= category._id %>">
+                                                    <button type="button"
+                                                        class="status-btn <%= category.status === 'listed' ? 'unlist-btn' : 'list-btn' %>"
+                                                        onclick="toggleCategoryStatus('<%= category._id %>', '<%= category.status %>')">
+                                                        <%= category.status === 'listed' ? 'Unlist' : 'List' %>
+                                                    </button>
+                                                </form>                                                
+                                            </td>
+                                            <td style="display: flex">
+                                                <!-- <form action="/admin/user-management/user-details" method="GET">
+                                                    <button class="action-btn view-btn" type="submit">View</button>
+                                                </form> -->
+                                                <!-- <button class="view-btn" onclick="viewCategory('<%= category._id %>')">
+                                                    View
+                                                </button> -->
+
+                                                <button class="action-btn edit-btn" data-id="<%= category._id %>"
+                                                    data-name="<%= category.name %>"
+                                                    data-description="<%= category.description %>">Edit</button>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination -->
+
+                            <div class="pagination">
+                                <% if (currentPage> 1) { %>
+                                    <a
+                                        href="/admin/category-management?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                                    <% } %>
+                                        <% for (let i=1; i <=totalPages; i++) { %>
+                                            <a href="/admin/category-management?page=<%= i %>&search=<%= search %>"
+                                                class="<%= currentPage === i ? 'active' : '' %>">
+                                                <%= i %>
+                                            </a>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <a
+                                                        href="/admin/category-management?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                                                    <% } %>
+                            </div>
+        </div>
+    </div>
+
+    <!-- add category -->
+    <div id="addCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeAddModal">&times;</span>
+            <h2>Add Category</h2>
+
+            <form id="addCategoryForm" action="/admin/category-management/add-category" method="post">
+                <div class="form-group">
+                    <label for="add-cat-name">Category Name:</label>
+                    <input type="text" id="add-cat-name" name="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="add-cat-description">Description:</label>
+                    <input type="text" id="add-cat-description" name="description" required/>
+                </div>
+                <button type="submit" class="updateCategory-btn">Add Category</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Category Modal -->
+    <div id="editCategoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeEditModal">&times;</span>
+            <h2>Edit Category</h2>
+
+            <form id="editCategoryForm" action="/admin/category-management/edit-category" method="post">
+                <input type="hidden" id="edit-cat-id" name="id" />
+                <div class="form-group">
+                    <label for="add-cat-name">Category Name:</label>
+                    <input type="text" id="edit-cat-name" name="name" required />
+                </div>
+                <div class="form-group">
+                    <label for="add-cat-description">Description:</label>
+                    <input type="text" id="edit-cat-description" name="description" required/>
+                </div>
+                <button type="submit" class="updateCategory-btn">Update Category</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="/javascripts/admin/category-management.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>

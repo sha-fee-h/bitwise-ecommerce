@@ -1,0 +1,81 @@
+
+/* Container for the dropdown */
+.dropdown {
+position: relative;
+display: inline-block;
+}
+
+/* Style for the sign-in link (user's name) */
+.sign-in-link {
+text-decoration: none;
+color: #333;
+font-weight: bold;
+padding: 8px 12px;
+border: 1px solid transparent;
+border-radius: 4px;
+transition: background 0.3s, border-color 0.3s;
+}
+
+/* Hover effect for the sign-in link */
+.sign-in-link:hover {
+color: #1e1f36;
+}
+
+/* Dropdown content (hidden by default) */
+.dropdown-content {
+display: none; /* Hide by default */
+position: absolute;
+background-color: #fff;
+min-width: 160px;
+box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+padding: 8px 0;
+z-index: 1;
+border-radius: 4px;
+top: 100%; /* Position below the dropdown link */
+left: 0;
+}
+
+/* Style for each link inside the dropdown */
+.dropdown-content a {
+color: #333;
+padding: 10px 16px;
+text-decoration: none;
+display: block;
+transition: background 0.3s;
+}
+
+/* Hover effect for dropdown links */
+.dropdown-content a:hover {
+background-color: #f1f1f1;
+}
+
+/* Show the dropdown content on hover */
+.dropdown:hover .dropdown-content {
+display: block;
+}
+
+/* Style for the signup/login link when user is not signed in */
+a[href="/auth/login"] {
+text-decoration: none;
+color: #000000;
+font-weight: bold;
+padding: 8px 12px;
+border: 1px solid transparent;
+border-radius: 4px;
+transition: background 0.3s, border-color 0.3s;
+}
+
+/* Hover effect for signup/login link */
+a[href="/auth/login"]:hover {
+color: #4272d7;
+}
+.logout-btn{
+color: #333;
+padding: 10px 16px;
+text-decoration: none;
+display: block;
+transition: background 0.3s;
+}
+.logout-btn :hover {
+background-color: #f1f1f1;
+}

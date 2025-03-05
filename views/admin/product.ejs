@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitwise | User-management</title>
+    <link rel="stylesheet" href="/css/admin/product.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>Product-Management</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>&gt;</span>
+                <a href="#">Product-Management</a>
+            </nav>
+
+            <div class="product-search-filter">
+                <div style="display: flex">
+                    <form action="/admin/product-management" method="get">
+                        <input type="text" name="search" placeholder="Search products..." class="search-input"
+                            value="<%= search %>" />
+                        <button class="add-product-btn" type="submit">Search</button>
+                    </form>
+                    <% if (search) { %>
+                        <form action="/admin/product-management" method="GET" style="margin-left: 10px">
+                            <input type="hidden" name="search" value="" />
+                            <button type="submit" class="add-product-btn">Show All</button>
+                        </form>
+                        <% } %>
+                </div>
+                <form action="/admin/product-management/add-product" method="get">
+
+                    <button class="add-product-btn">+ Add product</button>
+                </form>
+            </div>
+
+            <% if (error_msg) { %>
+                <div class="error-message" id="error"><%= error_msg %></div>
+                <% } %> <% if (success_msg) { %>
+                <div class="success-message" id="error"><%= success_msg %></div>
+            <% } %>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>SI No</th>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                       
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% products.forEach(function(products, index) { %>
+                        <tr>
+                            <td>
+                                <%= (currentPage - 1) * 10 + index + 1 %>
+                            </td>
+                            <td style="width: 100px;">
+                                <img src="/<%= products.images.length > 0 ? 'uploads/' + products.images[0] : 'images/default-product.jpg' %>" alt="img" style="max-width: 50px; max-height: 50px;" />
+                            </td>
+                            <td>
+                                <%= products.name %>
+                            </td>
+                            <td>
+                                <%= products.category ? products.category.name : 'No Category' %>
+                            </td>   
+                            <td>
+                                <%= products.price %>
+                            </td>
+                            <td>
+                                <%= products.stock %>
+                            </td>
+                            
+                            <td style="display: flex">
+                                <!-- <form action="/admin/user-management/user-details" method="GET">
+                                    <button class="action-btn view-btn" type="submit">View</button>
+                                </form> -->
+                                <form id="status-form-<%= products._id %>">
+                                    <button type="button" class="status-btn <%= products.status === 'listed' ? 'unlist-btn' : 'list-btn' %>" 
+                                        onclick="toggleProductStatus('<%= products._id %>', '<%= products.status %>')">
+                                        <%= products.status === 'listed' ? 'Unlist' : 'List' %>
+                                    </button>
+                                </form>                                
+                                <form action="/admin/product-management/edit-product/<%= products._id %>" method="GET">
+                                    <button class="action-btn view-btn" type="submit">View/Edit</button>
+                                </form>
+                            </td>
+
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/admin/product-management?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                <% } %>
+                <% for (let i=1; i <=totalPages; i++) { %>
+                    <a href="/admin/product-management?page=<%= i %>&search=<%= search %>"
+                        class="<%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/product-management?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                <% } %>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+        <script src="/javascripts/admin/product.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bitwise | User-management</title>
+
+        <style>
+            /* CSS styles remain unchanged */
+            :root {
+                --primary-color: #5c59e8;
+                --secondary-color: #c21000;
+                --bg-color: #f8f9fa;
+                --sidebar-bg: #f0f1f7;
+                --table-bg: #ffffff;
+                --text-color: #333;
+                --header-bg: #ffffff;
+                --low-stock-color: #f39c12;
+                --active-status: #148800;
+                --blocked-status: #a40e00;
+            }
+
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: var(--bg-color);
+            }
+
+            .dashboard-container {
+                display: flex;
+                min-height: 100vh;
+            }
+
+            /* Sidebar */
+            .unique-sidebar {
+                width: 250px;
+                background-color: var(--sidebar-bg);
+                padding: 20px;
+            }
+
+            .unique-sidebar-header h2 {
+                font-size: 1.5rem;
+                color: var(--primary-color);
+                text-align: center;
+            }
+
+            .unique-sidebar-menu {
+                list-style: none;
+                padding: 0;
+            }
+
+            .unique-sidebar-menu li {
+                margin: 10px 0;
+            }
+
+            .unique-sidebar-menu li a {
+                text-decoration: none;
+                color: var(--text-color);
+                font-weight: bold;
+                padding: 10px;
+                display: block;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .unique-sidebar-menu li a:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+
+            .unique-sidebar-menu li.active a {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            /* Main Content */
+            .product-list-container {
+                flex-grow: 1;
+                padding: 20px;
+            }
+
+            .product-list-container h1 {
+                font-size: 1.8rem;
+                color: var(--text-color);
+            }
+
+            /* Breadcrumbs */
+            .breadcrumbs {
+                font-size: 0.9rem;
+                color: var(--text-color);
+                margin-bottom: 15px;
+            }
+
+            .breadcrumbs a {
+                color: var(--primary-color);
+                text-decoration: none;
+                margin-right: 5px;
+            }
+
+            .breadcrumbs a:hover {
+                text-decoration: underline;
+            }
+
+            .breadcrumbs span {
+                margin-right: 5px;
+            }
+
+            .product-search-filter {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .search-input {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                width: 60%;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .add-product-btn {
+                padding: 10px 20px;
+                background-color: var(--primary-color);
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                transition: background-color 0.3s;
+            }
+
+            .add-product-btn:hover {
+                background-color: #4e54d4;
+            }
+
+            .product-table {
+                width: 100%;
+                background-color: var(--table-bg);
+                border-collapse: collapse;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
+
+            .product-table th,
+            .product-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .product-table th {
+                background-color: #f0f4ff;
+                font-weight: bold;
+                color: var(--text-color);
+            }
+
+            .product-table td {
+                color: var(--text-color);
+            }
+
+            .action-btn {
+                padding: 8px 12px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .edit-btn {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .edit-btn:hover {
+                background-color: #4e54d4;
+            }
+
+            .delete-btn {
+                background-color: #ff6154;
+                color: white;
+            }
+
+            .delete-btn:hover {
+                background-color: #d9534f;
+            }
+
+            .view-btn {
+                background-color: #007bff;
+                color: white;
+            }
+
+            .view-btn:hover {
+                background-color: #0056b3;
+            }
+
+            /* Pagination */
+            .pagination {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .pagination span {
+                color: var(--text-color);
+            }
+
+            .pagination-buttons {
+                display: flex;
+            }
+
+            .page-btn {
+                padding: 10px 15px;
+                margin: 0 5px;
+                border: 1px solid #ddd;
+                text-decoration: none;
+                color: var(--text-color);
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .page-btn:hover {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .page-btn.active {
+                background-color: var(--primary-color);
+                color: white;
+            }
+
+            .status-dropdown {
+                padding: 5px;
+                border-radius: 5px;
+                border: 1px solid #ddd;
+                width: 100%;
+            }
+
+            .user-profile {
+                background-color: white;
+                border-radius: 10px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .profile-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .profile-image {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                margin-right: 20px;
+            }
+
+            .profile-info h2 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+
+            .premium-badge {
+                background-color: #e0e7ff;
+                color: #3949ab;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 0.8em;
+                margin-left: 10px;
+            }
+
+            .user-details div {
+                margin-bottom: 10px;
+            }
+
+            .user-stats {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 20px;
+            }
+
+            .stat-card {
+                background-color: white;
+                border-radius: 10px;
+                padding: 20px;
+                flex: 1;
+                margin-right: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .stat-card:last-child {
+                margin-right: 0;
+            }
+
+            .stat-card h3 {
+                margin: 0;
+                font-size: 0.9em;
+                color: #888;
+            }
+
+            .stat-card .value {
+                font-size: 1.5em;
+                font-weight: bold;
+                margin: 10px 0;
+            }
+
+            .stat-card .change {
+                font-size: 0.8em;
+            }
+
+            .change.positive {
+                color: #4caf50;
+            }
+
+            .change.negative {
+                color: #f44336;
+            }
+
+            .order-history {
+                background-color: white;
+                border-radius: 10px;
+                padding: 20px;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .order-history-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 20px;
+            }
+
+            .order-filters {
+                display: flex;
+            }
+
+            .filter-btn {
+                background-color: #f0f2f5;
+                border: none;
+                padding: 8px 12px;
+                margin-left: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .order-table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            .order-table th,
+            .order-table td {
+                padding: 12px;
+                text-align: left;
+                border-bottom: 1px solid #eee;
+            }
+
+            .order-id {
+                color: #3949ab;
+            }
+
+            .product-info {
+                display: flex;
+                align-items: center;
+            }
+
+            .product-image {
+                width: 40px;
+                height: 40px;
+                margin-right: 10px;
+                border-radius: 5px;
+            }
+
+            .product-sub {
+                font-size: 0.8em;
+                color: #888;
+            }
+
+            .status {
+                padding: 5px 10px;
+                border-radius: 20px;
+                font-size: 0.8em;
+            }
+
+            .status.processing {
+                background-color: #fff3e0;
+                color: #e65100;
+            }
+
+            .status.shipped {
+                background-color: #e3f2fd;
+                color: #1565c0;
+            }
+
+            .status.delivered {
+                background-color: #e8f5e9;
+                color: #2e7d32;
+            }
+
+            .pagination {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 20px;
+            }
+
+            .pagination-buttons {
+                display: flex;
+            }
+
+            .page-btn {
+                background-color: #f0f2f5;
+                border: none;
+                padding: 5px 10px;
+                margin: 0 5px;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+            .page-btn.active {
+                background-color: #3949ab;
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="dashboard-container">
+            <!-- Sidebar -->
+            <aside class="unique-sidebar">
+                <div class="unique-sidebar-header">
+                    <h2>Byteverse</h2>
+                </div>
+                <ul class="unique-sidebar-menu">
+                    <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/user-management">Users</a></li>
+                    <li><a href="/admin/product-management">Products</a></li>
+                    <li><a href="/admin/orders/manage">Orders</a></li>
+                    <li><a href="/admin/category-management">Categories</a></li>
+                    <li><a href="/admin/coupon-management">Coupon</a></li>
+                    <li><a href="/admin/offer-management">Offers</a></li>
+                    <li><a href="/admin/inventory">Inventory</a></li>
+                    <li><a href="/admin/sales-report">Sales</a></li>
+                    <li><a href="/admin/transactions">Transactions</a></li>
+                </ul>
+            </aside>
+            <!-- Main Content -->
+            <div class="product-list-container">
+                <h1>User details</h1>
+
+                <!-- Breadcrumbs -->
+                <nav class="breadcrumbs">
+                    <a href="/admin/dashboard">Dashboard</a>
+                    <span>&gt;</span>
+                    <a href="#">User-Management</a>
+                    <span>&gt;</span>
+                    <a href="#">User-details</a>
+                </nav>
+
+                <div class="user-profile">
+                    <div class="profile-header">
+                        <img src="/public/images/potfolio.jpg" alt="User profile" class="profile-image" />
+                        <div class="profile-info">
+                            <h2>Linda Blair <span class="premium-badge">Premium</span></h2>
+                            <p>@linda_blair321</p>
+                        </div>
+                    </div>
+                    <div class="user-details">
+                        <div><strong>User ID :</strong> ID-011221</div>
+                        <div><strong>Billing Email :</strong> lindablair@email.com</div>
+                        <div><strong>Phone Number :</strong> 050 414 8778</div>
+                        <div><strong>Delivery Address :</strong> 1833 Bel Meadow Drive, Fontana, California 92335, USA</div>
+                        <div><strong>Latest Transaction:</strong> 12 December 2022</div>
+                    </div>
+                </div>
+
+                <div class="user-stats">
+                    <div class="stat-card">
+                        <h3>Total Balance</h3>
+                        <div class="value">$723.00</div>
+                        <div class="change negative">-25%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Orders</h3>
+                        <div class="value">1,296</div>
+                        <div class="change positive">+10%</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Rewards Point</h3>
+                        <div class="value">1400</div>
+                        <div class="change positive">+10%</div>
+                    </div>
+                </div>
+
+                <div class="order-history">
+                    <div class="order-history-header">
+                        <h2>Order History</h2>
+                        <div class="order-filters">
+                            <button class="filter-btn">Select Date</button>
+                            <button class="filter-btn">Filters</button>
+                        </div>
+                    </div>
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Product</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="order-id">#302012</td>
+                                <td class="product-info">
+                                    <div>
+                                        <div>Handmade Pouch</div>
+                                        <div class="product-sub">+3 other products</div>
+                                    </div>
+                                </td>
+                                <td>$121.00</td>
+                                <td><span class="status processing">Processing</span></td>
+                                <td>12 Dec 2023</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span>Showing 1-5 from 1,296</span>
+                        <div class="pagination-buttons">
+                            <button class="page-btn">&lt;</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">...</button>
+                            <button class="page-btn">&gt;</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,409 @@
+<!-- views/admin/couponManagement.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coupon Management | Bitwise</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #00a8e8;
+            --secondary-color: #ff006e;
+            --bg-color: #0d1117;
+            --container-bg: #161b22;
+            --text-color: #e0e0e0;
+            --input-bg: #1f2937;
+            --border-color: #5c59e8;
+            --error-color: #ff3a30;
+            --success-color: #00ff44;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .unique-sidebar {
+            width: 250px;
+            background-color: var(--container-bg);
+            padding: 20px;
+        }
+
+        .unique-sidebar-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .unique-sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .unique-sidebar-menu li {
+            margin: 10px 0;
+        }
+
+        .unique-sidebar-menu li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: bold;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .unique-sidebar-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .unique-sidebar-menu li.active a {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .product-list-container {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: var(--bg-color);
+        }
+
+        .product-list-container h1 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .breadcrumbs {
+            font-size: 0.9rem;
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+
+        .breadcrumbs a {
+            color: var(--primary-color);
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .breadcrumbs a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumbs span {
+            margin-right: 5px;
+        }
+
+        .form-section {
+            background-color: var(--container-bg);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .form-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            width: 100%;
+            max-width: 300px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            color: var(--text-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: #4e54d4;
+            transform: scale(1.05);
+        }
+
+        .toggle-btn {
+            padding: 5px 10px;
+            font-size: 0.9rem;
+        }
+
+        .list-btn {
+            background-color: var(--success-color);
+        }
+
+        .unlist-btn {
+            background-color: var(--error-color);
+        }
+
+        .coupons-section table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: var(--container-bg);
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .coupons-section th,
+        .coupons-section td {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            color: var(--text-color);
+        }
+
+        .coupons-section th {
+            background-color: var(--input-bg);
+        }
+
+        .coupons-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise Admin</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>Coupon Management</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>></span>
+                <a href="/admin/coupon-management">Coupon Management</a>
+            </nav>
+
+            <!-- Coupon Form -->
+            <div class="form-section">
+                <h3>Add New Coupon</h3>
+                <form id="couponForm">
+                    
+                    <div class="form-group">
+                        <label for="userId">User (Optional):</label>
+                        <select id="userId" name="userId">
+                            <option value="">-- No User (Global) --</option>
+                            <% users.forEach(user => { %>
+                                <option value="<%= user._id %>"><%= user.userName %> (<%= user.email %>)</option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="discount">Discount Amount (₹):</label>
+                        <input type="number" id="discount" name="discount" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date:</label>
+                        <input type="date" id="expiryDate" name="expiryDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="usageLimit">Usage Limit (Optional):</label>
+                        <input type="number" id="usageLimit" name="usageLimit" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="minimumSpend">Minimum Spend (₹):</label>
+                        <input type="number" id="minimumSpend" name="minimumSpend" min="0" default="0">
+                    </div>
+                    <button type="submit">Add Coupon</button>
+                </form>
+            </div>
+
+            <!-- Coupons Table -->
+            <div class="coupons-section">
+                <h3>Existing Coupons</h3>
+                <table id="couponsTable">
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>User</th>
+                            <th>Discount (₹)</th>
+                            <th>Expiry Date</th>
+                            <th>Usage Limit</th>
+                            <th>Used Count</th>
+                            <th>Min Spend (₹)</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Coupons will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load existing coupons
+        async function loadCoupons() {
+            const response = await fetch('/admin/coupons');
+            const result = await response.json();
+            if (result.success) {
+                const tbody = document.querySelector('#couponsTable tbody');
+                tbody.innerHTML = '';
+                result.coupons.forEach(coupon => {
+                    const row = `
+                        <tr>
+                            <td>${coupon.code}</td>
+                            <td>${coupon.userId ? coupon.userId.userName : 'Global'}</td>
+                            <td>${coupon.discount}</td>
+                            <td>${new Date(coupon.expiryDate).toLocaleDateString()}</td>
+                            <td>${coupon.usageLimit || 'Unlimited'}</td>
+                            <td>${coupon.usedCount}</td>
+                            <td>${coupon.minimumSpend}</td>
+                            <td>${coupon.isActive ? 'Active' : 'Inactive'}</td>
+                            <td>
+                                <button class="toggle-btn ${coupon.isActive ? 'unlist-btn' : 'list-btn'}" 
+                                        onclick="toggleCouponStatus('${coupon._id}', ${coupon.isActive})">
+                                    ${coupon.isActive ? 'Unlist' : 'List'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+            }
+        }
+
+        // Handle Coupon Form submission
+        document.getElementById('couponForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            if (!data.userId) delete data.userId; // Remove empty userId
+
+            const confirmation = await Swal.fire({
+                title: 'Confirm Addition',
+                text: 'Are you sure you want to add this coupon?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00a8e8',
+                cancelButtonColor: '#ff3a30',
+                confirmButtonText: 'Yes, add it!'
+            });
+
+            if (confirmation.isConfirmed) {
+                const response = await fetch('/admin/coupons', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    await Swal.fire({
+                        title: 'Success!',
+                        text: 'Coupon created successfully!',
+                        icon: 'success',
+                        confirmButtonColor: '#00a8e8'
+                    });
+                    e.target.reset();
+                    loadCoupons();
+                } else {
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: result.message || 'Failed to create coupon',
+                        icon: 'error',
+                        confirmButtonColor: '#ff3a30'
+                    });
+                }
+            }
+        });
+
+        // Toggle Coupon Status
+        async function toggleCouponStatus(couponId, isActive) {
+            const action = isActive ? 'unlist' : 'list';
+            const confirmation = await Swal.fire({
+                title: `Confirm ${action.charAt(0).toUpperCase() + action.slice(1)}`,
+                text: `Are you sure you want to ${action} this coupon?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#00a8e8',
+                cancelButtonColor: '#ff3a30',
+                confirmButtonText: `Yes, ${action} it!`
+            });
+
+            if (confirmation.isConfirmed) {
+                const response = await fetch(`/admin/coupons/toggle/${couponId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    await Swal.fire({
+                        title: 'Success!',
+                        text: result.message,
+                        icon: 'success',
+                        confirmButtonColor: '#00a8e8'
+                    });
+                    loadCoupons();
+                } else {
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: result.message || `Failed to ${action} coupon`,
+                        icon: 'error',
+                        confirmButtonColor: '#ff3a30'
+                    });
+                }
+            }
+        }
+
+        // Load coupons on page load
+        document.addEventListener('DOMContentLoaded', loadCoupons);
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!-- views/user/order-failure.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Failed | Bitwise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb; /* Vibrant blue */
+            --secondary-color: #dc2626; /* Red for failure */
+            --text-color: #1f2937; /* Dark gray */
+            --light-bg: #f9fafb; /* Light gray background */
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 30px;
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: var(--text-color);
+            margin-bottom: 30px;
+        }
+
+        .illustration {
+            width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn-retry {
+            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
+            color: white;
+        }
+
+        .btn-retry:hover {
+            background: linear-gradient(135deg, #1d4ed8, var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-details {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .btn-details:hover {
+            background: linear-gradient(135deg, #4b5563, #6b7280);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(107, 114, 128, 0.3);
+        }
+    </style>
+    <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>Order Failed</h1>
+        <img src="/images/order-failure.svg" alt="Order Failure" class="illustration"> <!-- Replace with your SVG/image -->
+        <p>
+            <% if (order) { %>
+                Sorry, your payment for order <%= order.orderId %> could not be processed.
+            <% } else { %>
+                Sorry, your payment attempt failed. Transaction ID: <%= razorpayOrderId %>
+                <% if (amount > 0) { %> (Amount: ₹<%= amount.toFixed(2) %>) <% } %>
+            <% } %>
+            Please try again or check your order details.
+        </p>
+        <button class="btn btn-retry" onclick="retryPayment()">Retry Payment</button>
+        <% if (order) { %>
+            <button class="btn btn-details" onclick="viewOrderDetails('<%= order.orderId %>')">View Order Details</button>
+        <% } %>
+    </div>
+
+    <script>
+        function retryPayment() {
+            // Redirect back to checkout to retry payment
+            window.location.href = `/checkout`;
+        }
+
+        function viewOrderDetails(orderId) {
+            // Redirect to order details page (adjust route as needed)
+            window.location.href = `/orders/${orderId}`;
+        }
+    </script>
+</body>
+</html>

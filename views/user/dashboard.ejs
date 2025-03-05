@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Bitwise</title>
+    <link rel="stylesheet" href="/css/user/dashboard.css"> 
+    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="/css/user/util.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/main.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+    <style>.product-info {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Space between image and name */
+        margin-bottom: 5px;
+    }
+    
+    .product-image {
+        width: 50px;  /* Adjust size as needed */
+        height: 50px;
+        object-fit: cover; /* Ensures image maintains aspect ratio */
+        border-radius: 4px; /* Optional: for rounded corners */
+    }
+    
+    .items-list {
+        list-style: none;
+        padding: 0;
+    }
+    
+    .item {
+        margin-bottom: 15px;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }</style>
+</head>
+<body>
+
+    <!-- header -->
+
+    <%- include('./partials/header.ejs') %>
+
+
+    <div class="dashboard-container">
+        <!-- Side Panel -->
+        <div class="side-panel">
+            
+            <ul>
+                <li class="<%= page === 'dashboard' ? 'active' : '' %>">
+                    <a href="/user/profile">Dashboard</a>
+                </li>
+                <li class="<%= page === 'orders' ? 'active' : '' %>">
+                    <a href="/orders/history">Order History</a>
+                </li>
+                <li class="<%= page === 'track-order' ? 'active' : '' %>">
+                    <a href="/user/track-order">Track Order</a>
+                </li>
+                <li class="<%= page === 'cart' ? 'active' : '' %>">
+                    <a href="/cart">Shopping Cart</a>
+                </li>
+                <li class="<%= page === 'coupons' ? 'active' : '' %>">
+                    <a href="/user/coupons">Coupons</a>
+                </li>
+                <li class="<%= page === 'wishlist' ? 'active' : '' %>">
+                    <a href="/wishlist">Wish List</a>
+                </li>
+                <li class="<%= page === 'wallet' ? 'active' : '' %>">
+                    <a href="/user/wallet">Wallet</a>
+                </li>
+                <li class="<%= page === 'address' ? 'active' : '' %>">
+                    <a href="/user/profile/address">Address</a>
+                </li>
+                <li class="<%= page === 'browsing-history' ? 'active' : '' %>">
+                    <a href="/user/browsing-history">Browsing History</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <!-- User Profile Section -->
+            <section class="profile-section">
+                <div class="profile-container">
+                    <h2>User Profile</h2>
+            
+                    <!-- Profile Image -->
+                    <div class="profile-image">
+                        <img src="<%= user.profileImage || '/images/default-profile.jpg' %>" alt="Profile Picture">
+                        <form action="/user/update-profile-image" method="POST" enctype="multipart/form-data">
+                            <label for="profileImage">Choose File</label>
+                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
+                            <button type="submit">Update Image</button>
+                        </form>                        
+                        <a href="/user/profile/edit"><button>Edit Profile</button></a>
+                    </div>
+            
+                    <!-- User Details -->
+                    <div class="user-info">
+                        <p><strong>Name:</strong> <%= user.userName %></p>
+                        <p><strong>Email:</strong> <%= user.email %></p>
+                        <p><strong>Phone:</strong> <%= user.phone %></p>
+                        <p><strong>Referral Code:</strong> <%= user.referralCode %></p>
+                    </div>
+                </div>
+            </section>
+            
+
+            <!-- Primary Address Section -->
+        <section class="address-section">
+            <div class="card">
+                <h2>Primary Address</h2>
+                <% 
+                    // Find the default address or use the first one
+                    const primaryAddress = user.addresses.find(addr => addr.isDefault) || user.addresses[0];
+                %>
+                <% if (primaryAddress) { %>
+                    <p><strong>Name:</strong> <%= primaryAddress.firstName %> <%= primaryAddress.lastName %></p>
+                    <p><strong>Address:</strong> <%= primaryAddress.street %>, <%= primaryAddress.city %>, <%= primaryAddress.state %> <%= primaryAddress.postalCode %>, <%= primaryAddress.country %></p>
+                    <p><strong>Phone:</strong> <%= primaryAddress.phoneNumber %></p>
+                    <% if (primaryAddress.additionalInfo) { %>
+                        <p><strong>Additional Info:</strong> <%= primaryAddress.additionalInfo %></p>
+                    <% } %>
+                    <a href="/user/profile/address" class="btnn edit-btn">Edit Address</a>
+                <% } else { %>
+                    <p>No address set. </p>
+                <% } %>
+            </div>
+        </section>
+
+            <!-- Recent Orders Section -->
+            <section class="orders-section">
+                <div class="card">
+                    <h2>Recent Orders</h2>
+                    <% if (recentOrders && recentOrders.length > 0) { %>
+                        <ul class="order-list">
+                            <% recentOrders.forEach(order => { %>
+                                <li class="order-item">
+                                    <p><strong>Order #:</strong> <%= order.orderId %></p>
+                                    <p><strong>Date:</strong> <%= order.orderDate.toLocaleDateString() %></p>
+                                    <p><strong>Delivery Status:</strong> <%= order.deliveryStatus %></p>
+                                    <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                                    <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                                    <% if (order.paymentMethod === 'Razorpay' && order.paymentId) { %>
+                                        <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
+                                    <% } %>
+                                    <p><strong>Total:</strong> $<%= order.total.toFixed(2) %>
+                                        <% if (order.shippingCost > 0 || order.couponDiscount > 0 || order.offerDiscount > 0) { %>
+                                            <small>
+                                                (Base: Rs. <%= (order.total - order.shippingCost + order.couponDiscount + order.offerDiscount).toFixed(2) %>
+                                                <% if (order.shippingCost > 0) { %> + Shipping: Rs. <%= order.shippingCost.toFixed(2) %><% } %>
+                                                <% if (order.couponDiscount > 0) { %> - Coupon: Rs. <%= order.couponDiscount.toFixed(2) %><% } %>
+                                                <% if (order.offerDiscount > 0) { %> - Offer: Rs. <%= order.offerDiscount.toFixed(2) %><% } %>)
+                                            </small>
+                                        <% } %>
+                                    </p>
+                                    <% if (order.couponCode) { %>
+                                        <p><strong>Coupon Used:</strong> <%= order.couponCode %></p>
+                                    <% } %>
+                                    <div class="order-details">
+                                        <p><strong>Items:</strong>
+                                            <div>
+                                            <% order.products.forEach(product => { %>
+                                                <img src="/uploads/<%= product.productId.images[0] %>" alt="<%= product.productId.name %>" class="product-image">
+
+                                                <%= product.productId.name || 'Unknown Product' %> 
+                                                (Qty: <%= product.quantity %> @ Rs. <%= product.price.toFixed(2) %>)
+                                                <% if (product.itemDeliveryStatus === 'Cancelled') { %>
+                                                    <span style="color: red;"> - Cancelled <%= product.itemCancelledAt ? 'on ' + product.itemCancelledAt.toLocaleDateString() : '' %></span>
+                                                <% } %>
+                                                <br>
+                                            <% }) %>
+                                        </div>
+                                        </p>
+                                        <p><strong>Shipping To:</strong> 
+                                            <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %>
+                                        </p>
+                                    </div>
+                                    <% if (order.deliveryStatus === 'Cancelled' && order.cancellationReason) { %>
+                                        <p><strong>Cancellation Reason:</strong> <%= order.cancellationReason %></p>
+                                    <% } %>
+                                    <% if (order.deliveryStatus === 'Returned' && order.returnReason) { %>
+                                        <p><strong>Return Reason:</strong> <%= order.returnReason %></p>
+                                    <% } %>
+                                    <a href="/orders/details/<%= order.orderId %>" class="btn view-details-btn">View Details</a>
+                                </li>
+                            <% }) %>
+                        </ul>
+                    <% } else { %>
+                        <p>No recent orders found.</p>
+                    <% } %>
+                </div>
+            </section>
+            
+            <style>
+                .order-item small {
+                    color: #666;
+                    font-size: 0.85em;
+                }
+                .order-details {
+                display: block;
+                    margin-top: 10px;
+                    padding-left: 20px;
+
+                }
+                
+            </style>
+        </div>
+    </div>
+</body>
+</html>

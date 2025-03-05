@@ -1,0 +1,187 @@
+<!-- views/admin/order-details.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details - <%= order.orderId %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .side-panel {
+            width: 270px;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 25px;
+            position: fixed;
+            top: 4em;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-panel .logo {
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #00aaff;
+        }
+        .side-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .side-panel ul li {
+            margin-bottom: 15px;
+        }
+        .side-panel ul li.active a {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .side-panel ul li a {
+            color: #d1d1e9;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 12px 15px;
+            display: block;
+            transition: background 0.3s, color 0.3s;
+        }
+        .side-panel ul li a:hover,
+        .side-panel ul li a:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #1a1a1a;
+            margin-left: 18em;
+        }
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .card {
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .items-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 15px;
+        }
+        .item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s;
+        }
+        
+        .item span {
+            color: #dc3545;
+            font-size: 14px;
+        }
+        h3 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        strong {
+            color: white;
+            font-weight: 600;
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="side-panel">
+            <div class="logo">Bitwise</div>
+            <ul>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="active"><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/products">Products</a></li>
+                <li><a href="/admin/users">Users</a></li>
+                <li><a href="/admin/coupons">Coupons</a></li>
+                <li><a href="/admin/offers">Offers</a></li>
+                <li><a href="/admin/support">Support</a></li>
+                <li><a href="/admin/settings">Settings</a></li>
+                <li><a href="/admin/logout">Logout</a></li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <header>
+                <h1>Order #<%= order.orderId %></h1>
+            </header>
+
+            <div class="card">
+                <p><strong>Order Date:</strong> <%= order.orderDate.toLocaleDateString() %></p>
+                <p><strong>User:</strong> <%= order.userId.userName %> (<%= order.userId.email %>)</p>
+                <p><strong>Delivery Status:</strong> <%= order.deliveryStatus %></p>
+                <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                <p><strong>Total:</strong> $<%= order.total.toFixed(2) %></p>
+                <% if (order.cancellationReason) { %>
+                    <p><strong>Cancellation Reason:</strong> <%= order.cancellationReason %></p>
+                <% } %>
+                <% if (order.returnReason) { %>
+                    <p><strong>Return Reason:</strong> <%= order.returnReason %></p>
+                <% } %>
+
+                <h3>Items</h3>
+                <ul class="items-list">
+                    <% order.products.forEach(product => { %>
+                        <li class="item">
+                            <strong><%= product.productId.name %></strong><br>
+                            Quantity: <%= product.quantity %> @ $<%= product.price.toFixed(2) %><br>
+                            <% if (product.itemDeliveryStatus === 'Cancelled') { %>
+                                <span>Cancelled <%= product.itemCancelledAt ? 'on ' + product.itemCancelledAt.toLocaleDateString() : '' %></span>
+                            <% } %>
+                        </li>
+                    <% }) %>
+                </ul>
+
+                <h3>Shipping Address</h3>
+                <p><%= order.address.firstName %> <%= order.address.lastName %><br>
+                   <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
+                   <%= order.address.country %></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

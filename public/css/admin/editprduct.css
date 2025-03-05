@@ -1,0 +1,477 @@
+:root {
+    --primary-color: #5c59e8;
+    --secondary-color: #c21000;
+    --bg-color: #f8f9fa;
+    --sidebar-bg: #f0f1f7;
+    --table-bg: #ffffff;
+    --text-color: #333;
+    --header-bg: #ffffff;
+    --low-stock-color: #f39c12;
+    --active-status: #148800;
+    --blocked-status: #a40e00;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--bg-color);
+}
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.unique-sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+}
+
+.unique-sidebar-header h2 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.unique-sidebar-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.unique-sidebar-menu li {
+    margin: 10px 0;
+}
+
+.unique-sidebar-menu li a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 10px;
+    display: block;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.unique-sidebar-menu li a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+}
+
+.unique-sidebar-menu li.active a {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Main Content */
+.product-list-container {
+    flex-grow: 2;
+    width: 60%;
+    padding: 20px;
+
+}
+
+.product-list-container h1 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.breadcrumbs a {
+    color: var(--primary-color);
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.breadcrumbs a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumbs span {
+    margin-right: 5px;
+}
+
+#product-form {
+    background-color: var(--table-bg);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 97%;
+    margin: auto;
+    margin-top: 55px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 48%;
+    /* Adjust width to fit two columns */
+    padding: 5px;
+    /* Optional: adds some spacing around form groups */
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #393939;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    background-color: #3a38b6;
+}
+
+input[type="file"] {
+    padding: 10px;
+    border: 1px solid var(--text-color);
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    #product-form {
+        padding: 15px;
+    }
+
+    .form-group {
+        width: 100%;
+        /* Stacks elements on smaller screens */
+    }
+}
+
+.error-message {
+
+    background-color: #f8d7da;
+    /* Light red background */
+    color: #721c24;
+    /* Dark red text color */
+    border: 1px solid #f5c6cb;
+    /* Border matching the background color */
+    padding: 10px 15px;
+    /* Padding for spacing inside the box */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    font-weight: bold;
+    /* Bold text */
+    margin: 10px 0;
+    /* Margin to separate from other elements */
+    text-align: center;
+    /* Center the text */
+    max-width: 400px;
+    /* Optional: to control the width */
+    margin-left: auto;
+    /* Optional: center the box horizontally */
+    margin-right: auto;
+    /* Optional: center the box horizontally */
+}
+
+.success-message {
+    background-color: #d4edda;
+    /* Light green background */
+    color: #155724;
+    /* Dark green text color */
+    border: 1px solid #c3e6cb;
+    /* Border matching the background color */
+    padding: 10px 15px;
+    /* Padding for spacing inside the box */
+    border-radius: 5px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Font size */
+    font-weight: bold;
+    /* Bold text */
+    margin: 10px 0;
+    /* Margin to separate from other elements */
+    text-align: center;
+    /* Center the text */
+    max-width: 400px;
+    /* Optional: to control the width */
+    margin-left: auto;
+    /* Optional: center the box horizontally */
+    margin-right: auto;
+    /* Optional: center the box horizontally */
+}
+
+.cropper-modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1000;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Black w/ opacity */
+}
+
+.cropper-modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 300px;
+    /* Width of the modal */
+    height: 400px;
+    /* Height of the modal */
+    position: relative;
+    /* To position close button */
+}
+
+.cropper-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.cropper-close:hover,
+.cropper-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+.image-remove-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: lightgray;
+    /* Light gray background */
+    color: white;
+    /* White color for the X */
+    border-radius: 50%;
+    /* Circular shape */
+    width: 20px;
+    /* Set width */
+    height: 20px;
+    /* Set height */
+    display: flex;
+    align-items: center;
+    /* Center the X vertically */
+    justify-content: center;
+    /* Center the X horizontally */
+    cursor: pointer;
+    /* Pointer cursor */
+    z-index: 1;
+    /* Ensure it’s on top of the image */
+}
+
+/* Preview Images Styles */
+#preview-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+#preview-container img {
+    max-width: 100px;
+    margin: 5px 10px 10px 0;
+    border-radius: 8px;
+    /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Soft shadow */
+    transition: transform 0.3s;
+    /* Animation on hover */
+}
+
+#preview-container img:hover {
+    transform: scale(1.05);
+    /* Slight zoom effect on hover */
+}
+
+/* Modal Styles */
+.cropper-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Bring modal to the front */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    /* Smooth fade in */
+    display: none;
+    /* Initially hidden */
+}
+
+.cropper-modal.active {
+    display: flex;
+    /* Show when active */
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    /* Visible when active */
+}
+
+.cropper-modal-content {
+    position: relative;
+    /* Create a positioning context */
+    background: white;
+    padding: 0;
+    /* Remove padding for better alignment */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    /* Enhanced shadow */
+}
+
+.cropper-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #333;
+    /* Darker color for visibility */
+    cursor: pointer;
+    transition: color 0.2s;
+    /* Change color on hover */
+}
+
+.cropper-close:hover {
+    color: red;
+    /* Change color on hover */
+}
+
+#cropper-image {
+    position: absolute;
+    /* Position absolutely within the modal */
+    top: 0;
+    /* Align to the top */
+    left: 0;
+    /* Align to the left */
+    width: 100%;
+    /* Full width */
+    height: auto;
+    /* Maintain aspect ratio */
+    border-radius: 8px;
+    /* Rounded corners */
+}
+
+/* Hide crop button initially */
+#crop-button {
+    display: none;
+    margin-top: 10px;
+    /* Add spacing above the button */
+    padding: 10px 15px;
+    /* Button padding */
+    background-color: #28a745;
+    /* Green background */
+    color: white;
+    /* White text */
+    border: none;
+    /* No border */
+    border-radius: 5px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Pointer cursor */
+    transition: background-color 0.3s;
+    /* Smooth background change */
+}
+
+#crop-button:hover {
+    background-color: #218838;
+    /* Darker green on hover */
+}
+
+/* Error Message */
+.error-message {
+    color: red;
+    margin-top: 10px;
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+.unique-sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    padding: 15px;
+}
+
+.unique-sidebar-header h2 {
+    margin: 0;
+}
+
+.unique-sidebar-menu {
+    list-style-type: none;
+    padding: 0;
+}
+
+.unique-sidebar-menu li {
+    margin: 10px 0;
+}
+
+.unique-sidebar-menu li a {
+    text-decoration: none;
+    color: #333;
+}
+
+.unique-sidebar-menu li.active a {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.product-list-container {
+    flex-grow: 1;
+    padding: 20px;
+}

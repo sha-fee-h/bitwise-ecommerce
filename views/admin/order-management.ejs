@@ -1,0 +1,370 @@
+<!-- views/admin/order-management.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Order Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .side-panel {
+            width: 270px;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 25px;
+            position: fixed;
+            top: 4em;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-panel .logo {
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #00aaff;
+        }
+        .side-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .side-panel ul li {
+            margin-bottom: 15px;
+        }
+        .side-panel ul li.active a {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .side-panel ul li a {
+            color: #d1d1e9;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 12px 15px;
+            display: block;
+            transition: background 0.3s, color 0.3s;
+        }
+        .side-panel ul li a:hover,
+        .side-panel ul li a:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #1a1a1a;
+            margin-left: 18em;
+        }
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .filters input, .filters select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        .filters button {
+            padding: 10px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .filters button:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .order-table th, .order-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .order-table th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: 600;
+        }
+        .order-table td {
+            background-color: #fff;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        .btn-view {
+            background-color: #007bff;
+        }
+        .btn-view:hover {
+            background-color: #0056b3;
+        }
+        .btn-verify {
+            background-color: #28a745;
+        }
+        .btn-verify:hover {
+            background-color: #218838;
+        }
+        .status-select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            padding: 8px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #007bff;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="side-panel">
+            <div class="logo">Bitwise</div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <header>
+                <h1>Order Management</h1>
+            </header>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="Search by Order ID or User" value="<%= query.search || '' %>">
+                <select id="statusFilter" onchange="filterOrders()">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" <%= query.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="Processing" <%= query.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                    <option value="Shipped" <%= query.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                    <option value="Delivered" <%= query.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                    <option value="Cancelled" <%= query.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <option value="Returned" <%= query.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                </select>
+                <button onclick="searchOrders()">Search</button>
+                <button onclick="clearFilters()">Clear</button>
+            </div>
+
+            <div class="card">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Order Date</th>
+                            <th>User</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        <% if (orders.length > 0) { %>
+                            <% orders.forEach(order => { %>
+                                <tr>
+                                    <td><%= order.orderId %></td>
+                                    <td><%= order.orderDate.toLocaleDateString() %></td>
+                                    <td><%= order.userId.userName %> (<%= order.userId.email %>)</td>
+                                    <td>$<%= order.total.toFixed(2) %></td>
+                                    <td>
+                                        <select class="status-select" onchange="updateOrderStatus('<%= order.orderId %>', this.value)">
+                                            <option value="Pending" <%= order.deliveryStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                            <option value="Processing" <%= order.deliveryStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                            <option value="Shipped" <%= order.deliveryStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                            <option value="Delivered" <%= order.deliveryStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            <option value="Cancelled" <%= order.deliveryStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                                            <option value="Returned" <%= order.deliveryStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/orders/details/<%= order.orderId %>" class="btn btn-view">View</a>
+                                        <% if (order.deliveryStatus === 'Delivered' || (order.deliveryStatus === 'Returned' && order.paymentStatus !== 'Refunded')) { %>
+                                            <button class="btn btn-verify" onclick="verifyReturn('<%= order.orderId %>')">Verify Return</button>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="6">No orders found.</td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <% if (page > 1) { %>
+                    <a href="/admin/orders/manage?page=<%= page - 1 %>&search=<%= encodeURIComponent(query.search) %>&status=<%= encodeURIComponent(query.status) %>">« Prev</a>
+                <% } %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/orders/manage?page=<%= i %>&search=<%= encodeURIComponent(query.search) %>&status=<%= encodeURIComponent(query.status) %>" class="<%= page === i ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+                <% if (page < totalPages) { %>
+                    <a href="/admin/orders/manage?page=<%= page + 1 %>&search=<%= encodeURIComponent(query.search) %>&status=<%= encodeURIComponent(query.status) %>">Next »</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchOrders() {
+            const search = document.getElementById('searchInput').value;
+            const status = document.getElementById('statusFilter').value;
+            window.location.href = `/admin/orders/manage?page=1&search=${encodeURIComponent(search)}&status=${encodeURIComponent(status)}`;
+        }
+
+        function clearFilters() {
+            window.location.href = '/admin/orders/manage?page=1';
+        }
+
+        function filterOrders() {
+            searchOrders();
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const response = await fetch(`/admin/orders/status/${orderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deliveryStatus: status })
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    Swal.fire('Error', result.message || 'Failed to update status', 'error');
+                    location.reload();
+                }
+            } catch (error) {
+                Swal.fire('Error', error.message || 'Failed to update status', 'error');
+                location.reload();
+            }
+        }
+
+        async function verifyReturn(orderId) {
+            const { value: action } = await Swal.fire({
+                title: 'Verify Return Request',
+                text: 'Accept or reject the return request?',
+                showCancelButton: true,
+                confirmButtonText: 'Accept',
+                cancelButtonText: 'Reject'
+            });
+
+            if (action) {
+                try {
+                    const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ accepted: true })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire('Success', 'Return verified and refund processed', 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', result.message || 'Failed to verify return', 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', error.message || 'Failed to verify return', 'error');
+                }
+            } else if (action === false) {
+                try {
+                    const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ accepted: false })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        Swal.fire('Success', 'Return request rejected', 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', result.message || 'Failed to reject return', 'error');
+                    }
+                } catch (error) {
+                    Swal.fire('Error', error.message || 'Failed to reject return', 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Bitwise | User-management</title>
+        <link rel="stylesheet" href="/css/admin/addproduct.css" />
+        <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" async></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    </head>
+
+    <body>
+        <div class="dashboard-container">
+            <aside class="unique-sidebar">
+                <div class="unique-sidebar-header">
+                    <h2>Bitwise</h2>
+                </div>
+                <ul class="unique-sidebar-menu">
+                    <li><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="#">Users</a></li>
+                    <li class="active"><a href="#">Products</a></li>
+                    <li><a href="#">Orders</a></li>
+                    <li><a href="/admin/category-management">Categories</a></li>
+                    <li><a href="#">Coupon</a></li>
+                    <li><a href="#">Offers</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">Settings</a></li>
+                </ul>
+            </aside>
+            <div class="product-list-container">
+                <h1>Add Product</h1>
+                <nav class="breadcrumbs">
+                    <a href="/admin/dashboard">Dashboard</a>
+                    <span>></span>
+                    <a href="/admin/product-management">Product-Management</a>
+                    <span>></span>
+                    <a href="#">Add-product</a>
+                </nav>
+                <% if (error_msg) { %>
+                <div class="error-message" id="error"><%= error_msg %></div>
+                <% } %> <% if (success_msg) { %>
+                <div class="success-message" id="error"><%= success_msg %></div>
+                <% } %>
+                <form id="product-form" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Product Name:</label>
+                        <input type="text" id="name" name="name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand:</label>
+                        <select id="brand" name="brand">
+                            <option value="" disabled selected>Select a brand</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Dell">Dell</option>
+                            <option value="HP">HP</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="Asus">Asus</option>
+                            <option value="Acer">Acer</option>
+                            <option value="Microsoft">Microsoft</option>
+                            <option value="MSI">MSI</option>
+                            <option value="Razer">Razer</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Toshiba">Toshiba</option>
+                            <option value="Sony">Sony</option>
+                            <option value="Huawei">Huawei</option>
+                            <option value="Xiaomi">Xiaomi</option>
+                            <option value="Alienware">Alienware</option>
+                            <option value="Gigabyte">Gigabyte</option>
+                            <option value="LG">LG</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" name="category">
+                            <option value="" disabled selected>Select a category</option>
+                            <% categories.forEach(function(category) { %> <% if (category.status === "listed") { %>
+                            <option value="<%= category._id %>"><%= category.name %></option>
+                            <% } %> <% }); %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price:</label>
+                        <input type="number" id="price" name="price" />
+                    </div>
+                    <div class="form-group">
+                        <label for="stock">Stock:</label>
+                        <input type="number" name="stock" id="stock" />
+                    </div>
+                    <div class="form-group">
+                        <label for="processor-brand">Processor Brand:</label>
+                        <select id="processor-brand" name="specifications[processor][brand]">
+                            <option value="" disabled selected>Select a processor brand</option>
+                            <option value="Intel">Intel</option>
+                            <option value="AMD">AMD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="processor-model">Processor Model:</label>
+                        <input type="text" id="processor-model" name="specifications[processor][model]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="processor-cores">Processor Cores:</label>
+                        <input type="number" id="processor-cores" name="specifications[processor][cores]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="processor-speed">Processor Speed:</label>
+                        <input type="text" id="processor-speed" name="specifications[processor][speed]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="ram-size">RAM Size (GB):</label>
+                        <select id="ram-size" name="specifications[ram][size]">
+                            <option value="" disabled selected>Select RAM size</option>
+                            <option value="4">4 GB</option>
+                            <option value="8">8 GB</option>
+                            <option value="16">16 GB</option>
+                            <option value="32">32 GB</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="ram-type">RAM Type:</label>
+                        <select id="ram-type" name="specifications[ram][type]">
+                            <option value="" disabled selected>Select RAM type</option>
+                            <option value="DDR4">DDR4</option>
+                            <option value="DDR5">DDR5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="storage-type">Storage Type:</label>
+                        <select id="storage-type" name="specifications[storage][type]">
+                            <option value="" disabled selected>Select storage type</option>
+                            <option value="SSD">SSD</option>
+                            <option value="HDD">HDD</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="storage-capacity">Storage Capacity:</label>
+                        <select id="storage-capacity" name="specifications[storage][capacity]">
+                            <option value="" disabled selected>Select storage capacity</option>
+                            <option value="256GB">256 GB</option>
+                            <option value="512GB">512 GB</option>
+                            <option value="1TB">1 TB</option>
+                            <option value="2TB">2 TB</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="display-size">Display Size:</label>
+                        <input type="text" id="display-size" name="specifications[display][size]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="display-resolution">Display Resolution:</label>
+                        <input type="text" id="display-resolution" name="specifications[display][resolution]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="graphics-brand">Graphics Brand:</label>
+                        <select id="graphics-brand" name="specifications[graphics][brand]">
+                            <option value="" disabled selected>Select a graphics brand</option>
+                            <option value="NVIDIA">NVIDIA</option>
+                            <option value="AMD">AMD</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="graphics-model">Graphics Model:</label>
+                        <input type="text" id="graphics-model" name="specifications[graphics][model]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="graphics-memory">Graphics Memory:</label>
+                        <input type="text" id="graphics-memory" name="specifications[graphics][memory]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="battery-type">Battery Type:</label>
+                        <select id="battery-type" name="specifications[battery][type]">
+                            <option value="" disabled selected>Select battery type</option>
+                            <option value="Lithium-ion">Lithium-ion</option>
+                            <option value="Lithium-polymer">Lithium-polymer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="battery-capacity">Battery Capacity:</label>
+                        <input type="text" id="battery-capacity" name="specifications[battery][capacity]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="os">Operating System:</label>
+                        <select id="os" name="specifications[os]">
+                            <option value="" disabled selected>Select an operating system</option>
+                            <option value="Windows">Windows</option>
+                            <option value="Linux">Linux</option>
+                            <option value="macOS">macOS</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="weight">Weight:</label>
+                        <input type="text" id="weight" name="specifications[weight]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="width">Width:</label>
+                        <input type="number" id="width" name="specifications[dimensions][width]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="height">Height:</label>
+                        <input type="number" id="height" name="specifications[dimensions][height]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="depth">Depth:</label>
+                        <input type="number" id="depth" name="specifications[dimensions][depth]" />
+                    </div>
+                    <div class="form-group">
+                        <label for="warranty">Warranty:</label>
+                        <input type="text" id="warranty" name="warranty" value="" />
+                    </div>
+                    <!-- Other form fields remain unchanged -->
+                    <div class="form-group">
+                        <label for="images">Upload Product Images (Minimum 3):</label>
+                        <div id="image-upload-container">
+                            <input type="file" accept="image/*" id="image-input" multiple onchange="handleImageSelection(this)" />
+                            <div id="image-previews"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit">Add Product</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <script>
+            let croppers = [];
+            let croppedImages = [];
+
+            function base64ToFile(base64, filename) {
+                const arr = base64.split(",");
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new File([u8arr], filename, { type: mime });
+            }
+
+            function handleImageSelection(input) {
+                const files = input.files;
+                if (files.length > 3) {
+                    alert("Please select a maximum of 3 images.");
+                    input.value = ""; // Clear the input
+                    return;
+                }
+
+                const previewContainer = document.getElementById("image-previews");
+                previewContainer.innerHTML = ""; // Clear previous previews
+                croppers = []; // Reset croppers
+                croppedImages = []; // Reset cropped images
+
+                Array.from(files).forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const previewHtml = `
+                            <div class="image-upload" id="image-upload-${index}">
+                                <img id="image-preview-${index}" class="image-preview" style="max-width: 200px;" src="${e.target.result}" />
+                                <input type="file" name="croppedImage[]" id="croppedImage-${index}" accept="image/*" hidden />
+                                <button type="button" class="crop-btn" onclick="cropImage(${index})">Crop</button>
+                                <input type="radio" name="primaryImageIndex" value="${index}" ${index === 0 ? "checked" : ""}> Set as Primary
+                            </div>
+                        `;
+                        previewContainer.insertAdjacentHTML("beforeend", previewHtml);
+
+                        const imgElement = document.getElementById(`image-preview-${index}`);
+                        croppers[index] = new Cropper(imgElement, {
+                            aspectRatio: 1,
+                            viewMode: 1,
+                            background: false,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            function cropImage(index) {
+                const cropper = croppers[index];
+                if (cropper) {
+                    const croppedCanvas = cropper.getCroppedCanvas();
+                    const base64Image = croppedCanvas.toDataURL("image/jpeg");
+
+                    croppedImages[index] = base64Image;
+
+                    const file = base64ToFile(base64Image, `image[${index}].png`);
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(file);
+
+                    const fileInput = document.getElementById(`croppedImage-${index}`);
+                    fileInput.files = dataTransfer.files;
+
+                    const imgElement = document.getElementById(`image-preview-${index}`);
+                    imgElement.src = base64Image;
+                    imgElement.style.display = "block";
+
+                    cropper.destroy();
+                    croppers[index] = null;
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const productForm = document.getElementById("product-form");
+                productForm.addEventListener("submit", function (event) {
+                    const files = document.getElementById("image-input").files;
+                    if (files.length < 3) {
+                        alert("Please upload at least 3 images.");
+                        event.preventDefault();
+                    }
+                });
+
+                const error = document.getElementById("error");
+                if (error) {
+                    setTimeout(() => {
+                        error.style.display = "none";
+                    }, 3000);
+                }
+            });
+        </script>
+    </body>
+</html>

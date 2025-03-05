@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Inventory Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a1a;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .side-panel {
+            width: 270px;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 25px;
+            position: fixed;
+            top: 4em;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-panel .logo {
+            font-size: 26px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #00aaff;
+        }
+        .side-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .side-panel ul li {
+            margin-bottom: 15px;
+        }
+        .side-panel ul li.active a {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+        .side-panel ul li a {
+            color: #d1d1e9;
+            text-decoration: none;
+            font-size: 16px;
+            padding: 12px 15px;
+            display: block;
+            transition: background 0.3s, color 0.3s;
+        }
+        .side-panel ul li a:hover,
+        .side-panel ul li a:focus {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            background-color: #1a1a1a;
+            margin-left: 18em;
+        }
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .filters input, .filters select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: #fff;
+        }
+        .filters button {
+            padding: 10px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .filters button:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            background-color: #1a1a1a;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .product-table th, .product-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .product-table th {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: 600;
+        }
+        .product-table td {
+            background-color: #fff;
+        }
+        .btn {
+            padding: 8px 15px;
+            text-decoration: none;
+            color: white;
+            border-radius: 4px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.3s;
+            margin-right: 5px;
+        }
+        .btn-stock {
+            background-color: #007bff;
+        }
+        .btn-stock:hover {
+            background-color: #0056b3;
+        }
+        .stock-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 4px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        .stock-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .stock-form input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .stock-form button {
+            padding: 10px 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .stock-form button:hover {
+            background-color: #0056b3;
+        }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination a {
+            padding: 8px 15px;
+            margin: 0 5px;
+            text-decoration: none;
+            color: #007bff;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .pagination a.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination a:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .side-panel {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="side-panel">
+            <div class="logo">Bitwise</div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+
+        <div class="main-content">
+            <header>
+                <h1>Inventory Management</h1>
+            </header>
+
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="Search by Product Name..." value="<%= query.search || '' %>">
+                <select id="categoryFilter" onchange="filterProducts()">
+                    <option value="">All Categories</option>
+                    <% categories.forEach(category => { %>
+                        <option value="<%= category._id %>" <%= query.category === category._id.toString() ? 'selected' : '' %>><%= category.name %></option>
+                    <% }) %>
+                </select>
+                <select id="stockFilter" onchange="filterProducts()">
+                    <option value="">All Stock Levels</option>
+                    <option value="low" <%= query.stock === 'low' ? 'selected' : '' %>>Low Stock (< 10)</option>
+                    <option value="out" <%= query.stock === 'out' ? 'selected' : '' %>>Out of Stock (0)</option>
+                </select>
+                <button onclick="searchProducts()">Search</button>
+                <button onclick="clearFilters()">Clear</button>
+            </div>
+
+            <div class="card">
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock Level</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody">
+                        <% if (products.length > 0) { %>
+                            <% products.forEach(product => { %>
+                                <tr>
+                                    <td><%= product.name %></td>
+                                    <td><%= product.category.name %></td> <!-- Assuming category is populated -->
+                                    <td>$<%= product.price.toFixed(2) %></td>
+                                    <td><%= product.stock %></td>
+                                    <td>
+                                        <button class="btn btn-stock" onclick="openStockModal('<%= product._id %>', '<%= product.stock %>')">Update Stock</button>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr><td colspan="5">No products found.</td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <% if (page > 1) { %>
+                    <a href="/admin/inventory?page=<%= page - 1 %>&search=<%= encodeURIComponent(query.search) %>&category=<%= encodeURIComponent(query.category) %>&stock=<%= encodeURIComponent(query.stock) %>">« Prev</a>
+                <% } %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/inventory?page=<%= i %>&search=<%= encodeURIComponent(query.search) %>&category=<%= encodeURIComponent(query.category) %>&stock=<%= encodeURIComponent(query.stock) %>" class="<%= page === i ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+                <% if (page < totalPages) { %>
+                    <a href="/admin/inventory?page=<%= page + 1 %>&search=<%= encodeURIComponent(query.search) %>&category=<%= encodeURIComponent(query.category) %>&stock=<%= encodeURIComponent(query.stock) %>">Next »</a>
+                <% } %>
+            </div>
+
+            <!-- Stock Update Modal -->
+            <div id="stockModal" class="stock-modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeStockModal()">×</span>
+                    <h2>Update Stock</h2>
+                    <form id="stockForm" class="stock-form">
+                        <input type="hidden" id="productId" name="productId">
+                        <label for="stockChange">Stock Change (Add/Remove):</label>
+                        <input type="number" id="stockChange" name="stockChange" required>
+                        <button type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchProducts() {
+            const search = document.getElementById('searchInput').value;
+            const category = document.getElementById('categoryFilter').value;
+            const stock = document.getElementById('stockFilter').value;
+            window.location.href = `/admin/inventory?page=1&search=${encodeURIComponent(search)}&category=${encodeURIComponent(category)}&stock=${encodeURIComponent(stock)}`;
+        }
+
+        function clearFilters() {
+            window.location.href = '/admin/inventory?page=1';
+        }
+
+        function filterProducts() {
+            searchProducts();
+        }
+
+        function openStockModal(productId, currentStock) {
+            document.getElementById('productId').value = productId;
+            document.getElementById('stockChange').value = '';
+            document.getElementById('stockModal').style.display = 'block';
+        }
+
+        function closeStockModal() {
+            document.getElementById('stockModal').style.display = 'none';
+        }
+
+        document.getElementById('stockForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const productId = document.getElementById('productId').value;
+            const stockChange = parseInt(document.getElementById('stockChange').value);
+
+            try {
+                const response = await fetch(`/admin/inventory/update-stock/${productId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stockChange })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    Swal.fire('Success', 'Stock updated successfully', 'success').then(() => {
+                        closeStockModal();
+                        location.reload(); // Reload to reflect updated stock
+                    });
+                } else {
+                    Swal.fire('Error', result.message || 'Failed to update stock', 'error');
+                }
+            } catch (error) {
+                Swal.fire('Error', error.message || 'Failed to update stock', 'error');
+            }
+        });
+
+        // Close modal if clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('stockModal');
+            if (event.target == modal) {
+                closeStockModal();
+            }
+        }
+    </script>
+</body>
+</html>

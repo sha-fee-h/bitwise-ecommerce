@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitwise | User-management</title>
+    <link rel="stylesheet" href="/css/admin/addproduct.css">
+   <!-- Cropper.js CSS -->
+   <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css" />
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" async></script>
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="#">Users</a></li>
+                <li class="active"><a href="#">Products</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="#">Coupon</a></li>
+                <li><a href="#">Offers</a></li>
+                <li><a href="#">Support</a></li>
+                <li><a href="#">Settings</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>Edit Product</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>&gt;</span>
+                <a href="/admin/product-management">Product-Management</a>
+                <span>&gt;</span>
+                <a href="#">Edit-product</a>
+            </nav>
+
+            <form id="product-form" enctype="multipart/form-data" method="POST" action="/admin/product-management/edit-product/<%= product._id %>">
+                <div class="form-group">
+                    <label for="name">Product Name:</label>
+                    <input type="text" id="name" name="name" value="<%= product.name %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Brand:</label>
+                    <select id="brand" name="brand" required>
+                        <option value="" disabled>Select a brand</option>
+                        <% ["Apple", "Dell", "HP", "Lenovo", "Asus", "Acer", "Microsoft", "MSI", "Razer", "Samsung", "Toshiba", "Sony", "Huawei", "Xiaomi", "Alienware", "Gigabyte", "LG"].forEach(function(brand) { %>
+                            <option value="<%= brand %>" <%= product.brand === brand ? 'selected' : '' %>><%= brand %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="category">Category:</label>
+                    <select id="category" name="category" required>
+                        <option value="" disabled>Select a category</option>
+                        <% categories.forEach(function(category) { %>
+                            <option value="<%= category._id %>" <%= product.category.toString() === category._id.toString() ? 'selected' : '' %>><%= category.name %></option>
+                        <% }); %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price:</label>
+                    <input type="number" id="price" name="price" value="<%= product.price %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock:</label>
+                    <input type="number" id="stock" name="stock" value="<%= product.stock %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="processor-brand">Processor Brand:</label>
+                    <select id="processor-brand" name="specifications[processor][brand]" required>
+                        <option value="" disabled>Select a processor brand</option>
+                        <option value="Intel" <%= product.specifications.processor.brand === 'Intel' ? 'selected' : '' %>>Intel</option>
+                        <option value="AMD" <%= product.specifications.processor.brand === 'AMD' ? 'selected' : '' %>>AMD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="processor-model">Processor Model:</label>
+                    <input type="text" id="processor-model" name="specifications[processor][model]" value="<%= product.specifications.processor.model %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="processor-cores">Processor Cores:</label>
+                    <input type="number" id="processor-cores" name="specifications[processor][cores]" value="<%= product.specifications.processor.cores %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="processor-speed">Processor Speed:</label>
+                    <input type="text" id="processor-speed" name="specifications[processor][speed]" value="<%= product.specifications.processor.speed %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="ram-size">RAM Size (GB):</label>
+                    <select id="ram-size" name="specifications[ram][size]" required>
+                        <option value="" disabled>Select RAM size</option>
+                        <option value="4" <%= product.specifications.ram.size == '4' ? 'selected' : '' %>>4 GB</option>
+                        <option value="8" <%= product.specifications.ram.size == '8' ? 'selected' : '' %>>8 GB</option>
+                        <option value="16" <%= product.specifications.ram.size == '16' ? 'selected' : '' %>>16 GB</option>
+                        <option value="32" <%= product.specifications.ram.size == '32' ? 'selected' : '' %>>32 GB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ram-type">RAM Type:</label>
+                    <select id="ram-type" name="specifications[ram][type]" required>
+                        <option value="" disabled>Select RAM type</option>
+                        <option value="DDR4" <%= product.specifications.ram.type === 'DDR4' ? 'selected' : '' %>>DDR4</option>
+                        <option value="DDR5" <%= product.specifications.ram.type === 'DDR5' ? 'selected' : '' %>>DDR5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="storage-type">Storage Type:</label>
+                    <select id="storage-type" name="specifications[storage][type]" required>
+                        <option value="" disabled>Select storage type</option>
+                        <option value="SSD" <%= product.specifications.storage.type === 'SSD' ? 'selected' : '' %>>SSD</option>
+                        <option value="HDD" <%= product.specifications.storage.type === 'HDD' ? 'selected' : '' %>>HDD</option>
+                        <option value="Hybrid" <%= product.specifications.storage.type === 'Hybrid' ? 'selected' : '' %>>Hybrid</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="storage-capacity">Storage Capacity:</label>
+                    <select id="storage-capacity" name="specifications[storage][capacity]" required>
+                        <option value="" disabled>Select storage capacity</option>
+                        <option value="256GB" <%= product.specifications.storage.capacity === '256GB' ? 'selected' : '' %>>256 GB</option>
+                        <option value="512GB" <%= product.specifications.storage.capacity === '512GB' ? 'selected' : '' %>>512 GB</option>
+                        <option value="1TB" <%= product.specifications.storage.capacity === '1TB' ? 'selected' : '' %>>1 TB</option>
+                        <option value="2TB" <%= product.specifications.storage.capacity === '2TB' ? 'selected' : '' %>>2 TB</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="display-size">Display Size:</label>
+                    <input type="text" id="display-size" name="specifications[display][size]" value="<%= product.specifications.display && product.specifications.display.size ? product.specifications.display.size : '' %>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="display-resolution">Display Resolution:</label>
+                    <input type="text" id="display-resolution" name="specifications[display][resolution]" value="<%= product.specifications.display && product.specifications.display.resolution ? product.specifications.display.resolution : '' %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="graphics-brand">Graphics Card Brand:</label>
+                    <select id="graphics-brand" name="specifications[graphics][brand]" required>
+                        <option value="" disabled>Select a graphics brand</option>
+                        <option value="NVIDIA" <%= product.specifications.graphics && product.specifications.graphics.brand === 'NVIDIA' ? 'selected' : '' %>>NVIDIA</option>
+                        <option value="AMD" <%= product.specifications.graphics && product.specifications.graphics.brand === 'AMD' ? 'selected' : '' %>>AMD</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="graphics-model">Graphics Model:</label>
+                    <input type="text" id="graphics-model" name="specifications[graphics][model]" value="<%= product.specifications.graphics && product.specifications.graphics.model || '' %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="graphics-memory">Graphics Memory:</label>
+                    <input type="text" id="graphics-memory" name="specifications[graphics][memory]" value="<%= product.specifications.graphics && product.specifications.graphics.memory || '' %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="battery-type">Battery Type:</label>
+                    <select id="battery-type" name="specifications[battery][type]" required>
+                        <option value="" disabled>Select battery type</option>
+                        <option value="Lithium-ion" <%= product.specifications.battery && product.specifications.battery.type === 'Lithium-ion' ? 'selected' : '' %>>Lithium-ion</option>
+                        <option value="Lithium-polymer" <%= product.specifications.battery && product.specifications.battery.type === 'Lithium-polymer' ? 'selected' : '' %>>Lithium-polymer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="battery-capacity">Battery Capacity:</label>
+                    <input type="text" id="battery-capacity" name="specifications[battery][capacity]" value="<%= product.specifications.battery && product.specifications.battery.capacity || '' %>" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="os">Operating System:</label>
+                    <select id="os" name="specifications[os]" required>
+                        <option value="" disabled>Select operating system</option>
+                        <option value="Windows" <%= product.specifications.os === 'Windows' ? 'selected' : '' %>>Windows</option>
+                        <option value="macOS" <%= product.specifications.os === 'macOS' ? 'selected' : '' %>>macOS</option>
+                        <option value="Linux" <%= product.specifications.os === 'Linux' ? 'selected' : '' %>>Linux</option>
+                        <option value="Chrome OS" <%= product.specifications.os === 'Chrome OS' ? 'selected' : '' %>>Chrome OS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="warranty">Warranty:</label>
+                    <input type="text" id="warranty" name="warranty" value="<%= product.warranty || '' %>" required>
+                </div>
+                <div class="form-group">
+                    <label for="images">Upload Product Images (Minimum 3):</label>
+                    <div id="image-upload-container">
+                        <!-- Display Existing Images -->
+                        <% product.images.forEach((image, index) => { %>
+                            <div class="image-upload" id="image-upload-<%= index %>">
+                                <img id="image-preview-<%= index %>" class="image-preview" src="/uploads/<%= image %>" style="display: block; max-width: 200px;" />
+                                <input type="hidden" name="existingImages[]" value="<%= image %>" />
+                                <input type="file" name="croppedImage[]" id="croppedImage-<%= index %>" accept="image/*" hidden />
+                                <button type="button" class="crop-btn" onclick="cropImage(<%= index %>)">Crop</button>
+                                <input type="radio" name="primaryImageIndex" value="<%= index %>" <%= product.primaryImageIndex === index ? 'checked' : '' %>> Set as Primary
+                                <button type="button" class="remove-btn" onclick="removeImage(<%= index %>)">Remove</button>
+                            </div>
+                        <% }); %>
+                        <!-- Single File Input for New Images -->
+                        <input type="file" accept="image/*" id="image-input" multiple onchange="handleImageSelection(this)" />
+                        <div id="image-previews"></div>
+                    </div>
+                </div>
+                
+                <button type="submit">Update Product</button>
+                </form>
+                </div>
+                
+                <script src="/javascripts/admin/product"></script>
+                <script>
+                    let croppers = [];
+                    let croppedImages = [];
+                
+                    function base64ToFile(base64, filename) {
+                        const arr = base64.split(",");
+                        const mime = arr[0].match(/:(.*?);/)[1];
+                        const bstr = atob(arr[1]);
+                        let n = bstr.length;
+                        const u8arr = new Uint8Array(n);
+                        while (n--) {
+                            u8arr[n] = bstr.charCodeAt(n);
+                        }
+                        return new File([u8arr], filename, { type: mime });
+                    }
+                
+                    function handleImageSelection(input) {
+                        const files = input.files;
+                        const existingCount = document.querySelectorAll(".image-upload").length;
+                        if (files.length + existingCount > 4) {
+                            alert("You can upload a maximum of 3 images total.");
+                            input.value = "";
+                            return;
+                        }
+                
+                        const previewContainer = document.getElementById("image-previews");
+                        previewContainer.innerHTML = ""; // Clear previous previews
+                
+                        Array.from(files).forEach((file, index) => {
+                            const newIndex = existingCount + index;
+                            const reader = new FileReader();
+                            reader.onload = function (e) {
+                                const previewHtml = `
+                                    <div class="image-upload" id="image-upload-${newIndex}">
+                                        <img id="image-preview-${newIndex}" class="image-preview" style="max-width: 200px;" src="${e.target.result}" />
+                                        <input type="file" name="croppedImage[]" id="croppedImage-${newIndex}" accept="image/*" hidden />
+                                        <button type="button" class="crop-btn" onclick="cropImage(${newIndex})">Crop</button>
+                                        <input type="radio" name="primaryImageIndex" value="${newIndex}" ${newIndex === 0 && !product.primaryImageIndex ? "checked" : ""}> Set as Primary
+                                        <button type="button" class="remove-btn" onclick="removeImage(${newIndex})">Remove</button>
+                                    </div>
+                                `;
+                                previewContainer.insertAdjacentHTML("beforeend", previewHtml);
+                
+                                const imgElement = document.getElementById(`image-preview-${newIndex}`);
+                                croppers[newIndex] = new Cropper(imgElement, {
+                                    aspectRatio: 1,
+                                    viewMode: 1,
+                                    background: false,
+                                });
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    }
+                
+                    function cropImage(index) {
+                        const cropper = croppers[index];
+                        if (cropper) {
+                            const croppedCanvas = cropper.getCroppedCanvas();
+                            const base64Image = croppedCanvas.toDataURL("image/jpeg");
+                
+                            croppedImages[index] = base64Image;
+                
+                            const file = base64ToFile(base64Image, `image[${index}].png`);
+                            const dataTransfer = new DataTransfer();
+                            dataTransfer.items.add(file);
+                
+                            const fileInput = document.getElementById(`croppedImage-${index}`);
+                            fileInput.files = dataTransfer.files;
+                
+                            const imgElement = document.getElementById(`image-preview-${index}`);
+                            imgElement.src = base64Image;
+                            imgElement.style.display = "block";
+                
+                            cropper.destroy();
+                            croppers[index] = null;
+                        }
+                    }
+                
+                    function removeImage(index) {
+                        const container = document.getElementById(`image-upload-${index}`);
+                        if (container) {
+                            if (croppers[index]) {
+                                croppers[index].destroy();
+                                croppers[index] = null;
+                            }
+                            container.remove();
+                        }
+                    }
+                
+                    document.querySelector("form").addEventListener("submit", function (e) {
+                        const uploads = document.querySelectorAll(".image-upload").length;
+                        if (uploads < 3) {
+                            e.preventDefault();
+                            alert("Please ensure at least 3 images are present.");
+                        }
+                    });
+                
+                    const error = document.getElementById("error");
+                    if (error) {
+                        setTimeout(() => {
+                            error.style.display = "none";
+                        }, 3000);
+                    }
+                </script>
+        
+</body>
+
+</html>

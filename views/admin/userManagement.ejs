@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bitwise | User-management</title>
+    <link rel="stylesheet" href="/css/admin/user-management.css" />
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+        <!-- Main Content -->
+        <div class="product-list-container">
+            <h1>User-Management</h1>
+
+            <!-- Breadcrumbs -->
+            <nav class="breadcrumbs">
+                <a href="/admin/dashboard">Dashboard</a>
+                <span>&gt;</span>
+                <a href="#">User-Management</a>
+            </nav>
+
+            <div class="product-search-filter">
+                <div style="display: flex">
+                    <form action="/admin/user-management" method="get">
+                        <input type="text" name="search" placeholder="Search customer..." class="search-input"
+                            value="<%= search %>" />
+                        <button class="add-product-btn" type="submit">Search</button>
+                    </form>
+                    <% if (search) { %>
+                        <form action="/admin/user-management" method="GET" style="margin-left: 10px">
+                            <input type="hidden" name="search" value="" />
+                            <button type="submit" class="add-product-btn">Show All</button>
+                        </form>
+                        <% } %>
+                </div>
+            </div>
+
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>SI No</th>
+                        <th>Customer Name</th>
+                        <th>Email</th>
+                        <!-- <th>Orders</th> -->
+                        <!-- <th>Wallet Balance</th> -->
+                        <th>Status</th>
+                        <th>Action</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% users.forEach(function(users, index) { %>
+                        <tr>
+                            <td>
+                                <%= index+1 %>
+                            </td>
+                            <td>
+                                <%= users.userName %>
+                            </td>
+                            <td>
+                                <%= users.email %>
+                            </td>
+                            <td>
+                                <%= users.isBlocked ? "blocked" : "active" %>
+                            </td>
+                            <td>
+                                <button 
+                                    id="status-btn-<%= users._id %>"
+                                    class="status-btn <%= users.isBlocked ? 'unblock-btn' : 'block-btn' %>" 
+                                    onclick="toggleUserStatus('<%= users._id %>', <%= users.isBlocked %>)">
+                                    <%= users.isBlocked ? 'Unblock' : 'Block' %>
+                                </button>
+                            </td>
+                            
+                            <td>
+                                <%= new Date(users.createdAt).toLocaleDateString() %>
+                            </td>
+
+                        </tr>
+                        <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/admin/user-management?page=<%= currentPage - 1 %>&search=<%= search %>">Previous</a>
+                    <% } %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="/admin/user-management?page=<%= i %>&search=<%= search %>"
+                                class="<%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <a
+                                        href="/admin/user-management?page=<%= currentPage + 1 %>&search=<%= search %>">Next</a>
+                                    <% } %>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="/javascripts/admin/user-management.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+
+</html>

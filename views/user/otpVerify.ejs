@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<!-- Coding By CodingNepal - codingnepalweb.com -->
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>OTP Verification Form</title>
+        <link rel="stylesheet" href="/css/user/otpvarify.css" />
+        <!-- Boxicons CSS -->
+        <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+        <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
+    </head>
+
+    <body>
+        <div class="container">
+            <header>
+                <i class="bx bxs-check-shield"></i>
+            </header>
+            <h4>Enter OTP Code</h4>
+
+            <% if (message) { %>
+            <p class="error-message"><%= message %></p>
+            <% } %>
+
+            <form  id="otpForm">
+                <div class="input-field">
+                    <input type="number" maxlength="1" id="otp1" name="otp1" required />
+                    <input type="number" maxlength="1" id="otp2" name="otp2" required />
+                    <input type="number" maxlength="1" id="otp3" name="otp3" required />
+                    <input type="number" maxlength="1" id="otp4" name="otp4" required />
+                    <input type="number" maxlength="1" id="otp5" name="otp5" required />
+                    <input type="number" maxlength="1" id="otp6" name="otp6" required />
+                </div>
+                <button type="submit">Verify OTP</button>
+                <p>
+                    Didn't receive the code?
+                    <a id="resend-otp" style="pointer-events: none; color: grey">Resend OTP</a>
+                    in <span id="timer">10</span> seconds.
+                </p>
+            </form>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/javascripts/user/otpverify.js"></script>
+    </body>
+</html>

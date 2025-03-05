@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <!-- <link rel="stylesheet" href="/css/auth.css"> Link to external CSS -->
+     <style>
+        /* General Page Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container Box */
+.container {
+    background: #fff;
+    padding: 20px;
+    width: 350px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Heading */
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* OTP Input Fields */
+.otp-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+
+.otp-input {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.otp-input:focus {
+    outline: 2px solid #007bff;
+}
+
+/* Button */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Flash Messages */
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Error Text */
+.error-text {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Resend OTP Link */
+.resend-otp {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.resend-otp a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.resend-otp a:hover {
+    text-decoration: underline;
+}
+
+     </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Verify OTP</h2>
+
+        <!-- Flash Messages -->
+        <% if (success.length > 0) { %>
+            <div class="alert success"><%= success %></div>
+        <% } %>
+        <% if (error.length > 0) { %>
+            <div class="alert error"><%= error %></div>
+        <% } %>
+
+        <form action="/auth/verify-otp" method="POST" onsubmit="return prepareOTP()">
+            <input type="hidden" name="email" value="<%= email %>">
+            
+            <!-- Hidden input to store full OTP -->
+            <input type="hidden" name="otp" id="full-otp">
+        
+            <div class="otp-container">
+                <input type="number" class="otp-input" maxlength="1" required>
+                <input type="number" class="otp-input" maxlength="1" required>
+                <input type="number" class="otp-input" maxlength="1" required>
+                <input type="number" class="otp-input" maxlength="1" required>
+                <input type="number" class="otp-input" maxlength="1" required>
+                <input type="number" class="otp-input" maxlength="1" required>
+            </div>
+        
+            <p id="otp-error" class="error-text"></p>
+        
+            <button type="submit">Verify</button>
+        </form>
+        
+
+        <!-- <p class="resend-otp">Didn't receive the code? <a href="/resend-otp?email=<%= email %>">Resend OTP</a></p> -->
+    </div>
+
+    <script>
+        function prepareOTP() {
+    const otpInputs = document.querySelectorAll(".otp-input");
+    let otp = "";
+
+    otpInputs.forEach(input => otp += input.value);
+
+    if (otp.length !== 6) {
+        document.getElementById("otp-error").textContent = "Enter a valid 6-digit OTP.";
+        return false;
+    }
+
+    document.getElementById("full-otp").value = otp;  // ✅ Store full OTP in hidden input
+    return true;
+}
+
+// Auto move to next input field
+document.querySelectorAll(".otp-input").forEach((input, index, array) => {
+    input.addEventListener("input", () => {
+        if (input.value.length === 1 && index < array.length - 1) {
+            array[index + 1].focus();
+        }
+    });
+});
+
+    </script>
+</body>
+</html>

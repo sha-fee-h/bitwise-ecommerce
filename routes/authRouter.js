@@ -18,7 +18,9 @@ router.post('/signUp/resend-otp', authController.resendOtp)
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: 'auth/login' }), authController.googleAuth);
+// router.get('/google/callback', passport.authenticate('google', { failureRedirect: 'auth/login' }), authController.googleAuth);
+router.get('/google/callback', authController.googleAuth);
+
 
 router.post('/logout', authController.logout)
 

@@ -7,7 +7,7 @@ const Category=require('../../models/categorySchema')
 const referralController = require('../../controllers/user/referralController')
 const MESSAGES = require('../../constants/messages')
 const STATUS_CODES = require('../../constants/statusCodes');
-
+const passport = require('passport');
 
 let otpStore = {};
 
@@ -368,28 +368,56 @@ const resetPassword = async (req, res) => {
     }
 };
 
-const googleAuth = (req, res) => {
-    if (req.user.isBlocked) {
-        console.log('here')
-        // req.logout(() => {
-        //     req.session.destroy(() => {
-        //         // console.log('here')
-        //         res.render("user/login",{message:"User is blocked"});
-        //     });
-        // });
-        req.logout((err) => {
-            if (err) {
-                console.log("Logout error:", err);
-                return res.redirect('/pageNotFound');
-            }
-            res.render("user/login",{message:MESSAGES.BLOCKED_USER});
-        });
-    } else {
+// const googleAuth = (req, res) => {
+//     if (req.user.isBlocked) {
+//         console.log('here')
+        
+//         req.logout((err) => {
+//             if (err) {
+//                 console.log("Logout error:", err);
+//                 return res.redirect('/pageNotFound');
+//             }
+//             res.render("user/login",{message:MESSAGES.BLOCKED_USER});
+//         });
+//     } else {
 
-        req.session.userData = 
-        res.redirect("/"); 
-    }
-}
+//         req.session.userData = 
+//         res.redirect("/"); 
+//     }
+// }
+
+const googleAuth = (req, res, next) => {
+    const preservedAdmin = req.session.admin; // 🧷 Step 1: Save admin before Passport messes with session
+
+    passport.authenticate('google', { failureRedirect: '/auth/login' }, (err, user, info) => {
+        if (err || !user) return res.redirect('/auth/login');
+
+        if (user.isBlocked) {
+            return req.logout((err) => {
+                if (err) {
+                    console.log("Logout error:", err);
+                    return res.redirect('/pageNotFound');
+                }
+
+                // Restore admin session if it existed
+                if (preservedAdmin) req.session.admin = preservedAdmin;
+
+                return res.render("user/login", { message: MESSAGES.BLOCKED_USER });
+            });
+        }
+
+        req.login(user, (err) => {
+            if (err) return next(err);
+
+            req.session.userData = user; // ✅ Save user info in session
+            if (preservedAdmin) req.session.admin = preservedAdmin; // 🔁 Restore admin session
+
+            return res.redirect('/');
+        });
+    })(req, res, next);
+};
+
+
 
 module.exports = {loadSignIn, signUp , loadOtp, resendOtp, verifyOtp, login, logout, forgotPassword, verifyOTP, resetPassword ,googleAuth , sendVerificationEmail, securePassword, generateOtp
 }

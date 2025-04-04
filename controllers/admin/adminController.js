@@ -1,6 +1,7 @@
 const User = require('../../models/userSchema');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const messages = require('../../constants/messages')
 
 const loadLogin = (req,res)=>{
 
@@ -25,11 +26,11 @@ const login = async (req,res)=>{
                 req.session.admin = true;
                 return res.redirect('/admin/dashboard');
             }else{
-                return res.render('admin/login',{'error_msg':'Incorrect Password'})
+                return res.render('admin/login',{'error_msg':messages.INCORRECT_PASSWORD})
             }
 
         }else {
-            return res.render('admin/login',{'error_msg':'Invalid Email'})
+            return res.render('admin/login',{'error_msg':messages.INVALID_EMAIL})
         }
         
 

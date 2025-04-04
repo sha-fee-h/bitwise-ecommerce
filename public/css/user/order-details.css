@@ -1,0 +1,218 @@
+:root {
+    --primary-color: #060318;
+    --hover-color: #565564;
+    --secondary-color: #16a34a;
+    --text-color: #1f2937;
+    --light-bg: #f9fafb;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --gray-light: #6b7280;
+    --gray-dark: #374151;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.order-details {
+    max-width: 960px;
+    margin: 2rem auto 4rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease;
+}
+
+
+
+.order-details h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.order-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-light);
+}
+
+.order-info p {
+    margin: 0.4rem 0;
+    font-size: 1rem;
+}
+
+.order-info strong {
+    color: var(--gray-dark);
+    font-weight: 600;
+}
+
+.retry-btn {
+    background: linear-gradient(135deg, var(--secondary-color), #15803d);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.retry-btn:hover {
+    background: linear-gradient(135deg, #15803d, var(--secondary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(22, 163, 74, 0.3);
+}
+
+h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gray-dark);
+    margin: 2rem 0 1rem;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.items-table th,
+.items-table td {
+    padding: 1rem;
+    text-align: left;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--gray-light);
+    transition: background-color 0.2s ease;
+}
+
+.items-table th {
+    background-color: var(--light-bg);
+    color: var(--gray-dark);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.product-image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--gray-light);
+}
+
+.product-name {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.cancelled {
+    color: #e74c3c;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.delivered {
+    color: #27ae60;
+    font-weight: 500;
+}
+
+.btn-cancel-item {
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-cancel-item:hover {
+    background-color: #c0392b;
+    transform: translateY(-2px);
+}
+
+.price-breakdown {
+    margin-top: 1.5rem;
+    padding: 1.25rem;
+    background-color: var(--light-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-light);
+}
+
+.price-breakdown p {
+    margin: 0.6rem 0;
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-breakdown .total {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    border-top: 1px solid var(--gray-light);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.address-section p {
+    margin: 0.4rem 0;
+    font-size: 1rem;
+    color: var(--text-color);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .order-details {
+        margin: 4rem 1rem;
+        padding: 1.5rem;
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+    }
+
+    .items-table th,
+    .items-table td {
+        font-size: 0.85rem;
+        padding: 0.75rem;
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
+    }
+
+    .btn-cancel-item {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}

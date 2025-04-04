@@ -4,129 +4,255 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details - <%= order.orderId %></title>
+
+    <!-- Vendor CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     
 
-<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
-<!--===============================================================================================-->
-<link rel="stylesheet" type="text/css" href="/css/user/util.css" />
-<link rel="stylesheet" type="text/css" href="/css/user/main.css" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<link rel="stylesheet" type="text/css" href="/css/user/header.css" />
-<style>
-    .order-details { max-width: 800px; margin: 8em auto; padding: 20px; border: 1px solid #ddd; border-radius: 5px; }
-    .items-list { list-style: none; padding: 0; }
-    .item { border-bottom: 1px solid #eee; padding: 10px 0; }
-    .btn-cancel-item { background-color: #dc3545; color: white; padding: 5px 10px; border: none; cursor: pointer; }
-    .product-info {
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Space between image and name */
-    margin-bottom: 5px;
-}
+    <!-- Custom CSS -->
+    
+    <link rel="stylesheet" href="/css/user/header.css" />
+    <link rel="stylesheet" href="/css/user/order-details.css" />
+    <link rel="stylesheet" href="/css/user/footer.css" />
 
-.product-image {
-    width: 50px;  /* Adjust size as needed */
-    height: 50px;
-    object-fit: cover; /* Ensures image maintains aspect ratio */
-    border-radius: 4px; /* Optional: for rounded corners */
-}
 
-.items-list {
-    list-style: none;
-    padding: 0;
-}
-
-.item {
-    margin-bottom: 15px;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-}
-</style>
+    
 </head>
 <body>
     <%- include('./partials/header.ejs') %>
 
-
     <div class="order-details">
         <h2>Order #<%= order.orderId %></h2>
-        <p><strong>Order Date:</strong> <%= order.orderDate.toLocaleDateString() %></p>
-        <p><strong>Delivery Status:</strong> <%= order.deliveryStatus %></p>
-        <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-        <% if (order.paymentMethod === 'Razorpay' && order.paymentId) { %>
-            <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
+        <div class="order-info">
+            <div>
+                <p><strong>Order Date:</strong> <%= order.orderDate.toLocaleDateString() %></p>
+                <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                <% if (order.paymentMethod === 'Razorpay' && order.paymentId) { %>
+                    <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
+                <% } %>
+            </div>
+            <div>
+                <p><strong>Delivery Status:</strong> <%= order.deliveryStatus %></p>
+                <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
+                <p><strong>Total:</strong> ₹<%= order.total.toFixed(2) %></p>
+            </div>
+            <% if (order.paymentStatus==='Failed') { %>
+                <button class="retry-btn" id="retry-payment-btn">Retry Payment</button>
+            <% } %>
+        </div>
+
+        <% if (order.couponCode) { %>
+            <p><strong>Coupon Used:</strong> <%= order.couponCode %></p>
         <% } %>
-        <p><strong>Payment Status:</strong> <%= order.paymentStatus %></p>
-        <p><strong>Total:</strong> $<%= order.total.toFixed(2) %></p>
         <% if (order.cancellationReason) { %>
             <p><strong>Cancellation Reason:</strong> <%= order.cancellationReason %></p>
         <% } %>
         <% if (order.returnReason) { %>
             <p><strong>Return Reason:</strong> <%= order.returnReason %></p>
         <% } %>
-    
+
         <h3>Items</h3>
-        <ul class="items-list">
-            <% order.products.forEach(product => { %>
-                <li class="item">
-                    <div class="product-info">
-                        <img src="/uploads/<%= product.productId.images[0] %>" alt="<%= product.productId.name %>" class="product-image">
-                        <strong><%= product.productId.name %></strong>
-                    </div>
-                    Quantity: <%= product.quantity %> @ $<%= product.price.toFixed(2) %><br>
-                    <% if (product.itemDeliveryStatus === 'Cancelled') { %>
-                        <span>Cancelled <%= product.itemCancelledAt ? 'on ' + product.itemCancelledAt.toLocaleDateString() : '' %></span>
-                    <% } else if (order.deliveryStatus !== 'Cancelled' && order.deliveryStatus !== 'Delivered' && order.deliveryStatus !== 'Returned') { %>
-                        <button class="btn-cancel-item" onclick="cancelItem('<%= order.orderId %>', '<%= product.productId._id %>')">Cancel Item</button>
-                    <% } %>
-                </li>
-            <% }) %>
-        </ul>
-    
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Actual Price</th>
+                    <th>Discount</th>
+                    <th>Final Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% order.products.forEach(product => { %>
+                    <tr>
+                        <td>
+                            <div class="product-info">
+                                <img src="/uploads/<%= product.productId.images[0] %>" alt="<%= product.productId.name %>" class="product-image">
+                                <span class="product-name"><%= product.productId.name %></span>
+                            </div>
+                        </td>
+                        <td><%= product.quantity %></td>
+                        <td>₹<%= (product.price * product.quantity).toFixed(2) %></td>
+                        <td>₹<%= (product.offerDiscount ? product.offerDiscount * product.quantity : 0).toFixed(2) %></td>
+                        <td>₹<%= ((product.price * product.quantity) - (product.offerDiscount ? product.offerDiscount * product.quantity : 0)).toFixed(2) %></td>
+                        <td>
+                            <% if (product.itemDeliveryStatus === 'Cancelled') { %>
+                                <span class="cancelled">Cancelled <%= product.itemCancelledAt ? 'on ' + product.itemCancelledAt.toLocaleDateString() : '' %></span>
+                            <% } else if (order.deliveryStatus === 'Delivered') { %>
+                                <span class="delivered">Delivered</span>
+                            <% } else { %>
+                                <%= product.itemDeliveryStatus || 'Pending' %>
+                            <% } %>
+                        </td>
+                        <td>
+                            <% if (product.itemDeliveryStatus !== 'Cancelled' && order.deliveryStatus !== 'Cancelled' && order.deliveryStatus !== 'Delivered' && order.deliveryStatus !== 'Returned' && order.deliveryStatus!=='Return Accepted' && order.deliveryStatus !=='Return Rejected' && order.paymentStatus !== 'Failed') { %>
+                                <button class="btn-cancel-item" onclick="cancelItem('<%= order.orderId %>', '<%= product.productId._id %>')">Cancel Item</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+
+        <h3>Price Breakdown</h3>
+        <div class="price-breakdown">
+            <p><span>Subtotal:</span> <span>₹<%= order.products.reduce((acc, product) => acc + (product.price * product.quantity), 0).toFixed(2) %></span></p>
+            <p><span>Offer Discount:</span> <span>-₹<%= order.offerDiscount.toFixed(2) %></span></p>
+            <p><span>Coupon Discount:</span> <span>-₹<%= order.couponDiscount.toFixed(2) %></span></p>
+            <p><span>Shipping Cost:</span> <span>₹<%= order.shippingCost.toFixed(2) %></span></p>
+            <p class="total"><span>Total:</span> <span>₹<%= order.total.toFixed(2) %></span></p>
+        </div>
+
         <h3>Shipping Address</h3>
-        <p><%= order.address.firstName %> <%= order.address.lastName %><br>
-           <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
-           <%= order.address.country %></p>
+        <div class="address-section">
+            <p><%= order.address.firstName %> <%= order.address.lastName %><br>
+               <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
+               <%= order.address.country %></p>
+        </div>
     </div>
-    
+    <%- include('./partials/footer.ejs') %>
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Pre-encode the EJS variables as JSON strings to avoid syntax errors
+        const orderDataForRetry = {
+            selectedAddress: <%- JSON.stringify(order ? order.address : "") %>,
+            couponCode: <%- JSON.stringify(order && order.couponCode ? order.couponCode : "") %>
+        };
+        const userDataForPrefill = {
+            name: <%- JSON.stringify(`${user?.firstName || "User"} ${user?.lastName || ""}`) %>,
+            email: <%- JSON.stringify(user?.email || "") %>,
+            contact: <%- JSON.stringify(user?.phone || "") %>
+        };
+
+        // Ensure the script runs after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            const retryButton = document.getElementById('retry-payment-btn');
+            if (retryButton) {
+                retryButton.addEventListener('click', function () {
+                    retryPayment('<%= order ? order._id : "" %>');
+                });
+            }
+        });
+
+        async function retryPayment(orderId) {
+            if (!orderId) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Order ID is missing. Please contact support."
+                });
+                return;
+            }
+
+            try {
+                // Request a new Razorpay order for the failed order
+                const response = await fetch('/checkout/retry-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId })
+                });
+
+                // Check if the response is OK (status 200-299)
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+                }
+
+                const razorpayData = await response.json();
+
+                if (!razorpayData.success) {
+                    Swal.fire({ icon: "error", title: "Retry Failed", text: razorpayData.message });
+                    return;
+                }
+
+                const options = {
+                    key: razorpayData.key,
+                    amount: razorpayData.amount,
+                    currency: razorpayData.currency,
+                    order_id: razorpayData.razorpayOrderId,
+                    name: 'Bitwise',
+                    description: 'Order Payment Retry',
+                    handler: async function (response) {
+                        const orderData = {
+                            selectedAddress: orderDataForRetry.selectedAddress,
+                            paymentMethod: 'Razorpay',
+                            couponCode: orderDataForRetry.couponCode,
+                            razorpayOrderId: response.razorpay_order_id,
+                            paymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature,
+                            orderId: orderId // Pass the MongoDB _id for updating the order
+                        };
+
+                        // Update the order with the new payment details
+                        const updateOrderResponse = await fetch('/checkout/place-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orderData)
+                        });
+
+                        const result = await updateOrderResponse.json();
+
+                        if (result.success) {
+                            window.location.href = `/checkout/order-success?orderId=${orderId}`;
+                        } else {
+                            Swal.fire({ icon: "error", title: "Payment Failed", text: result.message });
+                            window.location.href = `/checkout/order-failure?orderId=${orderId}`;
+                        }
+                    },
+                    prefill: {
+                        name: userDataForPrefill.name,
+                        email: userDataForPrefill.email,
+                        contact: userDataForPrefill.contact
+                    },
+                    theme: { color: '#2563eb' }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    Swal.fire({ 
+                        icon: "error", 
+                        title: "Payment Failed", 
+                        text: response.error.description || "Payment failed. Please try again." 
+                    });
+                    window.location.href = `/checkout/order-failure?orderId=${orderId}`;
+                });
+                rzp.open();
+            } catch (error) {
+                console.error('Error retrying payment in frontend:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Retry Failed",
+                    text: error.message || "An error occurred while retrying the payment."
+                });
+            }
+        }
+    </script>
+
     <script>
         async function cancelItem(orderId, productId) {
             const { value: reason } = await Swal.fire({
                 title: 'Cancel Item',
                 input: 'text',
                 inputLabel: 'Reason for cancellation (optional)',
-                showCancelButton: true
+                inputPlaceholder: 'Enter reason...',
+                showCancelButton: true,
+                confirmButtonColor: '#3498db',
+                cancelButtonColor: '#e74c3c'
             });
-    
+
             if (reason !== undefined) {
                 try {
                     const response = await fetch(`/orders/cancel-item/${orderId}/${productId}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ cancellationReason: reason || '' })
+                        body: JSON.stringify({ cancellationReason: reason || 'No reason provided' })
                     });
                     const result = await response.json();
                     if (result.success) {
@@ -135,7 +261,7 @@
                         Swal.fire('Error', result.message || 'Failed to cancel item', 'error');
                     }
                 } catch (error) {
-                    Swal.fire('Error', error.message || 'Failed to cancel item', 'error');
+                    Swal.fire('Error', error.message || 'Something went wrong', 'error');
                 }
             }
         }

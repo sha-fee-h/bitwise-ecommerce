@@ -193,6 +193,39 @@
             color: var(--primary-color);
             margin-bottom: 15px;
         }
+        .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .pagination p {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .pagination-links a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #333;
+    }
+    .pagination-links a.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .pagination-links a:hover:not(.active) {
+        background-color: #f0f0f0;
+    }
+    .active {
+        color: green;
+        font-weight: bold;
+    }
+    .inactive {
+        color: red;
+        font-weight: bold;
+    }
     </style>
 </head>
 <body>
@@ -217,193 +250,265 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="product-list-container">
-            <h1>Coupon Management</h1>
+<div class="product-list-container">
+    <h1>Coupon Management</h1>
 
-            <!-- Breadcrumbs -->
-            <nav class="breadcrumbs">
-                <a href="/admin/dashboard">Dashboard</a>
-                <span>></span>
-                <a href="/admin/coupon-management">Coupon Management</a>
-            </nav>
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+        <a href="/admin/dashboard">Dashboard</a>
+        <span>></span>
+        <a href="/admin/coupon-management">Coupon Management</a>
+    </nav>
 
-            <!-- Coupon Form -->
-            <div class="form-section">
-                <h3>Add New Coupon</h3>
-                <form id="couponForm">
-                    
-                    <div class="form-group">
-                        <label for="userId">User (Optional):</label>
-                        <select id="userId" name="userId">
-                            <option value="">-- No User (Global) --</option>
-                            <% users.forEach(user => { %>
-                                <option value="<%= user._id %>"><%= user.userName %> (<%= user.email %>)</option>
-                            <% }) %>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="discount">Discount Amount (₹):</label>
-                        <input type="number" id="discount" name="discount" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="expiryDate">Expiry Date:</label>
-                        <input type="date" id="expiryDate" name="expiryDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="usageLimit">Usage Limit (Optional):</label>
-                        <input type="number" id="usageLimit" name="usageLimit" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label for="minimumSpend">Minimum Spend (₹):</label>
-                        <input type="number" id="minimumSpend" name="minimumSpend" min="0" default="0">
-                    </div>
-                    <button type="submit">Add Coupon</button>
-                </form>
+    <!-- Coupon Form -->
+    <div class="form-section">
+        <h3>Add New Coupon</h3>
+        <form id="couponForm">
+            <div class="form-group">
+                <label for="userId">User (Optional):</label>
+                <select id="userId" name="userId">
+                    <option value="">-- No User (Global) --</option>
+                    <% users.forEach(user => { %>
+                        <option value="<%= user._id %>"><%= user.userName %> (<%= user.email %>)</option>
+                    <% }) %>
+                </select>
             </div>
-
-            <!-- Coupons Table -->
-            <div class="coupons-section">
-                <h3>Existing Coupons</h3>
-                <table id="couponsTable">
-                    <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>User</th>
-                            <th>Discount (₹)</th>
-                            <th>Expiry Date</th>
-                            <th>Usage Limit</th>
-                            <th>Used Count</th>
-                            <th>Min Spend (₹)</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Coupons will be dynamically inserted here -->
-                    </tbody>
-                </table>
+            <div class="form-group">
+                <label for="discount">Discount Amount (₹):</label>
+                <input type="number" id="discount" name="discount" min="0" required>
             </div>
-        </div>
+            <div class="form-group">
+                <label for="expiryDate">Expiry Date:</label>
+                <input type="date" id="expiryDate" name="expiryDate" required>
+            </div>
+            <div class="form-group">
+                <label for="usageLimit">Usage Limit (Optional):</label>
+                <input type="number" id="usageLimit" name="usageLimit" min="1">
+            </div>
+            <div class="form-group">
+                <label for="minimumSpend">Minimum Spend (₹):</label>
+                <input type="number" id="minimumSpend" name="minimumSpend" min="0" value="0">
+            </div>
+            <button type="submit">Add Coupon</button>
+        </form>
     </div>
 
-    <script>
-        // Load existing coupons
-        async function loadCoupons() {
-            const response = await fetch('/admin/coupons');
+    <!-- Coupons Table -->
+    <div class="coupons-section">
+        <h3>Existing Coupons</h3>
+        <table id="couponsTable">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>User</th>
+                    <th>Discount (₹)</th>
+                    <th>Expiry Date</th>
+                    <th>Usage Limit</th>
+                    <th>Used Count</th>
+                    <th>Min Spend (₹)</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="couponsTableBody">
+                <!-- Coupons will be dynamically inserted here -->
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination" id="paginationControls">
+            <p id="paginationInfo"></p>
+            <div class="pagination-links" id="paginationLinks"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Declare currentPage and defaultLimit in the global scope
+    let currentPage = 1;
+    const defaultLimit = 5;
+
+    // Load existing coupons with pagination
+    async function loadCoupons(page = 1, limit = defaultLimit) {
+        try {
+            currentPage = page; // Update the current page
+            const response = await fetch(`/admin/coupons?page=${page}&limit=${limit}`);
             const result = await response.json();
-            if (result.success) {
-                const tbody = document.querySelector('#couponsTable tbody');
-                tbody.innerHTML = '';
-                result.coupons.forEach(coupon => {
-                    const row = `
-                        <tr>
-                            <td>${coupon.code}</td>
-                            <td>${coupon.userId ? coupon.userId.userName : 'Global'}</td>
-                            <td>${coupon.discount}</td>
-                            <td>${new Date(coupon.expiryDate).toLocaleDateString()}</td>
-                            <td>${coupon.usageLimit || 'Unlimited'}</td>
-                            <td>${coupon.usedCount}</td>
-                            <td>${coupon.minimumSpend}</td>
-                            <td>${coupon.isActive ? 'Active' : 'Inactive'}</td>
-                            <td>
-                                <button class="toggle-btn ${coupon.isActive ? 'unlist-btn' : 'list-btn'}" 
-                                        onclick="toggleCouponStatus('${coupon._id}', ${coupon.isActive})">
-                                    ${coupon.isActive ? 'Unlist' : 'List'}
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
+
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to fetch coupons');
             }
-        }
 
-        // Handle Coupon Form submission
-        document.getElementById('couponForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-            if (!data.userId) delete data.userId; // Remove empty userId
+            const { coupons, currentPage: serverPage, totalPages, totalCoupons } = result;
 
-            const confirmation = await Swal.fire({
-                title: 'Confirm Addition',
-                text: 'Are you sure you want to add this coupon?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#00a8e8',
-                cancelButtonColor: '#ff3a30',
-                confirmButtonText: 'Yes, add it!'
+            // Render coupons in the table
+            const tbody = document.querySelector('#couponsTableBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            coupons.forEach(coupon => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${coupon.code}</td>
+                    <td>${coupon.userId ? coupon.userId.userName : 'Global'}</td>
+                    <td>${coupon.discount}</td>
+                    <td>${new Date(coupon.expiryDate).toLocaleDateString()}</td>
+                    <td>${coupon.usageLimit || 'Unlimited'}</td>
+                    <td>${coupon.usedCount}</td>
+                    <td>${coupon.minimumSpend}</td>
+                    <td class="${coupon.isActive ? 'active' : 'inactive'}">${coupon.isActive ? 'Active' : 'Inactive'}</td>
+                    <td>
+                        <button class="toggle-btn ${coupon.isActive ? 'unlist-btn' : 'list-btn'}" 
+                                onclick="toggleCouponStatus('${coupon._id}', ${coupon.isActive})">
+                            ${coupon.isActive ? 'Unlist' : 'List'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
 
-            if (confirmation.isConfirmed) {
-                const response = await fetch('/admin/coupons', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-                const result = await response.json();
+            // Render pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
+            paginationInfo.textContent = `Showing ${coupons.length} of ${totalCoupons} coupons`;
 
-                if (result.success) {
-                    await Swal.fire({
-                        title: 'Success!',
-                        text: 'Coupon created successfully!',
-                        icon: 'success',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    e.target.reset();
-                    loadCoupons();
-                } else {
-                    await Swal.fire({
-                        title: 'Error!',
-                        text: result.message || 'Failed to create coupon',
-                        icon: 'error',
-                        confirmButtonColor: '#ff3a30'
-                    });
-                }
+            // Render pagination links
+            const paginationLinks = document.getElementById('paginationLinks');
+            paginationLinks.innerHTML = '';
+
+            // Previous link
+            if (currentPage > 1) {
+                const prevLink = document.createElement('a');
+                prevLink.href = '#';
+                prevLink.textContent = 'Previous';
+                prevLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadCoupons(currentPage - 1, limit);
+                });
+                paginationLinks.appendChild(prevLink);
             }
+
+            // Page number links
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = i;
+                pageLink.className = currentPage === i ? 'active' : '';
+                pageLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadCoupons(i, limit);
+                });
+                paginationLinks.appendChild(pageLink);
+            }
+
+            // Next link
+            if (currentPage < totalPages) {
+                const nextLink = document.createElement('a');
+                nextLink.href = '#';
+                nextLink.textContent = 'Next';
+                nextLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadCoupons(currentPage + 1, limit);
+                });
+                paginationLinks.appendChild(nextLink);
+            }
+        } catch (error) {
+            console.error('Error fetching coupons:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Handle Coupon Form submission
+    document.getElementById('couponForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+        if (!data.userId) delete data.userId; // Remove empty userId
+
+        const confirmation = await Swal.fire({
+            title: 'Confirm Addition',
+            text: 'Are you sure you want to add this coupon?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a8e8',
+            cancelButtonColor: '#ff3a30',
+            confirmButtonText: 'Yes, add it!'
         });
 
-        // Toggle Coupon Status
-        async function toggleCouponStatus(couponId, isActive) {
-            const action = isActive ? 'unlist' : 'list';
-            const confirmation = await Swal.fire({
-                title: `Confirm ${action.charAt(0).toUpperCase() + action.slice(1)}`,
-                text: `Are you sure you want to ${action} this coupon?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#00a8e8',
-                cancelButtonColor: '#ff3a30',
-                confirmButtonText: `Yes, ${action} it!`
+        if (confirmation.isConfirmed) {
+            const response = await fetch('/admin/coupons', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
             });
+            const result = await response.json();
 
-            if (confirmation.isConfirmed) {
-                const response = await fetch(`/admin/coupons/toggle/${couponId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+            if (result.success) {
+                await Swal.fire({
+                    title: 'Success!',
+                    text: 'Coupon created successfully!',
+                    icon: 'success',
+                    confirmButtonColor: '#00a8e8'
                 });
-                const result = await response.json();
-
-                if (result.success) {
-                    await Swal.fire({
-                        title: 'Success!',
-                        text: result.message,
-                        icon: 'success',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    loadCoupons();
-                } else {
-                    await Swal.fire({
-                        title: 'Error!',
-                        text: result.message || `Failed to ${action} coupon`,
-                        icon: 'error',
-                        confirmButtonColor: '#ff3a30'
-                    });
-                }
+                e.target.reset();
+                loadCoupons(1, defaultLimit); // Go to page 1 to show the new coupon (since it's the latest)
+            } else {
+                await Swal.fire({
+                    title: 'Error!',
+                    text: result.message || 'Failed to create coupon',
+                    icon: 'error',
+                    confirmButtonColor: '#ff3a30'
+                });
             }
         }
+    });
 
-        // Load coupons on page load
-        document.addEventListener('DOMContentLoaded', loadCoupons);
-    </script>
+    // Toggle Coupon Status
+    async function toggleCouponStatus(couponId, isActive) {
+        const action = isActive ? 'unlist' : 'list';
+        const confirmation = await Swal.fire({
+            title: `Confirm ${action.charAt(0).toUpperCase() + action.slice(1)}`,
+            text: `Are you sure you want to ${action} this coupon?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a8e8',
+            cancelButtonColor: '#ff3a30',
+            confirmButtonText: `Yes, ${action} it!`
+        });
+
+        if (confirmation.isConfirmed) {
+            const response = await fetch(`/admin/coupons/toggle/${couponId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                await Swal.fire({
+                    title: 'Success!',
+                    text: result.message,
+                    icon: 'success',
+                    confirmButtonColor: '#00a8e8'
+                });
+                loadCoupons(currentPage, defaultLimit); // Stay on the current page
+            } else {
+                await Swal.fire({
+                    title: 'Error!',
+                    text: result.message || `Failed to ${action} coupon`,
+                    icon: 'error',
+                    confirmButtonColor: '#ff3a30'
+                });
+            }
+        }
+    }
+
+    // Load coupons on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadCoupons(1, defaultLimit); // Fetch first page with default limit
+    });
+</script>
 </body>
 </html>

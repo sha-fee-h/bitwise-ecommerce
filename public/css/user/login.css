@@ -45,8 +45,8 @@ a {
 
 button {
     border-radius: 20px;
-    border: 1px solid #1e1f36;
-    background-color: #1e1f36;
+    border: 1px solid #060318;
+    background-color: #060318;
     color: #FFFFFF;
     font-size: 12px;
     font-weight: bold;
@@ -54,6 +54,12 @@ button {
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: transform 80ms ease-in;
+}
+
+button:hover {
+    background-color: #565564;
+    border-color: #565564;
+    transform: translateY(-2px);
 }
 
 button:active {
@@ -67,6 +73,11 @@ button:focus {
 button.ghost {
     background-color: transparent;
     border-color: #FFFFFF;
+}
+
+button.ghost:hover {
+    background-color: #565564;
+    transform: translateY(-2px);
 }
 
 form {
@@ -162,9 +173,9 @@ input {
 }
 
 .overlay {
-    background: #1e1f36;
-    background: -webkit-linear-gradient(to right, #1e1f36, #1e1f36);
-    background: linear-gradient(to right, #1e1f36, #1e1f36);
+    background: #060318;
+    background: -webkit-linear-gradient(to right, #060318, #060318);
+    background: linear-gradient(to right, #060318, #060318);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;
@@ -264,8 +275,8 @@ footer a {
 
 .google-signin-button {
     background-color: #ffffff;
-    border-color: #1e1f36;
-    color: #1e1f36;
+    border-color: #060318;
+    color: #060318;
     padding: 10px 15px;
     border-radius: 5px;
     cursor: pointer;
@@ -278,7 +289,7 @@ footer a {
 }
 
 .google-signin-button:hover {
-    background-color: #1e1f36;
+    background-color: #565564;
     color: white;
 }
 

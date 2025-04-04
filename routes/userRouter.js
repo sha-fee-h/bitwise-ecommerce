@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/user/userController')
-// const passport = require('passport')
 const { userAuth, adminAuth, isLoggedIn } = require('../middlewares/auth');
-const upload = require('../config/multer');
+const productImageUpload = require('../config/multer');
+
 
 router.get('/profile',userAuth,userController.getDashboard)
 
-router.post('/update-profile-image',userAuth ,upload.single('profileImage'), userController.updateImage);
+router.post('/update-profile-image', userAuth, productImageUpload.single('croppedImage'), userController.updateImage);
 
 router.get('/profile/edit',userAuth,userController.getEditProfile)
 

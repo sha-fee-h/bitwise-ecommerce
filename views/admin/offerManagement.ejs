@@ -208,6 +208,54 @@
                 width: 100%;
             }
         }
+
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .pagination p {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .pagination-links a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #333;
+    }
+    .pagination-links a.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .pagination-links a:hover:not(.active) {
+        background-color: #f0f0f0;
+    }
+    .active {
+        color: green;
+        font-weight: bold;
+    }
+    .inactive {
+        color: red;
+        font-weight: bold;
+    }
+    .toggle-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .list-btn {
+        background-color: #28a745;
+        color: white;
+    }
+    .unlist-btn {
+        background-color: #dc3545;
+        color: white;
+    }
     </style>
 </head>
 <body>
@@ -232,259 +280,332 @@
         </aside>
 
         <!-- Main Content -->
-        <div class="product-list-container">
-            <h1>Offer Management</h1>
+<div class="product-list-container">
+    <h1>Offer Management</h1>
 
-            <!-- Breadcrumbs -->
-            <nav class="breadcrumbs">
-                <a href="/admin/dashboard">Dashboard</a>
-                <span>></span>
-                <a href="/admin/offer-management">Offer Management</a>
-            </nav>
+    <!-- Breadcrumbs -->
+    <nav class="breadcrumbs">
+        <a href="/admin/dashboard">Dashboard</a>
+        <span>></span>
+        <a href="/admin/offer-management">Offer Management</a>
+    </nav>
 
-            <!-- Forms Container -->
-            <div class="forms-container">
-                <!-- Product Offer Form -->
-                <div class="form-section">
-                    <h3>Add Product Offer</h3>
-                    <form id="productOfferForm">
-                        <div class="form-group">
-                            <label for="productId">Select Product:</label>
-                            <select id="productId" name="productId" required>
-                                <option value="">-- Select Product --</option>
-                                <% products.forEach(product => { %>
-                                    <option value="<%= product._id %>"><%= product.name %></option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="discountPercentage">Discount Percentage:</label>
-                            <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="startDate">Start Date:</label>
-                            <input type="date" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDate">End Date:</label>
-                            <input type="date" id="endDate" name="endDate" required>
-                        </div>
-                        <button type="submit">Add Product Offer</button>
-                    </form>
+    <!-- Forms Container -->
+    <div class="forms-container">
+        <!-- Product Offer Form -->
+        <div class="form-section">
+            <h3>Add Product Offer</h3>
+            <form id="productOfferForm">
+                <div class="form-group">
+                    <label for="productId">Select Product:</label>
+                    <select id="productId" name="productId" required>
+                        <option value="">-- Select Product --</option>
+                        <% products.forEach(product => { %>
+                            <option value="<%= product._id %>"><%= product.name %></option>
+                        <% }) %>
+                    </select>
                 </div>
-
-                <!-- Category Offer Form -->
-                <div class="form-section">
-                    <h3>Add Category Offer</h3>
-                    <form id="categoryOfferForm">
-                        <div class="form-group">
-                            <label for="categoryId">Select Category:</label>
-                            <select id="categoryId" name="categoryId" required>
-                                <option value="">-- Select Category --</option>
-                                <% categories.forEach(category => { %>
-                                    <option value="<%= category._id %>"><%= category.name %></option>
-                                <% }) %>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="discountPercentage">Discount Percentage:</label>
-                            <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="startDate">Start Date:</label>
-                            <input type="date" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="endDate">End Date:</label>
-                            <input type="date" id="endDate" name="endDate" required>
-                        </div>
-                        <button type="submit">Add Category Offer</button>
-                    </form>
+                <div class="form-group">
+                    <label for="discountPercentage">Discount Percentage:</label>
+                    <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100" required>
                 </div>
-            </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required>
+                </div>
+                <button type="submit">Add Product Offer</button>
+            </form>
+        </div>
 
-            <!-- Offers Table -->
-            <div class="offers-section">
-                <h3>Existing Offers</h3>
-                <table id="offersTable">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Target</th>
-                            <th>Discount (%)</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Offers will be dynamically inserted here -->
-                    </tbody>
-                </table>
-            </div>
+        <!-- Category Offer Form -->
+        <div class="form-section">
+            <h3>Add Category Offer</h3>
+            <form id="categoryOfferForm">
+                <div class="form-group">
+                    <label for="categoryId">Select Category:</label>
+                    <select id="categoryId" name="categoryId" required>
+                        <option value="">-- Select Category --</option>
+                        <% categories.forEach(category => { %>
+                            <option value="<%= category._id %>"><%= category.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="discountPercentage">Discount Percentage:</label>
+                    <input type="number" id="discountPercentage" name="discountPercentage" min="0" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" required>
+                </div>
+                <button type="submit">Add Category Offer</button>
+            </form>
         </div>
     </div>
 
-    <script>
-        // Load existing offers
-        async function loadOffers() {
-            const response = await fetch('/admin/offers');
+    <!-- Offers Table -->
+    <div class="offers-section">
+        <h3>Existing Offers</h3>
+        <table id="offersTable">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Discount (%)</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="offersTableBody">
+                <!-- Offers will be dynamically inserted here -->
+            </tbody>
+        </table>
+
+        <!-- Pagination Controls -->
+        <div class="pagination" id="paginationControls">
+            <p id="paginationInfo"></p>
+            <div class="pagination-links" id="paginationLinks"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Declare currentPage in the global scope
+    let currentPage = 1;
+    const defaultLimit = 5; // Consistent limit across functions
+
+    // Load existing offers with pagination
+    async function loadOffers(page = 1, limit = defaultLimit) {
+        try {
+            currentPage = page; // Update the current page
+            const response = await fetch(`/admin/offers?page=${page}&limit=${limit}`);
             const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.message || 'Failed to fetch offers');
+            }
+
+            const { offers, currentPage: serverPage, totalPages, totalOffers } = result;
+
+            // Render offers in the table
+            const tbody = document.querySelector('#offersTableBody');
+            tbody.innerHTML = ''; // Clear existing rows
+
+            offers.forEach(offer => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${offer.type.charAt(0).toUpperCase() + offer.type.slice(1)}</td>
+                    <td>${offer.type === 'Product' ? offer.productId?.name || 'N/A' : offer.categoryId?.name || 'N/A'}</td>
+                    <td>${offer.discountPercentage}</td>
+                    <td>${new Date(offer.startDate).toLocaleDateString()}</td>
+                    <td>${new Date(offer.endDate).toLocaleDateString()}</td>
+                    <td class="${offer.isActive ? 'active' : 'inactive'}">${offer.isActive ? 'Active' : 'Inactive'}</td>
+                    <td>
+                        <button class="toggle-btn ${offer.isActive ? 'unlist-btn' : 'list-btn'}" 
+                                onclick="toggleOfferStatus('${offer._id}', ${offer.isActive})">
+                            ${offer.isActive ? 'Unlist' : 'List'}
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Render pagination info
+            const paginationInfo = document.getElementById('paginationInfo');
+            paginationInfo.textContent = `Showing ${offers.length} of ${totalOffers} offers`;
+
+            // Render pagination links
+            const paginationLinks = document.getElementById('paginationLinks');
+            paginationLinks.innerHTML = '';
+
+            // Previous link
+            if (currentPage > 1) {
+                const prevLink = document.createElement('a');
+                prevLink.href = '#';
+                prevLink.textContent = 'Previous';
+                prevLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadOffers(currentPage - 1, limit);
+                });
+                paginationLinks.appendChild(prevLink);
+            }
+
+            // Page number links
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement('a');
+                pageLink.href = '#';
+                pageLink.textContent = i;
+                pageLink.className = currentPage === i ? 'active' : '';
+                pageLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadOffers(i, limit);
+                });
+                paginationLinks.appendChild(pageLink);
+            }
+
+            // Next link
+            if (currentPage < totalPages) {
+                const nextLink = document.createElement('a');
+                nextLink.href = '#';
+                nextLink.textContent = 'Next';
+                nextLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    loadOffers(currentPage + 1, limit);
+                });
+                paginationLinks.appendChild(nextLink);
+            }
+        } catch (error) {
+            console.error('Error fetching offers:', error);
+            Swal.fire({
+                title: 'Error!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    // Handle Product Offer Form submission
+    document.getElementById('productOfferForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
+
+        const confirmation = await Swal.fire({
+            title: 'Confirm Addition',
+            text: 'Are you sure you want to add this product offer?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a8e8',
+            cancelButtonColor: '#ff3a30',
+            confirmButtonText: 'Yes, add it!'
+        });
+
+        if (confirmation.isConfirmed) {
+            const response = await fetch('/admin/offers/product', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+
             if (result.success) {
-                const tbody = document.querySelector('#offersTable tbody');
-                tbody.innerHTML = '';
-                result.offers.forEach(offer => {
-                    const row = `
-                        <tr>
-                            <td>${offer.type}</td>
-                            <td>${offer.type === 'Product' ? offer.productId?.name || 'N/A' : offer.categoryId?.name || 'N/A'}</td>
-                            <td>${offer.discountPercentage}</td>
-                            <td>${new Date(offer.startDate).toLocaleDateString()}</td>
-                            <td>${new Date(offer.endDate).toLocaleDateString()}</td>
-                            <td>${offer.isActive ? 'Active' : 'Inactive'}</td>
-                            <td>
-                                <button class="toggle-btn ${offer.isActive ? 'unlist-btn' : 'list-btn'}" 
-                                        onclick="toggleOfferStatus('${offer._id}', ${offer.isActive})">
-                                    ${offer.isActive ? 'Unlist' : 'List'}
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
+                await Swal.fire({
+                    title: 'Success!',
+                    text: 'Product offer created successfully!',
+                    icon: 'success',
+                    confirmButtonColor: '#00a8e8'
+                });
+                e.target.reset();
+                loadOffers(1, defaultLimit); // Go to page 1 to show the new offer (since it's the latest)
+            } else {
+                await Swal.fire({
+                    title: 'Error!',
+                    text: result.message || 'Failed to create product offer',
+                    icon: 'error',
+                    confirmButtonColor: '#ff3a30'
                 });
             }
         }
+    });
 
-        // Handle Product Offer Form submission
-        document.getElementById('productOfferForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
+    // Handle Category Offer Form submission
+    document.getElementById('categoryOfferForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData);
 
-            const confirmation = await Swal.fire({
-                title: 'Confirm Addition',
-                text: 'Are you sure you want to add this product offer?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#00a8e8',
-                cancelButtonColor: '#ff3a30',
-                confirmButtonText: 'Yes, add it!'
-            });
-
-            if (confirmation.isConfirmed) {
-                const response = await fetch('/admin/offers/product', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
-                });
-                const result = await response.json();
-
-                if (result.success) {
-                    await Swal.fire({
-                        title: 'Success!',
-                        text: 'Product offer created successfully!',
-                        icon: 'success',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    e.target.reset();
-                    loadOffers();
-                } else {
-                    await Swal.fire({
-                        title: 'Error!',
-                        text: result.message || 'Failed to create product offer',
-                        icon: 'error',
-                        confirmButtonColor: '#ff3a30'
-                    });
-                }
-            }
+        const confirmation = await Swal.fire({
+            title: 'Confirm Addition',
+            text: 'Are you sure you want to add this category offer?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a8e8',
+            cancelButtonColor: '#ff3a30',
+            confirmButtonText: 'Yes, add it!'
         });
 
-        // Handle Category Offer Form submission
-        document.getElementById('categoryOfferForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-
-            const confirmation = await Swal.fire({
-                title: 'Confirm Addition',
-                text: 'Are you sure you want to add this category offer?',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#00a8e8',
-                cancelButtonColor: '#ff3a30',
-                confirmButtonText: 'Yes, add it!'
+        if (confirmation.isConfirmed) {
+            const response = await fetch('/admin/offers/category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
             });
+            const result = await response.json();
 
-            if (confirmation.isConfirmed) {
-                const response = await fetch('/admin/offers/category', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data),
+            if (result.success) {
+                await Swal.fire({
+                    title: 'Success!',
+                    text: 'Category offer created successfully!',
+                    icon: 'success',
+                    confirmButtonColor: '#00a8e8'
                 });
-                const result = await response.json();
-
-                if (result.success) {
-                    await Swal.fire({
-                        title: 'Success!',
-                        text: 'Category offer created successfully!',
-                        icon: 'success',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    e.target.reset();
-                    loadOffers();
-                } else {
-                    await Swal.fire({
-                        title: 'Error!',
-                        text: result.message || 'Failed to create category offer',
-                        icon: 'error',
-                        confirmButtonColor: '#ff3a30'
-                    });
-                }
-            }
-        });
-
-        // Toggle Offer Status
-        async function toggleOfferStatus(offerId, isActive) {
-            const action = isActive ? 'unlist' : 'list';
-            const confirmation = await Swal.fire({
-                title: `Confirm ${action.charAt(0).toUpperCase() + action.slice(1)}`,
-                text: `Are you sure you want to ${action} this offer?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#00a8e8',
-                cancelButtonColor: '#ff3a30',
-                confirmButtonText: `Yes, ${action} it!`
-            });
-
-            if (confirmation.isConfirmed) {
-                const response = await fetch(`/admin/offers/toggle/${offerId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
+                e.target.reset();
+                loadOffers(1, defaultLimit); // Go to page 1 to show the new offer (since it's the latest)
+            } else {
+                await Swal.fire({
+                    title: 'Error!',
+                    text: result.message || 'Failed to create category offer',
+                    icon: 'error',
+                    confirmButtonColor: '#ff3a30'
                 });
-                const result = await response.json();
-
-                if (result.success) {
-                    await Swal.fire({
-                        title: 'Success!',
-                        text: result.message,
-                        icon: 'success',
-                        confirmButtonColor: '#00a8e8'
-                    });
-                    loadOffers();
-                } else {
-                    await Swal.fire({
-                        title: 'Error!',
-                        text: result.message || `Failed to ${action} offer`,
-                        icon: 'error',
-                        confirmButtonColor: '#ff3a30'
-                    });
-                }
             }
         }
+    });
 
-        // Load offers on page load
-        document.addEventListener('DOMContentLoaded', loadOffers);
-    </script>
+    // Toggle Offer Status
+    async function toggleOfferStatus(offerId, isActive) {
+        const action = isActive ? 'unlist' : 'list';
+        const confirmation = await Swal.fire({
+            title: `Confirm ${action.charAt(0).toUpperCase() + action.slice(1)}`,
+            text: `Are you sure you want to ${action} this offer?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#00a8e8',
+            cancelButtonColor: '#ff3a30',
+            confirmButtonText: `Yes, ${action} it!`
+        });
+
+        if (confirmation.isConfirmed) {
+            const response = await fetch(`/admin/offers/toggle/${offerId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                await Swal.fire({
+                    title: 'Success!',
+                    text: result.message,
+                    icon: 'success',
+                    confirmButtonColor: '#00a8e8'
+                });
+                loadOffers(currentPage, defaultLimit); // Stay on the current page
+            } else {
+                await Swal.fire({
+                    title: 'Error!',
+                    text: result.message || `Failed to ${action} offer`,
+                    icon: 'error',
+                    confirmButtonColor: '#ff3a30'
+                });
+            }
+        }
+    }
+
+    // Load offers on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadOffers(1, defaultLimit); // Fetch first page with default limit
+    });
+</script>
 </body>
 </html>

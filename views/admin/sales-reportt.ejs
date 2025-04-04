@@ -1,0 +1,372 @@
+<!-- views/admin/sales-report.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report | Bitwise Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #00a8e8; /* Cool cyan */
+            --secondary-color: #ff006e; /* Vibrant pink */
+            --bg-color: #0d1117; /* Deep black-blue for dark mode */
+            --container-bg: #161b22; /* Sidebar-like background */
+            --text-color: #e0e0e0; /* Soft white */
+            --input-bg: #1f2937; /* Dark input field */
+            --border-color: #5c59e8; /* Purple border highlight */
+            --error-color: #ff3a30; /* Bright red for errors */
+            --success-color: #00ff44; /* Neon green for success */
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar (Assuming you include a sidebar partial) */
+        .unique-sidebar {
+            width: 250px;
+            background-color: var(--container-bg);
+            padding: 20px;
+        }
+
+        .unique-sidebar-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .unique-sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .unique-sidebar-menu li {
+            margin: 10px 0;
+        }
+
+        .unique-sidebar-menu li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: bold;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .unique-sidebar-menu li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .unique-sidebar-menu li.active a {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .report-container {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .report-container h1 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            padding: 20px;
+            background: var(--container-bg);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-form {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select, input[type="date"], button {
+            padding: 10px;
+            border: none;
+            background: var(--input-bg);
+            color: var(--text-color);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, transform 0.3s;
+        }
+
+        select:focus, input[type="date"]:focus {
+            border: 2px solid var(--border-color);
+            outline: none;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        /* Summary and Report Sections */
+        .summary-section, .report-section {
+            padding: 20px;
+            background: var(--container-bg);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-section h2, .report-section h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .summary-section p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            color: var(--text-color);
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--input-bg);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Download Section */
+        .download-section {
+            text-align: center;
+        }
+
+        .download-section a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .filter-form { flex-direction: column; }
+            table { font-size: 0.9rem; }
+            th, td { padding: 10px; }
+            .dashboard-container { flex-direction: column; }
+            .unique-sidebar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Include Sidebar Partial (Adjust as needed) -->
+        <aside class="unique-sidebar">
+            <div class="unique-sidebar-header">
+                <h2>Bitwise</h2>
+            </div>
+            <ul class="unique-sidebar-menu">
+                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/user-management">Users</a></li>
+                <li><a href="/admin/product-management">Products</a></li>
+                <li><a href="/admin/orders/manage">Orders</a></li>
+                <li><a href="/admin/category-management">Categories</a></li>
+                <li><a href="/admin/coupon-management">Coupon</a></li>
+                <li><a href="/admin/offer-management">Offers</a></li>
+                <li><a href="/admin/inventory">Inventory</a></li>
+                <li><a href="/admin/sales-report">Sales</a></li>
+                <li><a href="/admin/transactions">Transactions</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="report-container">
+    <h1>Sales Report</h1>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <form class="filter-form" action="/admin/sales-report" method="GET">
+            <select name="filterType" onchange="toggleCustomDates(this.value)">
+                <option value="daily" <%= filterType === 'daily' ? 'selected' : '' %>>Daily</option>
+                <option value="weekly" <%= filterType === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                <option value="monthly" <%= filterType === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                <option value="custom" <%= filterType === 'custom' ? 'selected' : '' %>>Custom</option>
+            </select>
+            <input type="date" name="startDate" id="startDate" value="<%= reportData.startDate.toISOString().split('T')[0] %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
+            <input type="date" name="endDate" id="endDate" value="<%= reportData.endDate.toISOString().split('T')[0] %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
+            <button type="submit" class="btn">Generate Report</button>
+        </form>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="summary-section">
+        <h2>Summary</h2>
+        <p>Total Orders: <%= reportData.overallSalesCount %></p>
+        <p>Total Amount: ₹<%= reportData.overallOrderAmount.toFixed(2) %></p>
+        <p>Offer Discount: ₹<%= reportData.overallDiscount.toFixed(2) %></p>
+        <p>Coupon Discount: ₹<%= reportData.overallCouponDiscount.toFixed(2) %></p>
+    </div>
+
+    <!-- Report Section -->
+    <div class="report-section">
+        <h2>Order Details</h2>
+        <% if (reportData.orders.length > 0) { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total (₹)</th>
+                        <th>Offer Discount (₹)</th>
+                        <th>Coupon Discount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% reportData.orders.forEach(order => { %>
+                        <tr>
+                            <td><%= order.orderId %></td>
+                            <td><%= order.orderDate.toLocaleString() %></td>
+                            <td><%= order.total.toFixed(2) %></td>
+                            <td><%= (order.offerDiscount || 0).toFixed(2) %></td>
+                            <td><%= (order.couponDiscount || 0).toFixed(2) %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+
+            <!-- Pagination Controls -->
+            <div class="pagination">
+                <p>Showing <%= reportData.orders.length %> of <%= totalOrders %> orders</p>
+                <div class="pagination-links">
+                    <% if (currentPage > 1) { %>
+                        <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= currentPage - 1 %>&limit=<%= pageLimit %>">Previous</a>
+                    <% } %>
+
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= i %>&limit=<%= pageLimit %>" class="<%= currentPage === i ? 'active' : '' %>">
+                            <%= i %>
+                        </a>
+                    <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                        <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= currentPage + 1 %>&limit=<%= pageLimit %>">Next</a>
+                    <% } %>
+                </div>
+            </div>
+        <% } else { %>
+            <p style="color: var(--error-color);">No orders found for this period.</p>
+        <% } %>
+    </div>
+
+    <!-- Download Section -->
+    <div class="download-section">
+        <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= reportData.startDate.toISOString().split('T')[0] %>&endDate=<%= reportData.endDate.toISOString().split('T')[0] %>&format=pdf" class="btn">Download PDF</a>
+        <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= reportData.startDate.toISOString().split('T')[0] %>&endDate=<%= reportData.endDate.toISOString().split('T')[0] %>&format=excel" class="btn">Download Excel</a>
+    </div>
+</div>
+
+
+
+<style>
+    .pagination {
+        margin-top: 20px;
+        text-align: center;
+    }
+    .pagination p {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+        color: #666;
+    }
+    .pagination-links a {
+        margin: 0 5px;
+        padding: 5px 10px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        color: #333;
+    }
+    .pagination-links a.active {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+    .pagination-links a:hover:not(.active) {
+        background-color: #f0f0f0;
+    }
+</style>
+    </div>
+
+    <script>
+        function toggleCustomDates(filterType) {
+            const startDateInput = document.getElementById('startDate');
+            const endDateInput = document.getElementById('endDate');
+
+             // Reset dates when changing the filter type
+        startDateInput.value = '';
+        endDateInput.value = '';
+
+            if (filterType === 'custom') {
+                startDateInput.style.display = 'inline-block';
+                endDateInput.style.display = 'inline-block';
+            } else {
+                startDateInput.style.display = 'none';
+                endDateInput.style.display = 'none';
+            }
+        }
+        // Disable future dates
+    document.addEventListener('DOMContentLoaded', () => {
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('startDate').setAttribute('max', today);
+        document.getElementById('endDate').setAttribute('max', today);
+    });
+    </script>
+</body>
+</html>

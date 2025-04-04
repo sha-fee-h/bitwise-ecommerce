@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Order Management</title>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.8/dist/sweetalert2.all.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -225,6 +225,10 @@
                     <option value="Delivered" <%= query.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                     <option value="Cancelled" <%= query.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                     <option value="Returned" <%= query.status === 'Returned' ? 'selected' : '' %>>Returned</option>
+                    <option value="Return Accepted" <%= query.status === 'Return Accepted' ? 'selected' : '' %>>Return Accepted</option>
+                    <option value="Return Rejected" <%= query.status === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
+
+
                 </select>
                 <button onclick="searchOrders()">Search</button>
                 <button onclick="clearFilters()">Clear</button>
@@ -251,14 +255,20 @@
                                     <td><%= order.userId.userName %> (<%= order.userId.email %>)</td>
                                     <td>$<%= order.total.toFixed(2) %></td>
                                     <td>
-                                        <select class="status-select" onchange="updateOrderStatus('<%= order.orderId %>', this.value)">
+                                        <select class="status-select" onchange="updateOrderStatus('<%= order.orderId %>', this.value)" <%= order.paymentStatus === 'Failed' ? 'disabled' : '' %>>
                                             <option value="Pending" <%= order.deliveryStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
                                             <option value="Processing" <%= order.deliveryStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
                                             <option value="Shipped" <%= order.deliveryStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
                                             <option value="Delivered" <%= order.deliveryStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                                             <option value="Cancelled" <%= order.deliveryStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
                                             <option value="Returned" <%= order.deliveryStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                            <option value="Return Accepted" <%= order.deliveryStatus === 'Return Accepted' ? 'selected' : '' %>>Return Accepted</option>
+                                            <option value="Return Rejected" <%= order.deliveryStatus === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
+
                                         </select>
+                                        <% if (order.paymentStatus === 'Failed') { %>
+                                            <span style="color: #dc3545;">Failed Order</span>
+                                        <% } %>
                                     </td>
                                     <td>
                                         <a href="/admin/orders/details/<%= order.orderId %>" class="btn btn-view">View</a>
@@ -323,48 +333,58 @@
         }
 
         async function verifyReturn(orderId) {
-            const { value: action } = await Swal.fire({
-                title: 'Verify Return Request',
-                text: 'Accept or reject the return request?',
-                showCancelButton: true,
-                confirmButtonText: 'Accept',
-                cancelButtonText: 'Reject'
-            });
-
-            if (action) {
-                try {
-                    const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ accepted: true })
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        Swal.fire('Success', 'Return verified and refund processed', 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Error', result.message || 'Failed to verify return', 'error');
-                    }
-                } catch (error) {
-                    Swal.fire('Error', error.message || 'Failed to verify return', 'error');
-                }
-            } else if (action === false) {
-                try {
-                    const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ accepted: false })
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        Swal.fire('Success', 'Return request rejected', 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Error', result.message || 'Failed to reject return', 'error');
-                    }
-                } catch (error) {
-                    Swal.fire('Error', error.message || 'Failed to reject return', 'error');
-                }
-            }
+    const { value: choice } = await Swal.fire({
+        title: 'Verify Return Request',
+        html: `
+            <p>Accept or reject the return request?</p>
+            <button id="acceptBtn" class="swal2-btn swal2-confirm">Accept</button>
+            <button id="rejectBtn" class="swal2-btn swal2-deny">Reject</button>
+        `,
+        showConfirmButton: false,
+        showCancelButton: false,
+        didOpen: () => {
+            document.getElementById('acceptBtn').addEventListener('click', () => Swal.close({ value: 'accept' }));
+            document.getElementById('rejectBtn').addEventListener('click', () => Swal.close({ value: 'reject' }));
         }
+    });
+
+    console.log('Choice:', choice);
+
+    if (choice === 'accept') {
+        try {
+            const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accepted: true })
+            });
+            const result = await response.json();
+            if (result.success) {
+                Swal.fire('Success', 'Return verified and refund processed', 'success').then(() => location.reload());
+            } else {
+                Swal.fire('Error', result.message || 'Failed to verify return', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', error.message || 'Failed to verify return', 'error');
+        }
+    }
+    else if (choice === 'reject') {
+        try {
+            const response = await fetch(`/admin/orders/verify-return/${orderId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accepted: false })
+            });
+            const result = await response.json();
+            if (result.success) {
+                Swal.fire('Success', 'Return request rejected', 'success').then(() => location.reload());
+            } else {
+                Swal.fire('Error', result.message || 'Failed to reject return', 'error');
+            }
+        } catch (error) {
+            Swal.fire('Error', error.message || 'Failed to reject return', 'error');
+        }
+    }
+}
     </script>
 </body>
 </html>

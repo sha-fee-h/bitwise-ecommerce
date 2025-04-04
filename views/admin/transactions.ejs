@@ -174,7 +174,7 @@
         <!-- Main Content -->
         <div class="transaction-container">
             <h1>Transaction Management</h1>
-
+        
             <!-- Transactions Table -->
             <div class="transaction-table">
                 <% if (transactions.length > 0) { %>
@@ -206,11 +206,59 @@
                             <% }); %>
                         </tbody>
                     </table>
+        
+                    <!-- Pagination Controls -->
+                    <div class="pagination">
+                        <p>Showing <%= transactions.length %> of <%= totalTransactions %> transactions</p>
+                        <div class="pagination-links">
+                            <% if (currentPage > 1) { %>
+                                <a href="/admin/transactions?page=<%= currentPage - 1 %>&limit=<%= limit %>">Previous</a>
+                            <% } %>
+        
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <a href="/admin/transactions?page=<%= i %>&limit=<%= limit %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+        
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/admin/transactions?page=<%= currentPage + 1 %>&limit=<%= limit %>">Next</a>
+                            <% } %>
+                        </div>
+                    </div>
                 <% } else { %>
                     <p class="empty-state">No transactions found.</p>
                 <% } %>
             </div>
         </div>
+        
+        <style>
+            .pagination {
+                margin-top: 20px;
+                text-align: center;
+            }
+            .pagination p {
+                margin-bottom: 10px;
+                font-size: 0.9em;
+                color: #666;
+            }
+            .pagination-links a {
+                margin: 0 5px;
+                padding: 5px 10px;
+                text-decoration: none;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                color: #333;
+            }
+            .pagination-links a.active {
+                background-color: #007bff;
+                color: white;
+                border-color: #007bff;
+            }
+            .pagination-links a:hover:not(.active) {
+                background-color: #f0f0f0;
+            }
+        </style>
     </div>
 </body>
 </html>

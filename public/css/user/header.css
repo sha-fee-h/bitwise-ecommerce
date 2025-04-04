@@ -1,81 +1,225 @@
+/* Import Poppins font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-/* Container for the dropdown */
-.dropdown {
-position: relative;
-display: inline-block;
-}
-
-/* Style for the sign-in link (user's name) */
-.sign-in-link {
-text-decoration: none;
-color: #333;
-font-weight: bold;
-padding: 8px 12px;
-border: 1px solid transparent;
-border-radius: 4px;
-transition: background 0.3s, border-color 0.3s;
+.site-header {
+    background-color: #fff;
+    
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-/* Hover effect for the sign-in link */
-.sign-in-link:hover {
-color: #1e1f36;
+.navbar {
+    padding: 1.2rem 0; /* Slightly increased padding for a taller header */
 }
 
-/* Dropdown content (hidden by default) */
-.dropdown-content {
-display: none; /* Hide by default */
-position: absolute;
-background-color: #fff;
-min-width: 160px;
-box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-padding: 8px 0;
-z-index: 1;
-border-radius: 4px;
-top: 100%; /* Position below the dropdown link */
-left: 0;
+.navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600; /* Bold for the logo */
+    color: #060318; /* Primary color */
+    transition: color 0.3s ease;
 }
 
-/* Style for each link inside the dropdown */
-.dropdown-content a {
-color: #333;
-padding: 10px 16px;
-text-decoration: none;
-display: block;
-transition: background 0.3s;
+.navbar-brand:hover {
+    color: #565564; /* Hover color */
 }
 
-/* Hover effect for dropdown links */
-.dropdown-content a:hover {
-background-color: #f1f1f1;
+.navbar-nav .nav-link {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 400; /* Regular weight for navigation links */
+    color: #060318; /* Primary color */
+    margin: 0 1.5rem; /* Increased spacing between links */
+    transition: color 0.3s ease;
+    text-transform: none; /* Sentence case */
 }
 
-/* Show the dropdown content on hover */
-.dropdown:hover .dropdown-content {
-display: block;
+.navbar-nav .nav-link:hover {
+    color: #565564; /* Hover color */
 }
 
-/* Style for the signup/login link when user is not signed in */
-a[href="/auth/login"] {
-text-decoration: none;
-color: #000000;
-font-weight: bold;
-padding: 8px 12px;
-border: 1px solid transparent;
-border-radius: 4px;
-transition: background 0.3s, border-color 0.3s;
+.navbar-actions {
+    display: flex;
+    align-items: center;
 }
 
-/* Hover effect for signup/login link */
-a[href="/auth/login"]:hover {
-color: #4272d7;
+.navbar-actions .nav-link {
+    margin: 0 1rem; /* Increased spacing for actions */
+    color: #060318; /* Primary color */
+    position: relative;
+    transition: color 0.3s ease;
 }
-.logout-btn{
-color: #333;
-padding: 10px 16px;
-text-decoration: none;
-display: block;
-transition: background 0.3s;
+
+.navbar-actions .nav-link:hover {
+    color: #565564; /* Hover color */
 }
-.logout-btn :hover {
-background-color: #f1f1f1;
+
+.navbar-actions .fa {
+    font-size: 1.2rem;
+}
+
+.profile-image {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid #e5e7eb;
+}
+
+.badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #e74c3c;
+    color: #fff;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+
+
+
+/* User Dropdown */
+.user-dropdown {
+    position: relative;
+}
+
+/* Remove the down arrow */
+.user-dropdown .nav-link::after {
+    display: none !important;
+}
+
+/* Show dropdown on hover */
+.user-dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Dropdown Menu Styling */
+.user-dropdown .dropdown-menu {
+    background-color: white;
+    border: 1px solid rgba(6, 3, 24, 0.1);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 0.5rem 0;
+    min-width: 150px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Dropdown Item Styling */
+.user-dropdown .dropdown-item {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    color: #060318;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover Effect for Dropdown Items */
+.user-dropdown .dropdown-item:hover {
+    background-color: #f9fafb;
+    color: #565564;
+}
+
+/* Style the Logout Button */
+.user-dropdown .dropdown-item[type="submit"] {
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    color: #060318;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.user-dropdown .dropdown-item[type="submit"]:hover {
+    background-color: #f9fafb;
+    color: #565564;
+}
+
+
+/* Style for signup/login button */
+.navbar-actions .login-btn {
+    background: #060318; /* Primary color */
+    color: white;
+    padding: 8px 20px;
+    border-radius: 20px; /* Pill-shaped button */
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.navbar-actions .login-btn:hover {
+    background: #565564; /* Hover color */
+    color: white;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(6, 3, 24, 0.8)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Responsive Design */
+@media (max-width: 991px) {
+    .navbar-nav {
+        text-align: center;
+        margin-top: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        margin: 0.5rem 0;
+    }
+
+    .navbar-actions {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .navbar-actions .nav-link {
+        margin: 0 1rem;
+    }
+
+    .navbar-actions .login-btn {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+
+    .navbar-actions .nav-link {
+        margin: 0 0.75rem;
+    }
+
+    .navbar-actions .fa {
+        font-size: 1rem;
+    }
+
+    .badge {
+        font-size: 0.65rem;
+        padding: 1px 5px;
+    }
+
+    .navbar-actions .login-btn {
+        padding: 5px 14px;
+        font-size: 0.85rem;
+    }
 }

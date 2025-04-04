@@ -1,8 +1,9 @@
 const User =  require('../models/userSchema');
+const homeController = require('../controllers/user/homeController')
 
-const userAuth = (req, res, next) => {
+const userAuth = async (req, res, next) => {
     if (req.session?.userData || req.user) {
-        // console.log("User Email:", req.user?.email || req.session?.userData?.email);
+        console.log("User Email:", req.user?.email || req.session?.userData?.email);
 
         User.findOne({ email: req.session?.userData?.email || req.user?.email })
             .then(data => {
@@ -10,12 +11,22 @@ const userAuth = (req, res, next) => {
                     return next(); 
                 } else {
                     
-                    req.session.destroy((err) => {
-                        if (err) {
-                            console.error("Error destroying session:", err);
-                        }
-                        return res.render("user/login", { message: "You are blocked by admin" });
-                    });
+                    // req.session.destroy((err) => {
+                    //     if (err) {
+                    //         console.error("Error destroying session:", err);
+                    //     }
+                    //     return res.render("user/login", { message: "You are blocked by admin" });
+                    // });
+                    if (req.session.userData) {
+                        delete req.session.userData; 
+                    }
+                    req.user = null;
+            
+                    
+                    if (req.session.passport) {
+                        delete req.session.passport; 
+                    }
+                    return res.render("user/login", { message: "You are blocked by admin" });
                 }
             })
             .catch(error => {
@@ -24,8 +35,9 @@ const userAuth = (req, res, next) => {
             });
 
     } else {
-        // console.log("User not logged in.");
-        return res.render("user/home", { userLoggedIn: false, user: false });
+        console.log("User not logged in.");
+        const {bestSellers , newArrivals } = await homeController.getHomeData();
+        return res.render("user/home", {  user: false, cartCount:0, wishlistCount:0, newArrivals, bestSellers  });
     }
 };
 

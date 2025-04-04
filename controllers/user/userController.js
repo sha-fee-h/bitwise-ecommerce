@@ -5,7 +5,11 @@ const bcrypt = require('bcrypt');
 // const verifyEmailOTP=require('../../config/verifiyEmailOTP')
 const authController = require('../../controllers/user/authController')
 const Wallet = require('../../models/walletSchema');
-const Coupon = require('../../models/couponSchema')
+const Coupon = require('../../models/couponSchema');
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
+const fs = require('fs').promises
+const path = require('path');
 
 
 const getDashboard = async (req, res) => {
@@ -31,7 +35,9 @@ const getDashboard = async (req, res) => {
     res.render('user/dashboard', {
       user: user,
       recentOrders: recentOrders,
-      page: 'dashboard'
+      page: 'dashboard',
+      cartCount:0,
+      wishlistCount:0
     });
 
   } catch (error) {
@@ -40,30 +46,61 @@ const getDashboard = async (req, res) => {
   }
 };
 
+
+
 const updateImage = async (req, res) => {
   try {
+      const userId = req.session?.userData?._id || req.user?._id;
 
-    const userId = req.session?.userData?._id || req.user?._id;
+      // Fetch the user
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
 
+      // Check if a file was uploaded
+      if (!req.file) {
+          return res.status(400).json({ message: 'No cropped image file provided' });
+      }
+
+      // The file has already been saved by multer to the uploads directory
+      const newFilename = req.file.filename;
+      const newImagePath = `/uploads/${newFilename}`;
+      console.log(`Saved new profile image: ${newImagePath}`);
+
+      // Delete the old profile image if it exists and is not the default
+      if (user.profileImage && user.profileImage !== '/images/default-profile.jpg') {
+        try {
+            // Extract filename and build the correct absolute path
+            const imageFileName = path.basename(user.profileImage);
+            const oldImagePath = path.resolve(__dirname, '..', '..', 'uploads', imageFileName); // Adjusted path
     
-    const user = await User.findById(userId)
+            await fs.unlink(oldImagePath);
+            console.log(`Deleted old profile image: ${oldImagePath}`);
+        } catch (err) {
+            console.error(`Error deleting old profile image: ${err.message}`);
+            // Proceed even if deletion fails (e.g., file doesn't exist)
+        }
+      }
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    
-    if (req.file) {
-      
-      user.profileImage = `/uploads/${req.file.filename}`;
+      // Update the user's profile image path
+      user.profileImage = newImagePath;
       await user.save();
-    }
 
-    
-    return res.redirect('/user/profile');
+      // Redirect to the profile page with a success query parameter
+      return res.redirect('/user/profile?imageUpdated=true');
   } catch (error) {
-    console.error('Error updating profile image:', error);
-    return res.status(500).json({ message: 'Internal Server Error' });
+      console.error('Error updating profile image:', error);
+      // If an error occurs, delete the uploaded file to avoid orphaned files
+      if (req.file) {
+          try {
+              await fs.unlink(req.file.path);
+              console.log(`Deleted uploaded file due to error: ${req.file.path}`);
+          } catch (unlinkErr) {
+              console.error(`Error deleting uploaded file: ${unlinkErr.message}`);
+          }
+      }
+      return res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -76,7 +113,7 @@ const getEditProfile = async (req, res, next) => {
       return res.status(404).send('User not found.');
     }
     
-    res.render('user/edit-profile', { user });
+    res.render('user/edit-profile', { user, cartCount:0, wishlistCount:0 });
   } catch (error) {
     next(error);
   }
@@ -353,7 +390,7 @@ const getUserAddresses = async (req, res) => {
     }
 
     const userAddresses = await Address.find({ userId }).sort({ isDefault: -1 });
-    res.render("user/address", { userAddresses,user });
+    res.render("user/address", { userAddresses,user ,cartCount:0, wishlistCount:0});
 
   } catch (error) {
     console.error("Error fetching addresses:", error);
@@ -425,22 +462,90 @@ const fetchAddress = async (req, res) => {
 };
 
 
+// const getWalletDetails = async (req, res) => {
+//   try {
+//       const userId = req.session?.userData?._id || req.user?._id;
+//       const user = await User.findById(userId);
+//       if (!user) return res.redirect('/');
+
+//       let wallet = await Wallet.findOne({ userId }).populate('userId', 'firstName lastName email');
+//       if (!wallet) {
+//           wallet = new Wallet({ userId, balance: 0, transactions: [] });
+//           await wallet.save();
+//       }
+
+//       res.render("user/wallet-details", { user, wallet });
+//   } catch (error) {
+//       console.error("Error fetching wallet details:", error);
+//       res.status(500).send("Internal Server Error");
+//   }
+// };
+
+const mongoose = require('mongoose'); // Ensure mongoose is imported
+
 const getWalletDetails = async (req, res) => {
   try {
-      const userId = req.session?.userData?._id || req.user?._id;
-      const user = await User.findById(userId);
-      if (!user) return res.redirect('/');
+    const userId = req.session?.userData?._id || req.user?._id;
+    const user = await User.findById(userId);
+    if (!user) return res.redirect('/');
 
-      let wallet = await Wallet.findOne({ userId }).populate('userId', 'firstName lastName email');
-      if (!wallet) {
-          wallet = new Wallet({ userId, balance: 0, transactions: [] });
-          await wallet.save();
+    let wallet = await Wallet.findOne({ userId }).populate('userId', 'firstName lastName email');
+    if (!wallet) {
+      wallet = new Wallet({ userId, balance: 0, transactions: [] });
+      await wallet.save();
+    }
+
+    // Pagination parameters
+    const page = parseInt(req.query.page) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit) || 10; // Default to 10 transactions per page
+    const skip = (page - 1) * limit;
+
+    // Step 1: Get the total number of transactions
+    const totalTransactionsResult = await Wallet.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: '$transactions' },
+      { $count: 'total' }
+    ]);
+    const totalTransactions = totalTransactionsResult.length > 0 ? totalTransactionsResult[0].total : 0;
+
+    // Step 2: Paginate the transactions using aggregation
+    const paginatedTransactionsResult = await Wallet.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      { $unwind: '$transactions' },
+      { $sort: { 'transactions.date': -1 } }, // Sort by date in descending order (newest first)
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $group: {
+          _id: '$_id',
+          userId: { $first: '$userId' },
+          balance: { $first: '$balance' },
+          transactions: { $push: '$transactions' }
+        }
       }
+    ]);
 
-      res.render("user/wallet-details", { user, wallet });
+    // Extract the paginated transactions
+    const paginatedWallet = paginatedTransactionsResult[0] || { transactions: [] };
+    wallet.transactions = paginatedWallet.transactions; // Update the wallet object with paginated transactions
+
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalTransactions / limit);
+    const pagination = {
+      currentPage: page,
+      totalPages: totalPages,
+      hasPrevPage: page > 1,
+      hasNextPage: page < totalPages,
+      prevPage: page - 1,
+      nextPage: page + 1,
+      limit: limit,
+      totalTransactions: totalTransactions
+    };
+
+    res.render("user/wallet-details", { user, wallet, pagination, cartCount:0, wishlistCount:0 });
   } catch (error) {
-      console.error("Error fetching wallet details:", error);
-      res.status(500).send("Internal Server Error");
+    console.error("Error fetching wallet details:", error);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -448,30 +553,48 @@ const getCoupons = async (req, res) => {
   try {
       const userId = req.session?.userData?._id || req.user?._id;
       const user = await User.findById(userId);
-      if (!user) return res.redirect('/auth/login');
+      if (!user) {
+          return res.status(STATUS_CODES.UNAUTHORIZED).redirect('/auth/login');
+      }
 
-      
+      // Find all orders for the user where a coupon was used
+      const ordersWithCoupons = await Order.find(
+          { userId, couponCode: { $ne: null } },
+          { couponCode: 1, _id: 0 } // Only select the couponCode field
+      );
+
+      // Extract the list of used coupon codes
+      const usedCouponCodes = ordersWithCoupons.map(order => order.couponCode);
+      console.log('Used coupon codes:', usedCouponCodes);
+
+      // Fetch global coupons (not used by the user)
       const globalCoupons = await Coupon.find({
           isActive: true,
           expiryDate: { $gte: new Date() },
-          userId: null
+          userId: null,
+          code: { $nin: usedCouponCodes }, // Exclude used coupons
       });
-      console.log('global coupons', globalCoupons)
-      
+      console.log('Global coupons (after filtering):', globalCoupons);
+
+      // Fetch user-specific coupons (not used by the user)
       const userCoupons = await Coupon.find({
           isActive: true,
           expiryDate: { $gte: new Date() },
-          userId: userId 
+          userId: userId,
+          code: { $nin: usedCouponCodes }, // Exclude used coupons
       });
+      console.log('User coupons (after filtering):', userCoupons);
 
-      res.render("user/coupon", { 
-          user, 
-          globalCoupons, 
-          userCoupons 
+      res.render('user/coupon', {
+          user,
+          globalCoupons,
+          userCoupons,
+          cartCount:0,
+          wishlistCount:0
       });
   } catch (error) {
-      console.error("Error fetching coupons:", error);
-      res.status(500).send("Internal Server Error");
+      console.error('Error fetching coupons:', error);
+      res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
   }
 };
 

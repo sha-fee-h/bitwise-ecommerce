@@ -90,13 +90,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (response.ok) {
                 const data = await response.text();
-                alert("OTP has been resent!"); // Notify the user
+                Swal.fire({ icon: "success", title: "OTP has been resent!", text: data.message ,showConfirmButton:false , timer:1000})
             } else {
-                alert("Failed to resend OTP. Please try again.");
+                Swal.fire({ icon: "error", title: "Failed to resend otp, please try again", text: data.message ,showConfirmButton:false , timer:1000})
             }
         } catch (error) {
             console.error("Error resending OTP:", error);
-            alert("An error occurred. Please try again later.");
+            Swal.fire({ icon: "error", title: "Internal Server Error", text: data.message ,showConfirmButton:false , timer:1000})
         }
 
         // Restart the countdown after resending OTP

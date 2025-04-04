@@ -2,6 +2,9 @@ const Order = require('../../models/orderSchema');
 const User = require('../../models/userSchema');
 const Wallet = require('../../models/walletSchema'); 
 const Product = require('../../models/productSchema')
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
+const { v4: uuidv4 } = require("uuid");
 
 
 const getOrderManagement = async (req, res) => {
@@ -54,7 +57,7 @@ const getOrderManagement = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching orders:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('Internal Server Error');
     }
 };
 
@@ -67,12 +70,12 @@ const getOrderDetails = async (req, res) => {
             .populate('products.productId')
             .populate('address');
         if (!order) {
-            return res.status(404).send('Order not found');
+            return res.status(STATUS_CODES.NOT_FOUND).send(MESSAGES.NOT_FOUND('Order'));
         }
         res.render('admin/order-details', { order });
     } catch (error) {
         console.error('Error fetching order details:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send('Internal Server Error');
     }
 };
 
@@ -84,16 +87,16 @@ const updateOrderStatus = async (req, res) => {
 
         const order = await Order.findOne({ orderId });
         if (!order) {
-            return res.status(404).json({ success: false, message: 'Order not found' });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('Order') });
         }
 
-        if (!['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned'].includes(deliveryStatus)) {
-            return res.status(400).json({ success: false, message: 'Invalid status' });
+        if (!['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Returned', 'Return Accepted', 'Return Rejected'].includes(deliveryStatus)) {
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'Invalid status' });
         }
 
         
         if (order.deliveryStatus === 'Cancelled') {
-            return res.status(400).json({ success: false, message: 'Cannot change status of cancelled order' });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'Cannot change status of cancelled order' });
         }
 
         
@@ -109,7 +112,7 @@ const updateOrderStatus = async (req, res) => {
         } else if (deliveryStatus === 'Returned' && order.deliveryStatus !== 'Returned') {
             
             if (order.deliveryStatus !== 'Delivered') {
-                return res.status(400).json({ success: false, message: 'Order must be delivered to be marked as returned' });
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'Order must be delivered to be marked as returned' });
             }
 
             
@@ -129,7 +132,7 @@ const updateOrderStatus = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error updating order status:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: error.message });
     }
 };
 
@@ -142,7 +145,7 @@ const verifyReturn = async (req, res) => {
 
         const order = await Order.findOne({ orderId }).populate('userId');
         if (!order || order.deliveryStatus !== 'Returned') {
-            return res.status(400).json({ success: false, message: 'Invalid return request' });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: 'Invalid return request' });
         }
 
         if (accepted) {
@@ -150,7 +153,10 @@ const verifyReturn = async (req, res) => {
             const wallet = await Wallet.findOne({ userId: order.userId._id }) || new Wallet({ userId: order.userId._id, balance: 0 });
             wallet.balance += order.total; 
             wallet.transactions = wallet.transactions || [];
+            const transactionId = uuidv4();
+            
             wallet.transactions.push({
+                id: transactionId,
                 amount: order.total,
                 type: 'credit',
                 description: `Refund for order #${order.orderId}`,
@@ -165,10 +171,10 @@ const verifyReturn = async (req, res) => {
 
 
             order.paymentStatus = 'Refunded';
-            order.deliveryStatus = 'Returned'; 
+            order.deliveryStatus = 'Return Accepted'; 
         } else {
             
-            order.deliveryStatus = 'Delivered';
+            order.deliveryStatus = 'Return Rejected';
             order.returnReason = null; 
             order.paymentStatus = 'Paid'; 
         }
@@ -177,7 +183,7 @@ const verifyReturn = async (req, res) => {
         res.json({ success: true });
     } catch (error) {
         console.error('Error verifying return:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: error.message });
     }
 };
 

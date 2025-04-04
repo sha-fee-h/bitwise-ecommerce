@@ -1,6 +1,7 @@
 const Product = require('../../models/productSchema')
 const Category = require('../../models/categorySchema')
-
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
 
 
 const getInventoryManagement = async (req, res) => {
@@ -41,7 +42,7 @@ const getInventoryManagement = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching inventory:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
     }
 };
 
@@ -53,13 +54,13 @@ const updateStock = async (req, res) => {
 
         const product = await Product.findById(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: 'Product not found' });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('Product') });
         }
 
         
         const newStock = product.stock + stockChange;
         if (newStock < 0) {
-            return res.status(400).json({ success: false, message: 'Stock cannot be negative' });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.NEGATIVE_STOCK });
         }
 
         
@@ -69,13 +70,13 @@ const updateStock = async (req, res) => {
         );
 
         if (updateResult.modifiedCount === 0) {
-            return res.status(500).json({ success: false, message: 'Failed to update stock' });
+            return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.STOCK_UPDATE_FAILED });
         }
 
         res.json({ success: true });
     } catch (error) {
         console.error('Error updating stock:', error);
-        res.status(500).json({ success: false, message: error.message });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: error.message });
     }
 };
 

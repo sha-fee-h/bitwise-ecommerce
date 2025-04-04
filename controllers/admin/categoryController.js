@@ -1,5 +1,6 @@
 const Category = require('../../models/categorySchema')
-
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes')
 
 
 const categoryInfo = async (req, res) => {
@@ -13,7 +14,7 @@ const categoryInfo = async (req, res) => {
 
         const categoryData = await Category.find({
             name: { $regex: search, $options: "i" },
-            status:"listed" //only show listed categories
+            // status:"listed" //only show listed categories
         })
             .sort({ createdAt: -1 })
             .skip(skip)
@@ -47,7 +48,7 @@ const addCategory = async (req, res) => {
         
         const existingCategory = await Category.findOne({ name });
         if (existingCategory) {
-            req.flash("error", "Category already exists!");
+            req.flash("error", MESSAGES.EXISTING_NAME('Category'));
             return res.redirect("/admin/category-management");
         }
 
@@ -55,11 +56,11 @@ const addCategory = async (req, res) => {
         const newCategory = new Category({ name, description });
         await newCategory.save();
 
-        req.flash("success", "Category added successfully!");
+        req.flash("success", MESSAGES.ADD_SUCCESS('Category'));
         res.redirect("/admin/category-management");
     } catch (error) {
         console.error("Error adding category:", error);
-        req.flash("error", "Failed to add category.");
+        req.flash("error", MESSAGES.ADD_FAILED('Category'));
         res.redirect("/admin/category-management");
     }
 
@@ -76,7 +77,7 @@ const editCategory = async (req, res) => {
         
         const existingCategory = await Category.findOne({ name: categoryName, _id: { $ne: id } });
         if (existingCategory) {
-            req.flash("error", "Category name already exists!");
+            req.flash("error", MESSAGES.EXISTING_NAME('Category'));
             return res.redirect("/admin/category-management");
         }
 
@@ -88,15 +89,15 @@ const editCategory = async (req, res) => {
         );
 
         if (!updatedCategory) {
-            req.flash("error", "Category not found.");
+            req.flash("error", MESSAGES.NOT_FOUND("Category"));
             return res.redirect("/admin/category-management");
         }
 
-        req.flash("success", "Category updated successfully!");
+        req.flash("success", MESSAGES.UPDATE_SUCCESS('Category'));
         res.redirect("/admin/category-management");
     } catch (error) {
         console.error("Error updating category:", error);
-        req.flash("error", "Failed to update category.");
+        req.flash("error", MESSAGES.UPDATE_FAILED('Category'));
         res.redirect("/admin/category-management");
     }
 };
@@ -112,18 +113,18 @@ const listCategory = async (req, res) => {
 
         if (!category) {
 
-            req.flash("error", "Category not found!");
+            req.flash("error", MESSAGES.NOT_FOUND('Category'));
 
-            return res.status(404).json({ success: false, message: "Category not found" });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('Category')});
 
         }
         req.flash("success", "Category unlisted successfully!");
         
-        res.status(200).json({ success: true, newStatus: category.status });
+        res.status(STATUS_CODES.OK).json({ success: true, newStatus: category.status });
     } catch (error) {
         console.error("Error updating category status:", error);
-        req.flash("error", "Error listing category");
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        req.flash("error", MESSAGES.UNLIST_FAILED('Category'));
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: INTERNAL_SERVER_ERROR });
     }
 };
 

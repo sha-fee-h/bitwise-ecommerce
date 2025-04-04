@@ -1,14 +1,20 @@
 const Wallet = require('../../models/walletSchema');
 const User = require('../../models/userSchema');
 const Order = require('../../models/orderSchema');
+const mongoose = require('mongoose');
+const MESSAGES = require('../../constants/messages')
+const STATUS_CODES = require('../../constants/statusCodes');
 
 
 const getTransactions = async (req, res) => {
     try {
         
+        const page = parseInt(req.query.page) || 1; 
+        const limit = parseInt(req.query.limit) || 10; 
+        const startIndex = (page - 1) * limit;
+
+        
         const wallets = await Wallet.find().populate('userId', 'userName email phone');
-        
-        
         const orders = await Order.find()
             .populate('userId', 'userName email phone')
             .populate('products.productId');
@@ -17,7 +23,6 @@ const getTransactions = async (req, res) => {
         const walletTransactions = [];
         for (const wallet of wallets) {
             wallet.transactions.forEach(transaction => {
-                
                 let sourceOrderId = null;
                 if (transaction.description.includes('Refund for order #')) {
                     sourceOrderId = transaction.description.match(/#(.+)/)?.[1];
@@ -28,7 +33,7 @@ const getTransactions = async (req, res) => {
                 }
 
                 walletTransactions.push({
-                    transactionId: transaction._id.toString(),
+                    transactionId: transaction.id,
                     date: transaction.date,
                     user: wallet.userId,
                     type: transaction.type,
@@ -47,10 +52,10 @@ const getTransactions = async (req, res) => {
                 (order.paymentMethod === 'Cash on Delivery')
             )
             .map(order => ({
-                transactionId: order.paymentId || order._id.toString(), 
+                transactionId: order.paymentId || order._id.toString(),
                 date: order.transactionDate || order.orderDate,
                 user: order.userId,
-                type: order.paymentMethod.toLowerCase().replace(' ', '_'), 
+                type: order.paymentMethod.toLowerCase().replace(' ', '_'),
                 amount: order.total,
                 description: `${order.paymentMethod} payment for order #${order.orderId}`,
                 source: order.paymentMethod.toLowerCase().replace(' ', '_'),
@@ -59,17 +64,26 @@ const getTransactions = async (req, res) => {
 
         
         const transactions = [...walletTransactions, ...orderTransactions];
-
-        
         transactions.sort((a, b) => b.date - a.date);
 
-        res.render('admin/transactions', { transactions });
+        
+        const totalTransactions = transactions.length;
+        const totalPages = Math.ceil(totalTransactions / limit);
+        const paginatedTransactions = transactions.slice(startIndex, startIndex + limit);
+
+        
+        res.render('admin/transactions', {
+            transactions: paginatedTransactions,
+            currentPage: page,
+            totalPages,
+            limit,
+            totalTransactions
+        });
     } catch (error) {
         console.error('Error fetching transactions:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
     }
 };
-
 
 const getTransactionDetails = async (req, res) => {
     try {
@@ -80,16 +94,17 @@ const getTransactionDetails = async (req, res) => {
         let user = null;
         let transactionSource = null;
 
-        
-        let wallet = await Wallet.findOne({ 'transactions._id': transactionId })
+        // Check wallet transactions by custom 'id' field
+        let wallet = await Wallet.findOne({ 'transactions.id': transactionId })
             .populate('userId', 'userName email phone');
 
         if (wallet) {
-            transaction = wallet.transactions.id(transactionId);
+            // Find the transaction subdocument by custom 'id'
+            transaction = wallet.transactions.find(t => t.id === transactionId);
             user = wallet.userId;
             transactionSource = 'wallet';
 
-            
+            // Extract orderId from description
             let orderId = null;
             if (transaction.description.includes('Refund for order #')) {
                 orderId = transaction.description.match(/#(.+)/)?.[1];
@@ -104,15 +119,16 @@ const getTransactionDetails = async (req, res) => {
                     .populate('products.productId')
                     .populate('address');
             }
-        } else {
-            
+        }
+
+        // Fallback: Check if transactionId is an order paymentId or _id
+        if (!transaction) {
             let order = await Order.findOne({ paymentId: transactionId })
                 .populate('userId', 'userName email phone')
                 .populate('products.productId')
                 .populate('address');
 
-            if (!order) {
-                
+            if (!order && mongoose.Types.ObjectId.isValid(transactionId)) {
                 order = await Order.findOne({ _id: transactionId })
                     .populate('userId', 'userName email phone')
                     .populate('products.productId')
@@ -134,7 +150,7 @@ const getTransactionDetails = async (req, res) => {
         }
 
         if (!transaction) {
-            return res.status(404).render('404');
+            return res.status(STATUS_CODES.NOT_FOUND).render('404');
         }
 
         res.render('admin/transaction-details', {
@@ -145,7 +161,7 @@ const getTransactionDetails = async (req, res) => {
         });
     } catch (error) {
         console.error('Error fetching transaction details:', error);
-        res.status(500).send('Internal Server Error');
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
     }
 };
 

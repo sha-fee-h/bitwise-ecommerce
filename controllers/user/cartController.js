@@ -3,7 +3,9 @@ const User = require("../../models/userSchema");
 const Order = require("../../models/orderSchema");
 const Product= require('../../models/productSchema')
 const Offer=require('../../models/offerSchema')
-const Wishlist = require('../../models/wishlistSchema')
+const Wishlist = require('../../models/wishlistSchema');
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
 
 
 async function applyDiscounts(cart) {
@@ -81,21 +83,25 @@ const loadCartPage = async (req, res, next) => {
             return res.render("user/cart-management", {
                 user,
                 cart: null,
-                cartTotal: 0,
+                subTotal: 0,
                 cartDiscount: 0,
-                finalTotal: 0
+                finalTotal: 0,
+                cartCount:0,
+                wishlistCount:0
             });
         }
 
-        
+        let subTotal = cart.products.reduce((sum,item)=>sum+(item.price*item.quantity),0)
         cart = await applyDiscounts(cart);
 
         res.render("user/cart-management", {
             user,
             cart,
-            cartTotal: cart.cartTotal,
+            subTotal: subTotal,
             cartDiscount: cart.cartDiscount,
-            finalTotal: cart.cartTotal - cart.cartDiscount
+            finalTotal: cart.cartTotal,
+            cartCount:1,
+            wishlistCount:0
         });
     } catch (error) {
         console.error("Error loading cart page:", error);
@@ -103,36 +109,60 @@ const loadCartPage = async (req, res, next) => {
     }
 };
 
-const getCartData = async (req, res) => {
+
+const getCartData = async (req,res) => {
     try {
         const userId = req.session?.userData?._id || req.user?._id;
+        const user = await User.findById(userId);
 
         if (!userId) {
-            return res.status(401).json({ success: false, error: "User not authenticated" });
+            return res.status(401).json({ error: "User not authenticated" });
         }
 
         let cart = await Cart.findOne({ userId }).populate("products.productId");
 
         if (!cart || cart.products.length === 0) {
-            return res.json({ success: true, products: [], cartTotal: 0, cartDiscount: 0 });
+            return res.json({ cart: null, subTotal: 0, cartDiscount: 0, finalTotal: 0 });
         }
 
+        let subTotal = cart.products.reduce((sum,item)=>sum+(item.price*item.quantity),0)
         cart = await applyDiscounts(cart);
-
+        console.log('from get cart data , cart.originalPrice is ',cart)
         res.json({
-            success: true,
-            products: cart.products,
-            cartTotal: cart.cartTotal,
+            cart,
+            subTotal: subTotal,
             cartDiscount: cart.cartDiscount,
-            finalTotal: cart.cartTotal - cart.cartDiscount
+            finalTotal: cart.cartTotal,
         });
     } catch (error) {
-        console.error("Error fetching cart:", error);
-        res.status(500).json({ success: false, error: "Internal server error" });
+        console.error('Error fetching cart data:', error);
+        res.status(500).json({ error: 'Failed to fetch cart data' });
+    }
+}
+
+const clearCart = async (req, res) => {
+    try {
+        const userId = req.session?.userData?._id || req.user?._id;
+        if (!userId) {
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        const cart = await Cart.findOne({ userId });
+        if (!cart) {
+            return res.status(404).json({ error: "Cart not found" });
+        }
+
+        cart.products = [];
+        cart.cartTotal = 0;
+        cart.cartDiscount = 0;
+        await cart.save();
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error clearing cart:', error);
+        res.status(500).json({ error: 'Failed to clear cart' });
     }
 };
-
-
 
 const addToCart = async (req, res) => {
     try {
@@ -141,22 +171,25 @@ const addToCart = async (req, res) => {
 
         quantity = parseInt(quantity, 10);
         if (isNaN(quantity) || quantity <= 0) {
-            return res.status(400).json({ success: false, message: "Invalid quantity" });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.INVALID_QUANTITY });
         }
 
         if (!userId) {
-            return res.status(401).json({ success: false, error: "User not authenticated" });
+            return res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, error: MESSAGES.USER_NOT_AUTHENTICATED });
         }
 
         const product = await Product.findById(productId).populate('category');
         if (!product) {
-            return res.status(404).json({ success: false, error: "Product not found" });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, error: MESSAGES.PRODUCT_NOT_FOUND });
         }
 
         if (product.stock < quantity) {
-            return res.status(400).json({ success: false, error: "Not enough stock available" });
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, error: MESSAGES.NOT_ENOUGH_STOCK });
         }
 
+        if (product.status==='unlisted' || product.category.status==='unlisted') {
+            return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, error: MESSAGES.PRODUCT_NOT_AVAILABLE });
+        }
         
         let wishlist = await Wishlist.findOne({ userId });
         if (wishlist) {
@@ -177,10 +210,10 @@ const addToCart = async (req, res) => {
         let existingProduct = cart.products.find((p) => p.productId.toString() === productId);
         if (existingProduct) {
             if (existingProduct.quantity >= product.stock) {
-                return res.status(400).json({ success: false, error: "Not enough stock available" });
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, error: MESSAGES.NOT_ENOUGH_STOCK });
             }
             if (existingProduct.quantity >= 5) {
-                return res.status(400).json({ success: false, error: "Cannot add more than 5" });
+                return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, error: MESSAGES.MAX_QUANTITY_EXCEEDED });
             }
             existingProduct.quantity += quantity;
             existingProduct.productTotal = existingProduct.quantity * product.price;
@@ -199,23 +232,23 @@ const addToCart = async (req, res) => {
         await cart.save();
 
         console.log("Product added to cart:", cart);
-        res.status(200).json({ success: true, message: "Product added to cart", cart });
+        res.status(STATUS_CODES.OK).json({ success: true, message: MESSAGES.PRODUCT_ADDED_TO_CART, cart });
     } catch (error) {
         console.error("Error adding product to cart:", error);
-        res.status(500).json({ success: false, error: "Internal server error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, error: MESSAGES.INTERNAL_SERVER_ERROR });
     }
 };
 
 
 
-const updateCartQuantity = async (req, res) => {
+const   updateCartQuantity = async (req, res) => {
     try {
         const { productId } = req.params;
         const { change } = req.body;
         const userId = req.session?.userData?._id || req.user?._id;
 
         if (!userId) {
-            return res.status(401).json({ success: false, error: "User not authenticated" });
+            return res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, error: "User not authenticated" });
         }
 
         
@@ -225,17 +258,17 @@ const updateCartQuantity = async (req, res) => {
                 populate: { path: 'category' } 
             });
 
-        if (!cart) return res.status(404).json({ success: false, error: "Cart not found" });
+        if (!cart) return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, error: "Cart not found" });
 
         const product = cart.products.find(p => p.productId._id.toString() === productId);
-        if (!product) return res.status(404).json({ success: false, error: "Product not found in cart" });
+        if (!product) return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, error: "Product not found in cart" });
 
         product.quantity += change;
 
         if (product.quantity <= 0 || product.quantity > 5) {
             product.quantity = 1;
-        } else if (product.productId.stock < product.quantity) {
-            return res.status(404).json({ success: false, error: "Exceeded Stock Limit" });
+        } else if (product.productId.stock < product.quantity && change>=0) {
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, error: "Exceeded Stock Limit" });
         } else {
             product.productTotal = product.quantity * product.price;
         }
@@ -245,7 +278,7 @@ const updateCartQuantity = async (req, res) => {
         res.json({ success: true, message: "Quantity updated", cart });
     } catch (error) {
         console.error("Error updating cart quantity:", error);
-        res.status(500).json({ success: false, error: "Internal server error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, error: "Internal server error" });
     }
 };
 
@@ -255,13 +288,13 @@ const removeFromCart = async (req, res) => {
         const { productId } = req.params;
 
         if (!userId) {
-            return res.status(401).json({ success: false, error: "User not authenticated" });
+            return res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, error: "User not authenticated" });
         }
 
         let cart = await Cart.findOne({ userId });
 
         if (!cart) {
-            return res.status(404).json({ success: false, error: "Cart not found" });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, error: "Cart not found" });
         }
 
         
@@ -273,10 +306,10 @@ const removeFromCart = async (req, res) => {
 
         await cart.save();
 
-        return res.status(200).json({ success: true, message: "Product removed from cart", cart });
+        return res.status(STATUS_CODES.OK).json({ success: true, message: "Product removed from cart", cart });
     } catch (error) {
         console.error("Error removing item from cart:", error);
-        res.status(500).json({ success: false, error: "Internal server error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, error: "Internal server error" });
     }
 };
 
@@ -287,13 +320,13 @@ const moveToWishlist = async (req, res) => {
         const { productId } = req.params; 
 
         if (!userId) {
-            return res.status(401).json({ success: false, message: "User not authenticated" });
+            return res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, message: "User not authenticated" });
         }
 
         
         const product = await Product.findById(productId);
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: "Product not found" });
         }
 
         
@@ -315,13 +348,81 @@ const moveToWishlist = async (req, res) => {
 
         await wishlist.save();
 
-        res.status(200).json({ success: true, message: "Product moved to wishlist" });
+        res.status(STATUS_CODES.OK).json({ success: true, message: "Product moved to wishlist" });
 
     } catch (error) {
         console.error("Error moving product to wishlist:", error);
-        res.status(500).json({ success: false, message: "Internal server error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
     }
 };
 
+const validateStock = async (req, res) => {
+    try {
+        const userId = req.session?.userData?._id || req.user?._id;
+        if (!userId) {
+            return res.status(STATUS_CODES.UNAUTHORIZED).json({
+                success: false,
+                message: MESSAGES.USER_NOT_AUTHENTICATED,
+            });
+        }
 
-module.exports = { loadCartPage , addToCart, getCartData, updateCartQuantity, removeFromCart, moveToWishlist};
+        const cart = await Cart.findOne({ userId }).populate({
+            path: 'products.productId',
+            populate: { path: 'category' }, 
+        });
+
+        if (!cart || cart.products.length === 0) {
+            return res.status(STATUS_CODES.BAD_REQUEST).json({
+                success: false,
+                message: MESSAGES.CART_EMPTY,
+            });
+        }
+
+        
+        for (const item of cart.products) {
+            const product = item.productId; 
+
+            
+            if (!product) {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({
+                    success: false,
+                    message: MESSAGES.PRODUCT_NOT_FOUND,
+                });
+            }
+
+            
+            if (product.stock < item.quantity) {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({
+                    success: false,
+                    message: MESSAGES.PRODUCT_OUT_OF_STOCK.replace('{product}', product.name || product._id),
+                });
+            }
+
+            
+            if (product.status === 'unlisted') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({
+                    success: false,
+                    message: MESSAGES.PRODUCT_UNLISTED.replace('{product}', product.name || product._id),
+                });
+            }
+
+            
+            if (product.category && product.category.status === 'unlisted') {
+                return res.status(STATUS_CODES.BAD_REQUEST).json({
+                    success: false,
+                    message: MESSAGES.CATEGORY_UNLISTED.replace('{category}', product.category.name || product.category._id),
+                });
+            }
+        }
+
+        res.status(STATUS_CODES.OK).json({ success: true });
+    } catch (error) {
+        console.error("Error validating cart for checkout:", error);
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: MESSAGES.INTERNAL_SERVER_ERROR,
+        });
+    }
+};
+
+module.exports = { loadCartPage ,getCartData, clearCart, addToCart, updateCartQuantity, removeFromCart, moveToWishlist, validateStock};

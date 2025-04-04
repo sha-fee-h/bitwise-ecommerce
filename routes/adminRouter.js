@@ -103,8 +103,8 @@ router.get('/download-sales-report',adminAuth, salesController.downloadSalesRepo
 
 //----------- transaction management -----------------//
 
-router.get('/transactions', transactionController.getTransactions);
-router.get('/transactions/:transactionId', transactionController.getTransactionDetails);
+router.get('/transactions',adminAuth, transactionController.getTransactions);
+router.get('/transactions/:transactionId',adminAuth, transactionController.getTransactionDetails);
 
 
 

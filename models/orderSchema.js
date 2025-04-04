@@ -50,13 +50,13 @@ const orderSchema = new mongoose.Schema(
         deliveryStatus: {
             type: String,
             required: true,
-            enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned"],
+            enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled", "Returned", "Return Accepted", "Return Rejected"],
             default: "Pending",
         },
         paymentMethod: {
             type: String,
             required: true,
-            enum: ["Razorpay", "Wallet Payments", "Cash on Delivery"],
+            enum: ["Razorpay", "Wallet", "Cash on Delivery"],
         },
         paymentStatus: {
             type: String,

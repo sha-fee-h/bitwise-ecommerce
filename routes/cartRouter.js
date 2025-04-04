@@ -9,6 +9,10 @@ router.get("/",userAuth, cartController.loadCartPage);
 
 router.get("/data",userAuth, cartController.getCartData);
 
+router.delete('/clear',userAuth, cartController.clearCart)
+
+router.get('/validate-stock',userAuth, cartController.validateStock);
+
 router.post("/add",userAuth, cartController.addToCart);
 
 router.patch("/update/:productId",userAuth, cartController.updateCartQuantity);

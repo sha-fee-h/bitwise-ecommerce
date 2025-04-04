@@ -4,78 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Bitwise</title>
-    <link rel="stylesheet" href="/css/user/dashboard.css"> 
-    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/css/user/util.css" />
-    <link rel="stylesheet" type="text/css" href="/css/user/main.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
-    <style>.product-info {
-        display: flex;
-        align-items: center;
-        gap: 10px; /* Space between image and name */
-        margin-bottom: 5px;
-    }
-    
-    .product-image {
-        width: 50px;  /* Adjust size as needed */
-        height: 50px;
-        object-fit: cover; /* Ensures image maintains aspect ratio */
-        border-radius: 4px; /* Optional: for rounded corners */
-    }
-    
-    .items-list {
-        list-style: none;
-        padding: 0;
-    }
-    
-    .item {
-        margin-bottom: 15px;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }</style>
+    <link rel="stylesheet" type="text/css" href="/css/user/dashboard.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/footer.css">
+
+
+    <!-- Include Cropper.js CSS (local) -->
+    <link rel="stylesheet" href="/css/cropper.min.css" />
+    <style>
+        
+    </style>
 </head>
 <body>
-
-    <!-- header -->
-
+    <!-- Header -->
     <%- include('./partials/header.ejs') %>
-
 
     <div class="dashboard-container">
         <!-- Side Panel -->
         <div class="side-panel">
-            
             <ul>
-                <li class="<%= page === 'dashboard' ? 'active' : '' %>">
-                    <a href="/user/profile">Dashboard</a>
-                </li>
                 <li class="<%= page === 'orders' ? 'active' : '' %>">
                     <a href="/orders/history">Order History</a>
                 </li>
@@ -105,23 +55,41 @@
 
         <!-- Main Content -->
         <div class="main-content">
-
             <!-- User Profile Section -->
             <section class="profile-section">
                 <div class="profile-container">
-                    <h2>User Profile</h2>
-            
-                    <!-- Profile Image -->
-                    <div class="profile-image">
-                        <img src="<%= user.profileImage || '/images/default-profile.jpg' %>" alt="Profile Picture">
-                        <form action="/user/update-profile-image" method="POST" enctype="multipart/form-data">
+                    <h2>Profile</h2>
+                    <div class="profile-imagee">
+                        <img id="profileImageDisplay" src="<%= user.profileImage && user.profileImage.trim() !== '' ? user.profileImage : '/images/default-profile.jpg' %>"
+                        onerror="this.onerror=null; this.src='/images/default-profile.jpg';" alt="Profile Picture">
+                        <form id="profileImageForm" action="/user/update-profile-image" method="POST" enctype="multipart/form-data">
                             <label for="profileImage">Choose File</label>
-                            <input type="file" id="profileImage" name="profileImage" accept="image/*">
-                            <button type="submit">Update Image</button>
-                        </form>                        
+                            <input type="file" id="profileImage" name="profileImage" accept="image/jpeg,image/png,image/gif">
+                            <input type="file" id="croppedImage" name="croppedImage" accept="image/*" hidden />
+                            <button type="submit" id="updateImageBtn" style="display: none;">Update Image</button>
+                        </form>
+                        <div id="image-error"></div>
                         <a href="/user/profile/edit"><button>Edit Profile</button></a>
                     </div>
-            
+
+                    <!-- Cropper Modal -->
+                    <div class="cropperr-modal" id="cropperModal">
+                        <div class="cropperr-container">
+                            <h3>Crop Your Profile Image</h3>
+                            <div class="cropperr-image-container">
+                                <img id="imageToCrop" style="width: 100%; height: 100%; display: none;">
+                            </div>
+                            <div class="cropperr-preview">
+                                <img id="cropPreview" src="" alt="Preview">
+                            </div>
+                            <div class="cropper-buttons">
+                                <button type="button" id="cropImageBtn">Crop & Save</button>
+                                <button type="button" id="cancelCropBtn">Cancel</button>
+                                <div id="cropLoading">Processing...</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- User Details -->
                     <div class="user-info">
                         <p><strong>Name:</strong> <%= user.userName %></p>
@@ -131,29 +99,28 @@
                     </div>
                 </div>
             </section>
-            
 
             <!-- Primary Address Section -->
-        <section class="address-section">
-            <div class="card">
-                <h2>Primary Address</h2>
-                <% 
-                    // Find the default address or use the first one
-                    const primaryAddress = user.addresses.find(addr => addr.isDefault) || user.addresses[0];
-                %>
-                <% if (primaryAddress) { %>
-                    <p><strong>Name:</strong> <%= primaryAddress.firstName %> <%= primaryAddress.lastName %></p>
-                    <p><strong>Address:</strong> <%= primaryAddress.street %>, <%= primaryAddress.city %>, <%= primaryAddress.state %> <%= primaryAddress.postalCode %>, <%= primaryAddress.country %></p>
-                    <p><strong>Phone:</strong> <%= primaryAddress.phoneNumber %></p>
-                    <% if (primaryAddress.additionalInfo) { %>
-                        <p><strong>Additional Info:</strong> <%= primaryAddress.additionalInfo %></p>
+            <section class="address-section">
+                <div class="card">
+                    <h2>Primary Address</h2>
+                    <% 
+                        // Find the default address or use the first one
+                        const primaryAddress = user.addresses.find(addr => addr.isDefault) || user.addresses[0];
+                    %>
+                    <% if (primaryAddress) { %>
+                        <p><strong>Name:</strong> <%= primaryAddress.firstName %> <%= primaryAddress.lastName %></p>
+                        <p><strong>Address:</strong> <%= primaryAddress.street %>, <%= primaryAddress.city %>, <%= primaryAddress.state %> <%= primaryAddress.postalCode %>, <%= primaryAddress.country %></p>
+                        <p><strong>Phone:</strong> <%= primaryAddress.phoneNumber %></p>
+                        <% if (primaryAddress.additionalInfo) { %>
+                            <p><strong>Additional Info:</strong> <%= primaryAddress.additionalInfo %></p>
+                        <% } %>
+                        <a href="/user/profile/address" class="btnn edit-btn">Edit Address</a>
+                    <% } else { %>
+                        <p>No address set.</p>
                     <% } %>
-                    <a href="/user/profile/address" class="btnn edit-btn">Edit Address</a>
-                <% } else { %>
-                    <p>No address set. </p>
-                <% } %>
-            </div>
-        </section>
+                </div>
+            </section>
 
             <!-- Recent Orders Section -->
             <section class="orders-section">
@@ -218,21 +185,427 @@
                     <% } %>
                 </div>
             </section>
-            
-            <style>
-                .order-item small {
-                    color: #666;
-                    font-size: 0.85em;
-                }
-                .order-details {
-                display: block;
-                    margin-top: 10px;
-                    padding-left: 20px;
-
-                }
-                
-            </style>
         </div>
     </div>
+<%- include('./partials/footer') %>
+
+
+    <!-- Include Cropper.js JS (local), Bootstrap, and SweetAlert2 -->
+    <script src="/js/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Ensure the DOM is fully loaded before setting up event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if Cropper.js is loaded
+            if (typeof Cropper === 'undefined') {
+                console.error('Cropper.js failed to load');
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: "Failed to load the image cropping tool. Please try again later.",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#060318",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancel",
+                    cancelButtonColor: "#565564",
+                    customClass: {
+                        popup: 'swal-custom-popup',
+                        title: 'swal-custom-title',
+                        htmlContainer: 'swal-custom-text',
+                        icon: 'swal-custom-icon',
+                        confirmButton: 'swal-custom-button',
+                        cancelButton: 'swal-custom-cancel-button'
+                    }
+                });
+                return;
+            }
+
+            let cropper = null;
+            const imageInput = document.getElementById('profileImage');
+            const cropperModal = document.getElementById('cropperModal');
+            const imageToCrop = document.getElementById('imageToCrop');
+            const cropPreview = document.getElementById('cropPreview');
+            const cropImageBtn = document.getElementById('cropImageBtn');
+            const cancelCropBtn = document.getElementById('cancelCropBtn');
+            const croppedImageInput = document.getElementById('croppedImage');
+            const profileImageForm = document.getElementById('profileImageForm');
+            const profileImageDisplay = document.getElementById('profileImageDisplay');
+            const imageError = document.getElementById('image-error');
+            const cropLoading = document.getElementById('cropLoading');
+
+            // Log browser information for debugging
+            console.log('Browser:', navigator.userAgent);
+
+            // Function to convert Base64 to File
+            function base64ToFile(base64, filename) {
+                const arr = base64.split(",");
+                const mime = arr[0].match(/:(.*?);/)[1];
+                const bstr = atob(arr[1]);
+                let n = bstr.length;
+                const u8arr = new Uint8Array(n);
+                while (n--) {
+                    u8arr[n] = bstr.charCodeAt(n);
+                }
+                return new File([u8arr], filename, { type: mime });
+            }
+
+            // Handle image selection
+            imageInput.addEventListener('change', (e) => {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    const file = files[0];
+                    console.log('Selected file:', file);
+
+                    // Validate file size (max 5MB)
+                    const maxSize = 5 * 1024 * 1024; // 5MB
+                    if (file.size > maxSize) {
+                        imageError.textContent = "Please select an image smaller than 5MB.";
+                        imageError.style.display = "block";
+                        setTimeout(() => {
+                            imageError.style.display = "none";
+                        }, 3000);
+                        imageInput.value = '';
+                        return;
+                    }
+
+                    // Validate file type
+                    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+                    if (!validImageTypes.includes(file.type)) {
+                        imageError.textContent = "Please select an image file (JPEG, PNG, or GIF).";
+                        imageError.style.display = "block";
+                        setTimeout(() => {
+                            imageError.style.display = "none";
+                        }, 3000);
+                        imageInput.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        console.log('FileReader loaded image:', event.target.result);
+                        imageToCrop.src = '';
+                        imageToCrop.src = event.target.result;
+                        imageToCrop.style.display = 'block';
+                        cropperModal.style.display = 'flex';
+
+                        // Wait for the image to load before initializing Cropper.js
+                        imageToCrop.onload = () => {
+                            console.log('Image loaded in cropper modal');
+                            // Destroy any existing cropper instance
+                            if (cropper) {
+                                cropper.destroy();
+                                cropper = null;
+                            }
+
+                            try {
+                                cropper = new Cropper(imageToCrop, {
+                                    aspectRatio: 1,
+                                    viewMode: 1,
+                                    background: false,
+                                    preview: '#cropPreview',
+                                    autoCropArea: 0.8,
+                                    responsive: true,
+                                    dragMode: 'move',
+                                    cropBoxResizable: true,
+                                    crop(event) {
+                                        console.log('Crop event:', event.detail);
+                                        try {
+                                            const canvas = cropper.getCroppedCanvas({
+                                                width: 120,
+                                                height: 120,
+                                                imageSmoothingEnabled: true,
+                                                imageSmoothingQuality: 'high'
+                                            });
+                                            if (canvas) {
+                                                cropPreview.src = canvas.toDataURL('image/jpeg');
+                                                console.log('Preview updated:', cropPreview.src);
+                                            } else {
+                                                console.error('Failed to generate preview canvas');
+                                            }
+                                        } catch (error) {
+                                            console.error('Error updating preview:', error);
+                                        }
+                                    }
+                                });
+                                console.log('Cropper initialized successfully:', cropper);
+
+                                // Set initial preview
+                                const initialCanvas = cropper.getCroppedCanvas({
+                                    width: 120,
+                                    height: 120
+                                });
+                                if (initialCanvas) {
+                                    cropPreview.src = initialCanvas.toDataURL('image/jpeg');
+                                }
+                            } catch (error) {
+                                console.error('Error initializing Cropper.js:', error);
+                                Swal.fire({
+                                    icon: "error",
+                                    title: "Error!",
+                                    text: "Failed to initialize the cropper. Please try again.",
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: "#060318",
+                                    showCancelButton: true,
+                                    cancelButtonText: "Cancel",
+                                    cancelButtonColor: "#565564",
+                                    customClass: {
+                                        popup: 'swal-custom-popup',
+                                        title: 'swal-custom-title',
+                                        htmlContainer: 'swal-custom-text',
+                                        icon: 'swal-custom-icon',
+                                        confirmButton: 'swal-custom-button',
+                                        cancelButton: 'swal-custom-cancel-button'
+                                    }
+                                });
+                                cropperModal.style.display = 'none';
+                                imageInput.value = '';
+                            }
+                        };
+
+                        imageToCrop.onerror = () => {
+                            console.error('Error loading image in cropper modal');
+                            Swal.fire({
+                                icon: "error",
+                                title: "Error!",
+                                text: "Failed to load the image for cropping.",
+                                confirmButtonText: "OK",
+                                confirmButtonColor: "#060318",
+                                showCancelButton: true,
+                                cancelButtonText: "Cancel",
+                                cancelButtonColor: "#565564",
+                                customClass: {
+                                    popup: 'swal-custom-popup',
+                                    title: 'swal-custom-title',
+                                    htmlContainer: 'swal-custom-text',
+                                    icon: 'swal-custom-icon',
+                                    confirmButton: 'swal-custom-button',
+                                    cancelButton: 'swal-custom-cancel-button'
+                                }
+                            });
+                            cropperModal.style.display = 'none';
+                            imageInput.value = '';
+                        };
+                    };
+                    reader.onerror = () => {
+                        console.error('FileReader error');
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Failed to read the image file.",
+                            confirmButtonText: "OK",
+                            confirmButtonColor: "#060318",
+                            showCancelButton: true,
+                            cancelButtonText: "Cancel",
+                            cancelButtonColor: "#565564",
+                            customClass: {
+                                popup: 'swal-custom-popup',
+                                title: 'swal-custom-title',
+                                htmlContainer: 'swal-custom-text',
+                                icon: 'swal-custom-icon',
+                                confirmButton: 'swal-custom-button',
+                                cancelButton: 'swal-custom-cancel-button'
+                            }
+                        });
+                        imageInput.value = '';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Handle "Crop & Save" button click
+cropImageBtn.addEventListener('click', () => {
+    console.log('Crop & Save button clicked');
+    if (cropper) {
+        cropLoading.style.display = 'inline-block';
+        cropImageBtn.disabled = true;
+
+        try {
+            const canvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+            if (!canvas) {
+                console.error('Failed to generate cropped canvas');
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: "Failed to crop the image. Please try again.",
+                    confirmButtonText: "OK",
+                    confirmButtonColor: "#060318",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancel",
+                    cancelButtonColor: "#565564",
+                    customClass: {
+                        popup: 'swal-custom-popup',
+                        title: 'swal-custom-title',
+                        htmlContainer: 'swal-custom-text',
+                        icon: 'swal-custom-icon',
+                        confirmButton: 'swal-custom-button',
+                        cancelButton: 'swal-custom-cancel-button'
+                    }
+                });
+                cropLoading.style.display = 'none';
+                cropImageBtn.disabled = false;
+                return;
+            }
+
+            const base64Image = canvas.toDataURL('image/jpeg');
+            console.log('Cropped image data:', base64Image);
+
+            // Convert Base64 to File and set it to the hidden input
+            const file = base64ToFile(base64Image, 'profile-image.jpeg');
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            croppedImageInput.files = dataTransfer.files;
+
+            // Clear the profileImage input to ensure only croppedImage is sent
+            imageInput.value = ''; // Clear the original file input
+
+            // Update the preview image
+            cropPreview.src = base64Image;
+            cropperModal.style.display = 'none';
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Update Profile Image',
+                text: 'Are you sure you want to update your profile image?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update it!',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#060318',
+                cancelButtonColor: '#565564',
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    htmlContainer: 'swal-custom-text',
+                    icon: 'swal-custom-icon',
+                    confirmButton: 'swal-custom-button',
+                    cancelButton: 'swal-custom-cancel-button'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    console.log('User confirmed image update');
+                    // Submit the form
+                    profileImageForm.submit();
+                } else {
+                    console.log('User canceled image update');
+                    // Reset the form if canceled
+                    croppedImageInput.files = null;
+                    imageInput.value = '';
+                    cropper.destroy();
+                    cropper = null;
+                }
+            }).finally(() => {
+                cropLoading.style.display = 'none';
+                cropImageBtn.disabled = false;
+            });
+        } catch (error) {
+            console.error('Error during cropping:', error);
+            Swal.fire({
+                icon: "error",
+                title: "Error!",
+                text: "An error occurred while cropping the image.",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#060318",
+                showCancelButton: true,
+                cancelButtonText: "Cancel",
+                cancelButtonColor: "#565564",
+                customClass: {
+                    popup: 'swal-custom-popup',
+                    title: 'swal-custom-title',
+                    htmlContainer: 'swal-custom-text',
+                    icon: 'swal-custom-icon',
+                    confirmButton: 'swal-custom-button',
+                    cancelButton: 'swal-custom-cancel-button'
+                }
+            });
+            cropLoading.style.display = 'none';
+            cropImageBtn.disabled = false;
+        }
+    } else {
+        console.error('Cropper not initialized');
+        Swal.fire({
+            icon: "error",
+            title: "Error!",
+            text: "Cropper is not initialized. Please try again.",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#060318",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+            cancelButtonColor: "#565564",
+            customClass: {
+                popup: 'swal-custom-popup',
+                title: 'swal-custom-title',
+                htmlContainer: 'swal-custom-text',
+                icon: 'swal-custom-icon',
+                confirmButton: 'swal-custom-button',
+                cancelButton: 'swal-custom-cancel-button'
+            }
+        });
+        cropperModal.style.display = 'none';
+        imageInput.value = '';
+    }
+});
+
+            // Handle "Cancel" button click
+            cancelCropBtn.addEventListener('click', () => {
+                console.log('Cancel button clicked');
+                cropperModal.style.display = 'none';
+                imageInput.value = '';
+                croppedImageInput.files = null;
+                if (cropper) {
+                    cropper.destroy();
+                    cropper = null;
+                }
+            });
+
+            // Handle form submission with validation
+            profileImageForm.addEventListener('submit', (e) => {
+                if (!croppedImageInput.files || croppedImageInput.files.length === 0) {
+                    e.preventDefault();
+                    console.log('Form submission blocked: No cropped image data');
+                    imageError.textContent = "Please crop the image before submitting.";
+                    imageError.style.display = "block";
+                    setTimeout(() => {
+                        imageError.style.display = "none";
+                    }, 3000);
+                } else {
+                    console.log('Form submitting with cropped image data');
+                    Swal.fire({
+                        title: 'Uploading...',
+                        text: 'Please wait while your profile image is being updated.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                }
+            });
+
+            // Update the displayed image after a successful upload
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('imageUpdated') === 'true') {
+                console.log('Image updated successfully');
+                Swal.fire({
+                    icon: "success",
+                    title: "Success!",
+                    text: "Profile image updated successfully.",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    customClass: {
+                        popup: 'swal-custom-popup',
+                        title: 'swal-custom-title',
+                        htmlContainer: 'swal-custom-text',
+                        icon: 'swal-custom-icon'
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-<!-- views/admin/sales-report.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +30,7 @@
             min-height: 100vh;
         }
 
-        /* Sidebar (Assuming you include a sidebar partial) */
+        /* Sidebar */
         .unique-sidebar {
             width: 250px;
             background-color: var(--container-bg);
@@ -135,8 +134,8 @@
             transform: scale(1.05);
         }
 
-        /* Summary and Report Sections */
-        .summary-section, .report-section {
+        /* Summary Section */
+        .summary-section {
             padding: 20px;
             background: var(--container-bg);
             border-radius: 8px;
@@ -144,19 +143,58 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .summary-section h2, .report-section h2 {
-            font-size: 1.8rem;
+        .summary-section h2 {
+            font-size: 1.5rem;
             font-weight: 600;
             color: var(--primary-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 5px;
         }
 
-        .summary-section p {
-            font-size: 1.2rem;
-            margin: 10px 0;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .summary-item p {
+            margin: 0;
+            font-size: 1rem;
             color: var(--text-color);
+        }
+
+        .summary-item p strong {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Report Section */
+        .report-section {
+            padding: 20px;
+            background: var(--container-bg);
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-section h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
         }
 
         /* Table Styling */
@@ -166,11 +204,13 @@
             background: var(--input-bg);
             border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         th, td {
             padding: 15px;
             text-align: left;
+            font-size: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -185,9 +225,79 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
+        tr:hover {
+            background: rgba(0, 168, 232, 0.2);
+            transition: background 0.2s ease-in-out;
+        }
+
+        td {
+            color: var(--text-color);
+        }
+
+        .discount {
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        .total {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .pagination p {
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        .pagination-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .pagination-links a {
+            padding: 8px 14px;
+            border-radius: 6px;
+            background: var(--input-bg);
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .pagination-links a:hover:not(.disabled) {
+            background: var(--primary-color);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .pagination-links a.active {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .pagination-links a.disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+
         /* Download Section */
         .download-section {
             text-align: center;
+            margin-top: 20px;
         }
 
         .download-section a {
@@ -197,23 +307,52 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .filter-form { flex-direction: column; }
-            table { font-size: 0.9rem; }
-            th, td { padding: 10px; }
-            .dashboard-container { flex-direction: column; }
-            .unique-sidebar { width: 100%; }
+            .dashboard-container {
+                flex-direction: column;
+            }
+
+            .unique-sidebar {
+                width: 100%;
+            }
+
+            .filter-form {
+                flex-direction: column;
+            }
+
+            table, th, td {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .report-section {
+                overflow-x: auto;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pagination-links {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Include Sidebar Partial (Adjust as needed) -->
+        <!-- Sidebar -->
         <aside class="unique-sidebar">
             <div class="unique-sidebar-header">
                 <h2>Bitwise</h2>
             </div>
             <ul class="unique-sidebar-menu">
-                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                <li><a href="/admin/dashboard">Dashboard</a></li>
                 <li><a href="/admin/user-management">Users</a></li>
                 <li><a href="/admin/product-management">Products</a></li>
                 <li><a href="/admin/orders/manage">Orders</a></li>
@@ -221,7 +360,7 @@
                 <li><a href="/admin/coupon-management">Coupon</a></li>
                 <li><a href="/admin/offer-management">Offers</a></li>
                 <li><a href="/admin/inventory">Inventory</a></li>
-                <li><a href="/admin/sales-report">Sales</a></li>
+                <li class="active"><a href="/admin/sales-report">Sales</a></li>
                 <li><a href="/admin/transactions">Transactions</a></li>
             </ul>
         </aside>
@@ -240,8 +379,8 @@
                         <option value="yearly" <%= filterType === 'yearly' ? 'selected' : '' %>>Yearly</option>
                         <option value="custom" <%= filterType === 'custom' ? 'selected' : '' %>>Custom</option>
                     </select>
-                    <input type="date" name="startDate" id="startDate" value="<%= reportData.startDate.toISOString().split('T')[0] %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
-                    <input type="date" name="endDate" id="endDate" value="<%= reportData.endDate.toISOString().split('T')[0] %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
+                    <input type="date" name="startDate" id="startDate" value="<%= startDate %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
+                    <input type="date" name="endDate" id="endDate" value="<%= endDate %>" style="display: <%= filterType === 'custom' ? 'inline-block' : 'none' %>">
                     <button type="submit" class="btn">Generate Report</button>
                 </form>
             </div>
@@ -249,10 +388,24 @@
             <!-- Summary Section -->
             <div class="summary-section">
                 <h2>Summary</h2>
-                <p>Total Orders: <%= reportData.overallSalesCount %></p>
-                <p>Total Amount: ₹<%= reportData.overallOrderAmount.toFixed(2) %></p>
-                <p>Offer Discount: ₹<%= reportData.overallDiscount.toFixed(2) %></p>
-                <p>Coupon Discount: ₹<%= reportData.overallCouponDiscount.toFixed(2) %></p>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <p>Total Orders</p>
+                        <p><strong><%= reportData.overallSalesCount %></strong></p>
+                    </div>
+                    <div class="summary-item">
+                        <p>Total Amount</p>
+                        <p><strong>₹<%= reportData.overallOrderAmount.toFixed(2) %></strong></p>
+                    </div>
+                    <div class="summary-item">
+                        <p>Offer Discount</p>
+                        <p><strong>₹<%= reportData.overallDiscount.toFixed(2) %></strong></p>
+                    </div>
+                    <div class="summary-item">
+                        <p>Coupon Discount</p>
+                        <p><strong>₹<%= reportData.overallCouponDiscount.toFixed(2) %></strong></p>
+                    </div>
+                </div>
             </div>
 
             <!-- Report Section -->
@@ -262,25 +415,51 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Order ID</th>
-                                <th>Date</th>
-                                <th>Total (₹)</th>
-                                <th>Offer Discount (₹)</th>
-                                <th>Coupon Discount (₹)</th>
+                                <th scope="col">#</th>
+                                <th scope="col">Order ID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Total (₹)</th>
+                                <th scope="col">Offer Discount (₹)</th>
+                                <th scope="col">Coupon Discount (₹)</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <% reportData.orders.forEach(order => { %>
+                            <% reportData.orders.forEach((order, index) => { %>
                                 <tr>
+                                    <td><%= (currentPage - 1) * pageLimit + index + 1 %></td>
                                     <td><%= order.orderId %></td>
                                     <td><%= order.orderDate.toLocaleString() %></td>
-                                    <td><%= order.total.toFixed(2) %></td>
-                                    <td><%= (order.offerDiscount || 0).toFixed(2) %></td>
-                                    <td><%= (order.couponDiscount || 0).toFixed(2) %></td>
+                                    <td class="total">₹<%= order.total.toFixed(2) %></td>
+                                    <td class="discount">₹<%= (order.offerDiscount || 0).toFixed(2) %></td>
+                                    <td class="discount">₹<%= (order.couponDiscount || 0).toFixed(2) %></td>
                                 </tr>
                             <% }); %>
                         </tbody>
                     </table>
+
+                    <!-- Pagination Controls -->
+                    <div class="pagination">
+                        <p>Showing <%= (currentPage - 1) * pageLimit + 1 %> to <%= Math.min(currentPage * pageLimit, totalOrders) %> of <%= totalOrders %> orders</p>
+                        <div class="pagination-links">
+                            <% if (currentPage > 1) { %>
+                                <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= currentPage - 1 %>&limit=<%= pageLimit %>" aria-label="Previous page">Previous</a>
+                            <% } else { %>
+                                <span class="disabled" aria-disabled="true">Previous</span>
+                            <% } %>
+
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= i %>&limit=<%= pageLimit %>" class="<%= currentPage === i ? 'active' : '' %>" aria-label="Page <%= i %>">
+                                    <%= i %>
+                                </a>
+                            <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                                <a href="/admin/sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&page=<%= currentPage + 1 %>&limit=<%= pageLimit %>" aria-label="Next page">Next</a>
+                            <% } else { %>
+                                <span class="disabled" aria-disabled="true">Next</span>
+                            <% } %>
+                        </div>
+                    </div>
                 <% } else { %>
                     <p style="color: var(--error-color);">No orders found for this period.</p>
                 <% } %>
@@ -288,8 +467,8 @@
 
             <!-- Download Section -->
             <div class="download-section">
-                <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= reportData.startDate.toISOString().split('T')[0] %>&endDate=<%= reportData.endDate.toISOString().split('T')[0] %>&format=pdf" class="btn">Download PDF</a>
-                <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= reportData.startDate.toISOString().split('T')[0] %>&endDate=<%= reportData.endDate.toISOString().split('T')[0] %>&format=excel" class="btn">Download Excel</a>
+                <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&format=pdf" class="btn" aria-label="Download sales report as PDF">Download PDF</a>
+                <a href="/admin/download-sales-report?filterType=<%= filterType %>&startDate=<%= startDate %>&endDate=<%= endDate %>&format=excel" class="btn" aria-label="Download sales report as Excel">Download Excel</a>
             </div>
         </div>
     </div>
@@ -298,6 +477,11 @@
         function toggleCustomDates(filterType) {
             const startDateInput = document.getElementById('startDate');
             const endDateInput = document.getElementById('endDate');
+
+            // Reset dates when changing the filter type
+            startDateInput.value = '';
+            endDateInput.value = '';
+
             if (filterType === 'custom') {
                 startDateInput.style.display = 'inline-block';
                 endDateInput.style.display = 'inline-block';
@@ -306,6 +490,13 @@
                 endDateInput.style.display = 'none';
             }
         }
+
+        // Disable future dates
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').setAttribute('max', today);
+            document.getElementById('endDate').setAttribute('max', today);
+        });
     </script>
 </body>
 </html>

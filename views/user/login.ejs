@@ -13,22 +13,29 @@
                 <form action="/auth/signUp" method="post" id="signupForm" onsubmit="return validateSignupForm()">
                     <h1>Create Account</h1>
 
-                    <span>use your email for registration</span>
+                    <!-- Username Field -->
+<input type="text" placeholder="Name" name="userName" id="username" onkeyup="validateUsername()" />
+<div class="error" id="usernameError"></div>
+
+<!-- Email Field -->
+<input type="email" placeholder="Email" name="email" id="email" onkeyup="validateEmail()" />
+<div class="error" id="emailError"></div>
 
                     <% if (message) { %>
                     <p class="error-message" id="error"><%= message %></p>
                     <% } %>
 
-                    <input type="text" placeholder="Name" name="userName" id="username" onkeyup="validateUsername()" />
-                    <div class="error" id="usernameError"></div>
-
-                    <input type="email" placeholder="Email" name="email" id="email" onkeyup="validateEmail()" />
-                    <div class="error" id="emailError"></div>
-
-                    <input type="password" placeholder="Password" name="password" id="password" onkeyup="validatePassword()" />
+                    <div class="input-container">
+                        <input type="password" placeholder="Password" name="password" id="password" onkeyup="validatePassword()" />
+                        <span class="toggle-password" onclick="togglePassword('password')">&#128065;</span>
+                    </div>
                     <div class="error" id="passwordError"></div>
-
-                    <input type="password" placeholder="Confirm Password" name="confirm_password" id="confirmPassword" onkeyup="validateConfirmPassword()" />
+                    
+                    <!-- Confirm Password Field with Toggle -->
+                    <div class="input-container">
+                        <input type="password" placeholder="Confirm Password" name="confirm_password" id="confirmPassword" onkeyup="validateConfirmPassword()" />
+                        <span class="toggle-password" onclick="togglePassword('confirmPassword')">&#128065;</span>
+                    </div>
                     <div class="error" id="confirmPasswordError"></div>
                     
                     <input type="text" placeholder="Referrral Code" name="referralCode" id="referralCode" />
@@ -61,7 +68,10 @@
                     <input type="email" placeholder="Email" name="email" id="signinEmail" onkeyup="checkEmailInput()" />
                     <div class="error" id="signinEmailError"></div>
 
-                    <input type="password" placeholder="Password" name="password" id="signinPassword" onkeyup="checkPasswordInput()" />
+                    <div class="input-container">
+                        <input type="password" placeholder="Password" name="password" id="signinPassword" onkeyup="checkPasswordInput()" />
+                        <span class="toggle-password" onclick="togglePassword('signinPassword')">&#128065;</span>
+                    </div>
                     <div class="error" id="signinPasswordError"></div>
 
                     <a href="/auth/forgot-password">Forgot your password?</a>
@@ -86,5 +96,42 @@
         </div>
 
         <script src="/javascripts/user/login.js"></script>
+        <style>
+            /* Input Container Styling */
+            .input-container {
+                position: relative;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        
+            /* Password Fields */
+            
+        
+            /* Toggle Password Visibility Button */
+            .toggle-password {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                cursor: pointer;
+                font-size: 18px;
+                color: var(--gray-dark);
+            }
+        
+            /* Error Message Styling */
+            .error {
+                color: red;
+                font-size: 12px;
+                margin-top: 5px;
+            }
+        </style>
+        
+        <script>
+            // Toggle password visibility without changing input width
+            function togglePassword(fieldId) {
+                const passwordField = document.getElementById(fieldId);
+                passwordField.type = passwordField.type === "password" ? "text" : "password";
+            }
+        </script>
     </body>
 </html>

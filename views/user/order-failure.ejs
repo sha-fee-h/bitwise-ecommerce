@@ -1,128 +1,222 @@
-<!-- views/user/order-failure.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Failed | Bitwise</title>
+    <title>Order Failure | Bitwise</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --primary-color: #2563eb; /* Vibrant blue */
-            --secondary-color: #dc2626; /* Red for failure */
-            --text-color: #1f2937; /* Dark gray */
-            --light-bg: #f9fafb; /* Light gray background */
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            --border-radius: 12px;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 600px;
-            padding: 30px;
-            background: #fff;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        p {
-            font-size: 1.2rem;
-            color: var(--text-color);
-            margin-bottom: 30px;
-        }
-
-        .illustration {
-            width: 200px;
-            height: auto;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 0 10px;
-        }
-
-        .btn-retry {
-            background: linear-gradient(135deg, var(--primary-color), #1d4ed8);
-            color: white;
-        }
-
-        .btn-retry:hover {
-            background: linear-gradient(135deg, #1d4ed8, var(--primary-color));
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-details {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            color: white;
-        }
-
-        .btn-details:hover {
-            background: linear-gradient(135deg, #4b5563, #6b7280);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(107, 114, 128, 0.3);
-        }
-    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
     <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/order-failure.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/footer.css" />
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    
 </head>
 <body>
-    <div class="container">
-        <h1>Order Failed</h1>
-        <img src="/images/order-failure.svg" alt="Order Failure" class="illustration"> <!-- Replace with your SVG/image -->
-        <p>
-            <% if (order) { %>
-                Sorry, your payment for order <%= order.orderId %> could not be processed.
-            <% } else { %>
-                Sorry, your payment attempt failed. Transaction ID: <%= razorpayOrderId %>
-                <% if (amount > 0) { %> (Amount: ₹<%= amount.toFixed(2) %>) <% } %>
-            <% } %>
-            Please try again or check your order details.
-        </p>
-        <button class="btn btn-retry" onclick="retryPayment()">Retry Payment</button>
+    <%- include('./partials/header.ejs') %>
+
+    <div class="failure-container">
+        <i class="fas fa-exclamation-circle failure-icon"></i>
+        <h1>Payment Failed</h1>
+        <div class="failure-message">
+            <p>We’re sorry, but your payment could not be processed.</p>
+            <p>Please try again or contact support if the issue persists.</p>
+        </div>
+
         <% if (order) { %>
-            <button class="btn btn-details" onclick="viewOrderDetails('<%= order.orderId %>')">View Order Details</button>
+            <div class="order-details">
+                <div class="order-info">
+                    <div>
+                        <p><strong>Order ID:</strong> <%= order.orderId %></p>
+                        <p><strong>Order Date:</strong> <%= order.orderDate.toLocaleString() %></p>
+                    </div>
+                    <div>
+                        <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
+                        <p><strong>Total Amount:</strong> ₹<%= order.total.toFixed(2) %></p>
+                    </div>
+                </div>
+
+                <h3>Items</h3>
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Actual Price</th>
+                            <th>Discount</th>
+                            <th>Final Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.products.forEach(product => { %>
+                            <tr>
+                                <td>
+                                    <div class="product-info">
+                                        <img src="/uploads/<%= product.productId.images[0] %>" alt="<%= product.productId.name %>" class="product-image">
+                                        <span class="product-name"><%= product.productId.name %></span>
+                                    </div>
+                                </td>
+                                <td><%= product.quantity %></td>
+                                <td>₹<%= (product.price * product.quantity).toFixed(2) %></td>
+                                <td>₹<%= (product.offerDiscount ? product.offerDiscount * product.quantity : 0).toFixed(2) %></td>
+                                <td>₹<%= ((product.price * product.quantity) - (product.offerDiscount ? product.offerDiscount * product.quantity : 0)).toFixed(2) %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+
+                <h3>Price Breakdown</h3>
+                <div class="price-breakdown">
+                    <p><span>Subtotal:</span> <span>₹<%= order.products.reduce((acc, product) => acc + (product.price * product.quantity), 0).toFixed(2) %></span></p>
+                    <p><span>Offer Discount:</span> <span>-₹<%= order.offerDiscount.toFixed(2) %></span></p>
+                    <% if (order.couponDiscount > 0) { %>
+                        <p><span>Coupon Discount (<%= order.couponCode || 'N/A' %>):</span> <span>-₹<%= order.couponDiscount.toFixed(2) %></span></p>
+                    <% } %>
+                    <p><span>Shipping Cost:</span> <span>₹<%= order.shippingCost.toFixed(2) %></span></p>
+                    <p class="total"><span>Total:</span> <span>₹<%= order.total.toFixed(2) %></span></p>
+                </div>
+            </div>
+
+            <button class="retry-btn" id="retry-payment-btn">Retry Payment</button>
+            <p class="contact-support">
+                Need help? <a href="/contact">Contact Support</a>
+            </p>
+        <% } else { %>
+            <p>Order not found. Please contact support.</p>
+            <p class="contact-support">
+                Need help? <a href="/contact">Contact Support</a>
+            </p>
         <% } %>
     </div>
+    <%- include('./partials/footer.ejs') %>
+
+
+    <!-- Bootstrap JS and Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 
     <script>
-        function retryPayment() {
-            // Redirect back to checkout to retry payment
-            window.location.href = `/checkout`;
-        }
+        // Pre-encode the EJS variables as JSON strings to avoid syntax errors
+        const orderDataForRetry = {
+            selectedAddress: <%- JSON.stringify(order ? order.address : "") %>,
+            couponCode: <%- JSON.stringify(order && order.couponCode ? order.couponCode : "") %>
+        };
+        const userDataForPrefill = {
+            name: <%- JSON.stringify(`${user?.firstName || "User"} ${user?.lastName || ""}`) %>,
+            email: <%- JSON.stringify(user?.email || "") %>,
+            contact: <%- JSON.stringify(user?.phone || "") %>
+        };
 
-        function viewOrderDetails(orderId) {
-            // Redirect to order details page (adjust route as needed)
-            window.location.href = `/orders/${orderId}`;
+        // Ensure the script runs after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            const retryButton = document.getElementById('retry-payment-btn');
+            if (retryButton) {
+                retryButton.addEventListener('click', function () {
+                    retryPayment('<%= order ? order._id : "" %>');
+                });
+            }
+        });
+
+        async function retryPayment(orderId) {
+            if (!orderId) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Order ID is missing. Please contact support."
+                });
+                return;
+            }
+
+            try {
+                // Request a new Razorpay order for the failed order
+                const response = await fetch('/checkout/retry-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId })
+                });
+
+                // Check if the response is OK (status 200-299)
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
+                }
+
+                const razorpayData = await response.json();
+
+                if (!razorpayData.success) {
+                    Swal.fire({ icon: "error", title: "Retry Failed", text: razorpayData.message });
+                    return;
+                }
+
+                const options = {
+                    key: razorpayData.key,
+                    amount: razorpayData.amount,
+                    currency: razorpayData.currency,
+                    order_id: razorpayData.razorpayOrderId,
+                    name: 'Bitwise',
+                    description: 'Order Payment Retry',
+                    handler: async function (response) {
+                        const orderData = {
+                            selectedAddress: orderDataForRetry.selectedAddress,
+                            paymentMethod: 'Razorpay',
+                            couponCode: orderDataForRetry.couponCode,
+                            razorpayOrderId: response.razorpay_order_id,
+                            paymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature,
+                            orderId: orderId // Pass the MongoDB _id for updating the order
+                        };
+
+                        // Update the order with the new payment details
+                        const updateOrderResponse = await fetch('/checkout/place-order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(orderData)
+                        });
+
+                        const result = await updateOrderResponse.json();
+
+                        if (result.success) {
+                            window.location.href = `/checkout/order-success?orderId=${orderId}`;
+                        } else {
+                            Swal.fire({ icon: "error", title: "Payment Failed", text: result.message });
+                            window.location.href = `/checkout/order-failure?orderId=${orderId}`;
+                        }
+                    },
+                    prefill: {
+                        name: userDataForPrefill.name,
+                        email: userDataForPrefill.email,
+                        contact: userDataForPrefill.contact
+                    },
+                    theme: { color: '#2563eb' }
+                };
+
+                const rzp = new Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    Swal.fire({ 
+                        icon: "error", 
+                        title: "Payment Failed", 
+                        text: response.error.description || "Payment failed. Please try again." 
+                    });
+                    window.location.href = `/checkout/order-failure?orderId=${orderId}`;
+                });
+                rzp.open();
+            } catch (error) {
+                console.error('Error retrying payment in frontend:', error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Retry Failed",
+                    text: error.message || "An error occurred while retrying the payment."
+                });
+            }
         }
     </script>
 </body>

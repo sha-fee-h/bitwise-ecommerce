@@ -1,6 +1,21 @@
 /* Import Google font - Poppins */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
 
+/* Theme Variables */
+:root {
+    --primary-color: #060318;
+    --hover-color: #565564;
+    --text-color: #1f2937;
+    --light-bg: #f9fafb;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --gray-light: #6b7280;
+    --gray-dark: #374151;
+    --btn-active: #060318;
+    --btn-hover: #565564;
+}
+
+/* Global Reset */
 * {
     margin: 0;
     padding: 0;
@@ -8,14 +23,17 @@
     font-family: "Poppins", sans-serif;
 }
 
+/* Page Layout */
 body {
     min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f6f5f7;
+    background: var(--light-bg);
+    color: var(--text-color);
 }
 
+/* Centering Containers */
 :where(.container, form, .input-field, header) {
     display: flex;
     flex-direction: column;
@@ -23,29 +41,33 @@ body {
     justify-content: center;
 }
 
+/* Main Container */
 .container {
     background: #fff;
     padding: 30px 65px;
-    border-radius: 12px;
+    border-radius: var(--border-radius);
     row-gap: 20px;
-    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow);
 }
 
+/* Header Circle */
 .container header {
     height: 65px;
     width: 65px;
-    background: #5C59E8;
+    background: var(--btn-active);
     color: #fff;
     font-size: 2.5rem;
     border-radius: 50%;
 }
 
+/* Heading */
 .container h4 {
     font-size: 1.25rem;
-    color: #333;
+    color: var(--text-color);
     font-weight: 500;
 }
 
+/* Input Fields */
 form .input-field {
     flex-direction: row;
     column-gap: 10px;
@@ -58,18 +80,20 @@ form .input-field {
     outline: none;
     font-size: 1.125rem;
     text-align: center;
-    border: 1px solid #ddd;
+    border: 1px solid var(--gray-light);
 }
 
 .input-field input:focus {
-    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 0 var(--shadow);
 }
 
+/* Remove Number Input Spinners */
 .input-field input::-webkit-inner-spin-button,
 .input-field input::-webkit-outer-spin-button {
     display: none;
 }
 
+/* Buttons */
 form button {
     margin-top: 25px;
     width: 100%;
@@ -80,27 +104,29 @@ form button {
     cursor: pointer;
     border-radius: 6px;
     pointer-events: none;
-    background: #6e93f7;
+    background: var(--gray-light);
     transition: all 0.2s ease;
 }
 
 form button.active {
-    background: #5C59E8;
+    background: var(--btn-active);
     pointer-events: auto;
 }
 
 form button:hover {
-    background: #4948b5;
+    background: var(--btn-hover);
 }
 
+/* Text & Links */
 p {
     white-space: nowrap;
 }
 
+/* Resend OTP Button */
 #resend-otp-btn {
     background: none;
     border: none;
-    color: grey;
+    color: var(--gray-light);
     text-decoration: underline;
     cursor: pointer;
     font-size: inherit;
@@ -109,17 +135,15 @@ p {
 }
 
 #resend-otp-btn:disabled {
-    color: grey;
-    /* Disabled color */
+    color: var(--gray-light);
     cursor: not-allowed;
-    /* Show disabled cursor */
 }
 
 #resend-otp-btn:not(:disabled) {
-    color: #5C59E8;
-    /* Active color */
+    color: var(--btn-active);
 }
 
+/* Error Messages */
 .error-message {
     background-color: #f8d7da;
     color: #721c24;

@@ -1,5 +1,6 @@
 const User = require('../../models/userSchema');
-
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
 
 const customerInfo = async (req, res) => {
     try {
@@ -54,7 +55,7 @@ const blockCustomer = async (req,res)=>{
         
         const user = await User.findById(userId);
         if (!user) {
-            return res.status(404).json({ success: false, message: "User not found" });
+            return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('User') });
         }
 
         user.isBlocked = !user.isBlocked; 
@@ -63,7 +64,7 @@ const blockCustomer = async (req,res)=>{
         res.json({ success: true, newStatus: user.isBlocked });
     } catch (error) {
         console.error("Error updating user status:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: MESSAGES.INTERNAL_SERVER_ERROR});
     }
 }
 

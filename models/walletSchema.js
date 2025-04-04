@@ -13,6 +13,7 @@ const walletSchema = new Schema({
         default: 0
     },
     transactions: [{
+        id: {type:String},
         amount: Number,
         type: { type: String, enum: ['credit', 'debit'] },
         description: String,

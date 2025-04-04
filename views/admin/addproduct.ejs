@@ -10,23 +10,51 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js" async></script>
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
-
+    <style>
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #c62828;
+            display: block;
+        }
+    
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            border-left: 4px solid #2e7d32;
+            display: block;
+        }
+    
+        .form-error {
+            color: #c62828;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
     <body>
         <div class="dashboard-container">
             <aside class="unique-sidebar">
                 <div class="unique-sidebar-header">
-                    <h2>Bitwise</h2>
+                    <h2>Bitwise Admin</h2>
                 </div>
                 <ul class="unique-sidebar-menu">
-                    <li><a href="/admin/dashboard">Dashboard</a></li>
-                    <li><a href="#">Users</a></li>
-                    <li class="active"><a href="#">Products</a></li>
-                    <li><a href="#">Orders</a></li>
+                    <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li><a href="/admin/user-management">Users</a></li>
+                    <li><a href="/admin/product-management">Products</a></li>
+                    <li><a href="/admin/orders/manage">Orders</a></li>
                     <li><a href="/admin/category-management">Categories</a></li>
-                    <li><a href="#">Coupon</a></li>
-                    <li><a href="#">Offers</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Settings</a></li>
+                    <li><a href="/admin/coupon-management">Coupon</a></li>
+                    <li><a href="/admin/offer-management">Offers</a></li>
+                    <li><a href="/admin/inventory">Inventory</a></li>
+                    <li><a href="/admin/sales-report">Sales</a></li>
+                    <li><a href="/admin/transactions">Transactions</a></li>
                 </ul>
             </aside>
             <div class="product-list-container">
@@ -38,15 +66,23 @@
                     <span>></span>
                     <a href="#">Add-product</a>
                 </nav>
-                <% if (error_msg) { %>
-                <div class="error-message" id="error"><%= error_msg %></div>
-                <% } %> <% if (success_msg) { %>
-                <div class="success-message" id="error"><%= success_msg %></div>
-                <% } %>
+                <!-- Error/Success Messages -->
+            <% if (error_msg) { %>
+                <div class="error-message" id="error-message"><%= error_msg %></div>
+            <% } %>
+            <% if (success_msg) { %>
+                <div class="success-message" id="success-message"><%= success_msg %></div>
+            <% } %>
+            <div class="form-error" id="form-error"></div>
+
                 <form id="product-form" method="POST" enctype="multipart/form-data">
+                    
                     <div class="form-group">
                         <label for="name">Product Name:</label>
                         <input type="text" id="name" name="name" />
+                    </div>
+                    <div style="margin-left: 8em;">
+                        <button type="submit">Add Product</button>
                     </div>
                     <div class="form-group">
                         <label for="brand">Brand:</label>
@@ -210,16 +246,14 @@
                         <label for="warranty">Warranty:</label>
                         <input type="text" id="warranty" name="warranty" value="" />
                     </div>
-                    <!-- Other form fields remain unchanged -->
+                    
                     <div class="form-group">
                         <label for="images">Upload Product Images (Minimum 3):</label>
                         <div id="image-upload-container">
                             <input type="file" accept="image/*" id="image-input" multiple onchange="handleImageSelection(this)" />
                             <div id="image-previews"></div>
+                            <div class="form-error" id="image-error"></div>
                         </div>
-                    </div>
-                    <div>
-                        <button type="submit">Add Product</button>
                     </div>
                 </form>
             </div>
@@ -228,7 +262,7 @@
         <script>
             let croppers = [];
             let croppedImages = [];
-
+    
             function base64ToFile(base64, filename) {
                 const arr = base64.split(",");
                 const mime = arr[0].match(/:(.*?);/)[1];
@@ -240,20 +274,27 @@
                 }
                 return new File([u8arr], filename, { type: mime });
             }
-
+    
             function handleImageSelection(input) {
                 const files = input.files;
+                const previewContainer = document.getElementById("image-previews");
+                const imageError = document.getElementById("image-error");
+                
                 if (files.length > 3) {
-                    alert("Please select a maximum of 3 images.");
+                    imageError.textContent = "Please select a maximum of 3 images.";
+                    imageError.style.display = "block";
                     input.value = ""; // Clear the input
+                    previewContainer.innerHTML = "";
+                    setTimeout(() => {
+                        imageError.style.display = "none";
+                    }, 3000);
                     return;
                 }
-
-                const previewContainer = document.getElementById("image-previews");
-                previewContainer.innerHTML = ""; // Clear previous previews
-                croppers = []; // Reset croppers
-                croppedImages = []; // Reset cropped images
-
+    
+                previewContainer.innerHTML = "";
+                croppers = [];
+                croppedImages = [];
+    
                 Array.from(files).forEach((file, index) => {
                     const reader = new FileReader();
                     reader.onload = function (e) {
@@ -266,7 +307,7 @@
                             </div>
                         `;
                         previewContainer.insertAdjacentHTML("beforeend", previewHtml);
-
+    
                         const imgElement = document.getElementById(`image-preview-${index}`);
                         croppers[index] = new Cropper(imgElement, {
                             aspectRatio: 1,
@@ -277,47 +318,75 @@
                     reader.readAsDataURL(file);
                 });
             }
-
+    
             function cropImage(index) {
                 const cropper = croppers[index];
                 if (cropper) {
                     const croppedCanvas = cropper.getCroppedCanvas();
                     const base64Image = croppedCanvas.toDataURL("image/jpeg");
-
                     croppedImages[index] = base64Image;
-
-                    const file = base64ToFile(base64Image, `image[${index}].png`);
+    
+                    const file = base64ToFile(base64Image, `image${index}.jpeg`);
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(file);
-
+    
                     const fileInput = document.getElementById(`croppedImage-${index}`);
                     fileInput.files = dataTransfer.files;
-
+    
                     const imgElement = document.getElementById(`image-preview-${index}`);
                     imgElement.src = base64Image;
                     imgElement.style.display = "block";
-
+    
                     cropper.destroy();
                     croppers[index] = null;
                 }
             }
-
+    
             document.addEventListener("DOMContentLoaded", function () {
                 const productForm = document.getElementById("product-form");
-                productForm.addEventListener("submit", function (event) {
-                    const files = document.getElementById("image-input").files;
-                    if (files.length < 3) {
-                        alert("Please upload at least 3 images.");
-                        event.preventDefault();
+                const formError = document.getElementById("form-error");
+                const messageElements = {
+                    error: document.getElementById("error-message"),
+                    success: document.getElementById("success-message")
+                };
+    
+                // Auto-hide server-side messages
+                Object.values(messageElements).forEach(element => {
+                    if (element) {
+                        setTimeout(() => {
+                            element.style.display = "none";
+                        }, 3000);
                     }
                 });
-
-                const error = document.getElementById("error");
-                if (error) {
-                    setTimeout(() => {
-                        error.style.display = "none";
-                    }, 3000);
-                }
+    
+                // Form validation
+                productForm.addEventListener("submit", function (event) {
+                    const files = document.getElementById("image-input").files;
+                    
+                    if (files.length < 3) {
+                        event.preventDefault();
+                        formError.textContent = "Please upload at least 3 images.";
+                        formError.style.display = "block";
+                        setTimeout(() => {
+                            formError.style.display = "none";
+                        }, 3000);
+                    }
+    
+                    // Add additional form validation as needed
+                    const requiredFields = ['name', 'brand', 'category', 'price', 'stock'];
+                    for (let field of requiredFields) {
+                        const input = document.getElementById(field);
+                        if (!input.value) {
+                            event.preventDefault();
+                            formError.textContent = `Please fill in the ${field} field.`;
+                            formError.style.display = "block";
+                            setTimeout(() => {
+                                formError.style.display = "none";
+                            }, 3000);
+                            break;
+                        }
+                    }
+                });
             });
         </script>
     </body>

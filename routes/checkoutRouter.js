@@ -19,6 +19,7 @@ router.post('/remove-coupon', checkoutController.removeCoupon);
 
 router.get('/order-success',userAuth, checkoutController.getOrderSuccess);
 router.get('/order-failure',userAuth, checkoutController.getOrderFailure);
+router.post('/retry-payment',userAuth, checkoutController.retryPayment);
 
 
 module.exports = router;

@@ -1,8 +1,11 @@
 const Products = require("../../models/productSchema");
 const Category = require("../../models/categorySchema");
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes');
 
 const multer = require("multer");
-const fs = require("fs");
+const fs = require('fs').promises;
+const path = require('path');
 
 
 const storage = multer.diskStorage({
@@ -169,6 +172,101 @@ const getEditProduct = async (req, res) => {
     }
 };
 
+// const postEditProduct = async (req, res) => {
+//     try {
+//         const productId = req.params.id;
+
+        
+//         const product = await Products.findById(productId);
+//         if (!product) {
+//             return res.redirect("/admin/product-management?error=Product not found");
+//         }
+
+        
+//         const existingImages = req.body.existingImages || []; 
+//         const newImageNames = req.files.map(file => file.filename); 
+
+        
+//         let updatedImages = [];
+//         if (existingImages) {
+//             updatedImages = Array.isArray(existingImages) ? existingImages : [existingImages];
+//         }
+//         if (newImageNames.length > 0) {
+//             updatedImages = [...updatedImages, ...newImageNames];
+//         }
+
+        
+//         if (updatedImages.length < 3) {
+//             return res.redirect(`/admin/editproduct/${productId}?error=At least 3 images are required`);
+//         }
+
+        
+//         const updatedProductData = {
+//             name: req.body.name,
+//             brand: req.body.brand,
+//             category: req.body.category,
+//             price: req.body.price,
+//             stock: req.body.stock,
+//             specifications: {
+//                 processor: {
+//                     brand: req.body.specifications?.processor?.brand || "",
+//                     model: req.body.specifications?.processor?.model || "",
+//                     cores: req.body.specifications?.processor?.cores || "",
+//                     speed: req.body.specifications?.processor?.speed || "",
+//                 },
+//                 ram: {
+//                     size: req.body.specifications?.ram?.size || "",
+//                     type: req.body.specifications?.ram?.type || "",
+//                 },
+//                 storage: {
+//                     type: req.body.specifications?.storage?.type || "",
+//                     capacity: req.body.specifications?.storage?.capacity || "",
+//                 },
+//                 display: {
+//                     size: req.body.specifications?.display?.size || "",
+//                     resolution: req.body.specifications?.display?.resolution || "",
+//                 },
+//                 graphics: {
+//                     brand: req.body.specifications?.graphics?.brand || "",
+//                     model: req.body.specifications?.graphics?.model || "",
+//                     memory: req.body.specifications?.graphics?.memory || "",
+//                 },
+//                 battery: {
+//                     type: req.body.specifications?.battery?.type || "",
+//                     capacity: req.body.specifications?.battery?.capacity || "",
+//                 },
+//                 os: req.body.specifications?.os || "",
+//                 weight: req.body.specifications?.weight || "",
+//                 dimensions: {
+//                     width: req.body.specifications?.dimensions?.width || "",
+//                     height: req.body.specifications?.dimensions?.height || "",
+//                     depth: req.body.specifications?.dimensions?.depth || "",
+//                 },
+//             },
+//             warranty: req.body.warranty || "",
+//             images: updatedImages,
+//             primaryImageIndex: parseInt(req.body.primaryImageIndex, 10) || 0,
+//             status: req.body.status || "listed",
+//         };
+
+        
+//         const updatedProduct = await Products.findByIdAndUpdate(productId, updatedProductData, { new: true });
+
+//         if (!updatedProduct) {
+//             return res.redirect("/admin/product-management?error=Product not found");
+//         }
+
+//         console.log("Product ID: ", productId);
+//         console.log("Updated Data: ", updatedProductData);
+//         console.log("Files: ", req.files);
+
+//         res.redirect(`/admin/product-management?success=Product updated successfully`);
+//     } catch (error) {
+//         console.error("Error updating product: \n", error);
+//         res.redirect(`/admin/editproduct/${productId}?error=Error updating product`);
+//     }
+// };
+
 const postEditProduct = async (req, res) => {
     try {
         const productId = req.params.id;
@@ -180,9 +278,8 @@ const postEditProduct = async (req, res) => {
         }
 
         
-        const existingImages = req.body.existingImages || []; 
-        const newImageNames = req.files.map(file => file.filename); 
-
+        const existingImages = req.body.existingImages || [];
+        const newImageNames = req.files.map(file => file.filename);
         
         let updatedImages = [];
         if (existingImages) {
@@ -195,6 +292,23 @@ const postEditProduct = async (req, res) => {
         
         if (updatedImages.length < 3) {
             return res.redirect(`/admin/editproduct/${productId}?error=At least 3 images are required`);
+        }
+
+        
+        const imagesToDelete = product.images.filter(
+            img => !updatedImages.includes(img) && img !== '' 
+        );
+
+        
+        for (const image of imagesToDelete) {
+            try {
+                const imagePath = path.resolve(__dirname, '..', '..', 'uploads', image);
+                await fs.unlink(imagePath);
+                console.log(`Deleted old product image: ${imagePath}`);
+            } catch (err) {
+                console.error(`Error deleting old product image ${image}: ${err.message}`);
+                
+            }
         }
 
         

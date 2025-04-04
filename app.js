@@ -17,6 +17,7 @@ const cartRouter=require('./routes/cartRouter')
 const wishlistRouter=require('./routes/wishlistRouter')
 const checkoutRouter=require('./routes/checkoutRouter')
 const orderRoutes=require('./routes/orderRoutes')
+const apiRoutes = require('./routes/apiRoutes')
 
 
 const session = require('express-session')
@@ -67,6 +68,7 @@ app.use('/cart',cartRouter)
 app.use('/wishlist',wishlistRouter)
 app.use('/checkout',checkoutRouter)
 app.use('/orders/',orderRoutes)
+app.use('/api/',apiRoutes)
 
 app.use((req, res, next) => {
     res.status(404).render('admin/404');

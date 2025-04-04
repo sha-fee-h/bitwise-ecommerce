@@ -3,7 +3,9 @@ const User = require("../../models/userSchema");
 const Order = require("../../models/orderSchema");
 const Product= require('../../models/productSchema')
 const Offer=require('../../models/offerSchema')
-const Wishlist = require('../../models/wishlistSchema')
+const Wishlist = require('../../models/wishlistSchema');
+const MESSAGES = require('../../constants/messages');
+const STATUS_CODES = require('../../constants/statusCodes')
 
 
 const loadWishlistPage = async (req, res, next) => {
@@ -21,7 +23,9 @@ const loadWishlistPage = async (req, res, next) => {
 
         res.render("user/wishlist", {
             user,
-            wishlist: wishlist || { products: [] }
+            wishlist: wishlist || { products: [] },
+            cartCount:0,
+            wishlistCount:0
         });
     } catch (error) {
         console.error("Error loading wishlist page:", error);
@@ -106,7 +110,9 @@ const moveToCart = async (req, res) => {
         if(product.stock==0){
             return res.status(404).json({ success: false, error: "Product is Out of Stock" });
         }
-
+        if (product.status==='unlisted' || product.category.status==='unlisted') {
+            return res.status(400).json({ success: false, error: "Product is not available" });
+        }
 
         if (existingProduct ) {
             existingProduct.quantity += 1;
@@ -156,6 +162,48 @@ const removeFromWishlist = async (req, res) => {
     }
 };
 
+const checkCount = async (req, res) => {
+    try {
+        const userId = req.session?.userData?._id || req.user?._id;
+
+        if(!userId){
+            console.log('here error is user logged out')
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+
+        // Initialize counts to 0 by default
+        let cartCount = 0;
+        let wishlistCount = 0;
+
+        if (userId) {
+            // Find the user's cart and wishlist documents in parallel
+            const [cart, wishlist] = await Promise.all([
+                Cart.findOne({ userId }, { products: 1 }),
+                Wishlist.findOne({ userId }, { products: 1 })
+            ]);
+
+            // Count the number of items in the cart (length of products array)
+            cartCount = cart && cart.products ? cart.products.length : 0;
+
+            // Count the number of items in the wishlist (length of products array)
+            wishlistCount = wishlist && wishlist.products ? wishlist.products.length : 0;
+
+            console.log(`Cart: ${cartCount} and Wishlist: ${wishlistCount}`);
+
+            return res.json({
+                cartCount,
+                wishlistCount
+            });
+        } else {
+            // Use 401 Unauthorized for missing user authentication
+            return res.status(401).json({ error: "User not authenticated" });
+        }
+    } catch (error) {
+        console.error('Error fetching counts:', error);
+        res.status(500).json({ error: 'Failed to fetch counts' });
+    }
+};
 
 
-module.exports = { loadWishlistPage ,getWishlistData , addToWishlist, moveToCart, removeFromWishlist};
+
+module.exports = { loadWishlistPage ,getWishlistData , addToWishlist, moveToCart, removeFromWishlist , checkCount};

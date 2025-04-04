@@ -5,9 +5,15 @@ const passport = require('passport')
 const { userAuth, adminAuth, isLoggedIn } = require('../middlewares/auth')
 
 
-router.get('/',userAuth ,homeController.getHome)
+router.get('/' ,homeController.getHome)
 
 router.get('/pageNotFound', homeController.pageNotFound);
+
+router.get('/about',homeController.getAbout)
+
+router.get('/contact',homeController.getContact)
+
+router.post('/contact',homeController.postContact)
 
 
 module.exports = router

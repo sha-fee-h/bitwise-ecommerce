@@ -34,9 +34,9 @@
                 <h1 class="product-title"><%= product.name %></h1>
                 <p class="product-brand">Brand: <%= product.brand %></p>
                 <p class="product-price">
-                    $<%= product.bestOffer ? (product.price - product.bestOffer.discountAmount).toFixed(2) : product.price.toFixed(2) %>
+                    ₹<%= product.bestOffer ? (product.price - product.bestOffer.discountAmount).toFixed(2) : product.price.toFixed(2) %>
                     <% if (product.bestOffer) { %>
-                        <span class="discount-price">$<%= product.price.toFixed(2) %></span>
+                        <span class="discount-price">₹<%= product.price.toFixed(2) %></span>
                     <% } %>
                 </p>
                 <p class="stock-status">

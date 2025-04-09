@@ -255,24 +255,23 @@
                                     <td><%= order.userId.userName %> (<%= order.userId.email %>)</td>
                                     <td>$<%= order.total.toFixed(2) %></td>
                                     <td>
-                                        <select class="status-select" onchange="updateOrderStatus('<%= order.orderId %>', this.value)" <%= order.paymentStatus === 'Failed' ? 'disabled' : '' %>>
-                                            <option value="Pending" <%= order.deliveryStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
-                                            <option value="Processing" <%= order.deliveryStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
-                                            <option value="Shipped" <%= order.deliveryStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
-                                            <option value="Delivered" <%= order.deliveryStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
-                                            <option value="Cancelled" <%= order.deliveryStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
-                                            <option value="Returned" <%= order.deliveryStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
-                                            <option value="Return Accepted" <%= order.deliveryStatus === 'Return Accepted' ? 'selected' : '' %>>Return Accepted</option>
-                                            <option value="Return Rejected" <%= order.deliveryStatus === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
-
-                                        </select>
-                                        <% if (order.paymentStatus === 'Failed') { %>
-                                            <span style="color: #dc3545;">Failed Order</span>
+                                        <% if (['Pending', 'Processing', 'Shipped', 'Delivered'].includes(order.deliveryStatus) && order.paymentStatus !== 'Failed') { %>
+                                            <select class="status-select" onchange="updateOrderStatus('<%= order.orderId %>', this.value)">
+                                                <option value="Pending" <%= order.deliveryStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                                                <option value="Processing" <%= order.deliveryStatus === 'Processing' ? 'selected' : '' %>>Processing</option>
+                                                <option value="Shipped" <%= order.deliveryStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                                                <option value="Delivered" <%= order.deliveryStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                                            </select>
+                                        <% } else { %>
+                                            <span class="status-text"><%= order.deliveryStatus %></span>
+                                            <% if (order.paymentStatus === 'Failed') { %>
+                                                <span style="color: #dc3545;"> (Failed Order)</span>
+                                            <% } %>
                                         <% } %>
                                     </td>
                                     <td>
                                         <a href="/admin/orders/details/<%= order.orderId %>" class="btn btn-view">View</a>
-                                        <% if (order.deliveryStatus === 'Delivered' || (order.deliveryStatus === 'Returned' && order.paymentStatus !== 'Refunded')) { %>
+                                        <% if (order.deliveryStatus === 'Returned' && order.paymentStatus !== 'Refunded') { %>
                                             <button class="btn btn-verify" onclick="verifyReturn('<%= order.orderId %>')">Verify Return</button>
                                         <% } %>
                                     </td>

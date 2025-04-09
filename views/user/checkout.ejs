@@ -97,8 +97,8 @@
                         <div class="coupon-item">
                             <div class="coupon-details">
                                 <p><strong>Code:</strong> <%= coupon.code %></p>
-                                <p><strong>Discount:</strong> <%= coupon.discount %>%</p>
-                                <p><strong>Minimum Spend:</strong> ₹<%= coupon.minimumSpend.toFixed(2) %></p>
+                                <p><strong>Discount:</strong> <%= coupon.discount %></p>
+                                <p><strong>Minimum Spend:</strong> ₹<%= coupon.minimumSpend?.toFixed(2) %></p>
                             
                             </div>
                             <div class="coupon-actions">
@@ -501,12 +501,13 @@ function applyCouponFromModal(code) {
                     headers: { "Content-Type": "application/json" }
                 });
 
+                
                 const result = await response.json();
                 if (!response.ok || !result.success) {
                     Swal.fire({
                         icon: "warning",
                         title: "Out of Stock",
-                        text: result.message || "Some products in your cart are out of stock. Please update your cart.",
+                        text: result.message || "You are blocked by admin",
                     }).then(() => location.reload()); // Reload to reflect updated stock
                     return;
                 }

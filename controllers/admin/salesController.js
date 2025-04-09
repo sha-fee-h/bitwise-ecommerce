@@ -228,7 +228,7 @@ const downloadSalesReport = async (req, res) => {
                 // Header styling with logo (if available)
                 doc.font('Helvetica-Bold')
                     .fontSize(24)
-                    .fillColor('#2563eb')
+                    .fillColor('##0d0e0f')
                     .text('SALES REPORT', { align: 'center' });
 
                 doc.fontSize(12)
@@ -254,7 +254,7 @@ const downloadSalesReport = async (req, res) => {
                     .fontSize(10)
                     .fillColor('#ffffff')
                     .rect(50, doc.y, summaryTableWidth, 20)
-                    .fill('#2563eb')
+                    .fill('#ffffff')
                     .fillColor('#ffffff')
                     .text('Metric', 60, doc.y - 15, { width: 150 })
                     .text('Value', 210, doc.y - 15, { width: 150 });
@@ -298,7 +298,7 @@ const downloadSalesReport = async (req, res) => {
                         .fontSize(10)
                         .fillColor('#ffffff')
                         .rect(50, doc.y, productTableWidth, 20)
-                        .fill('#2563eb')
+                        .fill('#ffffff')
                         .fillColor('#ffffff')
                         .text('Product Name', 60, doc.y - 15, { width: 250 })
                         .text('Units Sold', 310, doc.y - 15, { width: 100 })
@@ -338,7 +338,7 @@ const downloadSalesReport = async (req, res) => {
                     .fontSize(10)
                     .fillColor('#ffffff')
                     .rect(50, doc.y, orderTableWidth, 20)
-                    .fill('#2563eb')
+                    .fill('#ffffff')
                     .fillColor('#ffffff')
                     .text('Order ID', 60, doc.y - 15, { width: 120 })
                     .text('Date', 180, doc.y - 15, { width: 120 })
@@ -363,7 +363,7 @@ const downloadSalesReport = async (req, res) => {
                         // Add header to new page
                         doc.font('Helvetica-Bold')
                             .fontSize(14)
-                            .fillColor('#2563eb')
+                            .fillColor('##0d0e0f')
                             .text('SALES REPORT (continued)', { align: 'center' });
                         
                         doc.moveDown(1);
@@ -373,7 +373,7 @@ const downloadSalesReport = async (req, res) => {
                             .fontSize(10)
                             .fillColor('#ffffff')
                             .rect(50, doc.y, orderTableWidth, 20)
-                            .fill('#2563eb')
+                            .fill('#ffffff')
                             .fillColor('#ffffff')
                             .text('Order ID', 60, doc.y - 15, { width: 120 })
                             .text('Date', 180, doc.y - 15, { width: 120 })

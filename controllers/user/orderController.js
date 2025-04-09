@@ -15,7 +15,7 @@ const getOrderHistory = async (req, res) => {
 
         
         const { page = 1, startDate, endDate } = req.query;
-        const perPage = 5; // 5 orders per page
+        const perPage = 6; // 5 orders per page
         const currentPage = parseInt(page) || 1;
         const skip = (currentPage - 1) * perPage;
 

@@ -1,5 +1,7 @@
 const User =  require('../models/userSchema');
 const homeController = require('../controllers/user/homeController')
+const MESSAGES = require('../constants/messages')
+const STATUS_CODES = require('../constants/statusCodes');
 
 const userAuth = async (req, res, next) => {
     if (req.session?.userData || req.user) {
@@ -26,12 +28,12 @@ const userAuth = async (req, res, next) => {
                     if (req.session.passport) {
                         delete req.session.passport; 
                     }
-                    return res.render("user/login", { message: "You are blocked by admin" });
+                    return res.render("user/login", { message: MESSAGES.BLOCKED_USER });
                 }
             })
             .catch(error => {
                 console.log("Error in user auth middleware:", error);
-                return res.status(500).send("Internal Server Error");
+                return res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).send(MESSAGES.INTERNAL_SERVER_ERROR);
             });
 
     } else {
@@ -61,12 +63,12 @@ const userAuthJson = async (req, res, next) => {
                     if (req.session.passport) {
                         delete req.session.passport; 
                     }
-                    res.status(401).json({ error: "You are blocked by admin" })
+                    res.status(STATUS_CODES.UNAUTHORIZED).json({ error: MESSAGES.BLOCKED_USER})
                 }
             })
             .catch(error => {
                 console.log("Error in user auth middleware:", error);
-                res.status(401).json({ error: "Something went wrong" })
+                res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ error: MESSAGES.INTERNAL_SERVER_ERROR })
             });
 
     } else {

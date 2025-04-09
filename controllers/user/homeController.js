@@ -35,12 +35,12 @@ const pageNotFound=async (req,res)=>{
 
 const getHomeData = async () => {
     try {
-        // Fetch new arrivals (latest 4 products)
+        
         const newArrivals = await Products.find({ status: 'listed' })
-            .sort({ createdAt: -1 }) // Sort by creation date (newest first)
+            .sort({ createdAt: -1 }) 
             .limit(4);
 
-        // Check Redis cache for best sellers
+        
         const cacheKey = 'bestSellers';
         let bestSellers = null;
 
@@ -48,79 +48,79 @@ const getHomeData = async () => {
             const cachedData = await redisClient.get(cacheKey);
             if (cachedData) {
                 console.log('Best sellers fetched from cache');
-                bestSellers = JSON.parse(cachedData); // Parse the cached JSON string
+                bestSellers = JSON.parse(cachedData); 
             }
         } catch (redisError) {
             console.error('Redis error, falling back to database:', redisError);
-            // Continue without cache if Redis fails
+            
         }
 
         if (!bestSellers) {
             console.log('Best sellers not in cache, calculating...');
 
-            // Fetch best sellers using aggregation
+            
             const bestSellersAggregation = await Order.aggregate([
-                // Step 1: Exclude cancelled orders
+                
                 {
                     $match: {
                         deliveryStatus: { $ne: 'Cancelled' },
                     },
                 },
-                // Step 2: Unwind the products array
+                
                 {
                     $unwind: '$products',
                 },
-                // Step 3: Exclude cancelled items within orders
+                
                 {
                     $match: {
                         'products.itemDeliveryStatus': { $ne: 'Cancelled' },
                     },
                 },
-                // Step 4: Group by productId and sum the quantities
+                
                 {
                     $group: {
                         _id: '$products.productId',
                         totalSold: { $sum: '$products.quantity' },
                     },
                 },
-                // Step 5: Sort by totalSold in descending order
+                
                 {
                     $sort: { totalSold: -1 },
                 },
-                // Step 6: Limit to top 4 best sellers
+                
                 {
                     $limit: 4,
                 },
             ]);
 
-            // Extract product IDs from the aggregation result
+            
             const bestSellerProductIds = bestSellersAggregation.map(item => item._id);
 
-            // Fetch product details for the best sellers
+            
             bestSellers = await Products.find({
                 _id: { $in: bestSellerProductIds },
-                status: 'listed', // Ensure only listed products are shown
+                status: 'listed', 
             });
 
-            // Sort bestSellers to match the order of bestSellerProductIds
+            
             bestSellers = bestSellerProductIds.map(productId =>
                 bestSellers.find(product => product._id.toString() === productId.toString())
-            ).filter(product => product); // Filter out any null values
+            ).filter(product => product); 
 
-            // Cache the result for 1 hour (3600 seconds)
+            
             try {
                 await redisClient.setEx(cacheKey, 3600, JSON.stringify(bestSellers));
                 console.log('Best sellers cached in Redis');
             } catch (redisError) {
                 console.error('Redis error while caching:', redisError);
-                // Continue without caching if Redis fails
+                
             }
         }
 
         return { bestSellers, newArrivals };
     } catch (error) {
         console.error('Error in getHomeData:', error);
-        throw error; // Let the caller handle the error
+        throw error; 
     }
 };
 
@@ -170,12 +170,12 @@ const transporter = nodemailer.createTransport({
 const postContact = async (req, res) => {
     const { name, email, subject, message } = req.body;
 
-    // Basic validation
+    
     if (!name || !email || !subject || !message) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
-    // Email options for admin notification
+    
     const mailOptions = {
         from: process.env.NODEMAILER_EMAIL,
         to: process.env.ADMIN_EMAIL || process.env.NODEMAILER_EMAIL,

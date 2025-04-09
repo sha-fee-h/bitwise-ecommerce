@@ -276,6 +276,10 @@ const placeOrder = async (req, res) => {
     try {
       const userId = req.session?.userData?._id || req.user?._id;
       const { selectedAddress, paymentMethod, couponCode, razorpayOrderId, paymentId, razorpaySignature, orderId: existingOrderId } = req.body;
+
+      if (!userId) {
+        return res.status(STATUS_CODES.UNAUTHORIZED).json({ success: false, message: "User not authenticated" });
+    }
   
       if (!["Razorpay", "Cash on Delivery", "Wallet"].includes(paymentMethod)) {
         return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: "Invalid payment method" });
@@ -637,7 +641,7 @@ const retryPayment = async (req, res) => {
     });
   } catch (error) {
     console.error('Error in retryPayment:', error.message, error.stack);
-    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to retry payment: ' + error.message });
+    res.status(STATUS_CODES.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Failed to retry payment: Internal Server Error '  });
   }
 };
 

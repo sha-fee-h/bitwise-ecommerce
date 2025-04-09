@@ -162,7 +162,7 @@ const getAllOffers = async (req, res) => {
 
   const renderOfferManagement = async (req, res) => {
     try {
-      const products = await Product.find({ status: 'listed' }, 'name');
+      const products = await Product.find({ status: 'listed' }, 'name category');
       const categories = await Category.find({ status: 'listed' }, 'name');
       res.render('admin/offerManagement', { products, categories });
     } catch (error) {

@@ -17,6 +17,7 @@ module.exports = {
     //coupon related messages
     COUPON_FETCH_FAILED : `failed to fetch coupons`,
     COUPON_TOGGLE_FAILED : `failed to toggle coupon status`,
+    COUPON_MIN_SPEND : 'minimum spend should be greater than discount amount',
 
     //inventroy related messages
     NEGATIVE_STOCK : `Stock cannot be negaitve`,
@@ -28,7 +29,7 @@ module.exports = {
     INVALID_OTP : 'Invalid OTP, please try again',
     RESEND_OTP_SUCCESS : 'OTP resent successfully',
     RESEND_OTP_FAILURE : 'Failed to resent otp , Please try again',
-    BLOCKED_USER : 'User is blocked by admin',
+    BLOCKED_USER : 'You are blocked by admin',
     SEND_OTP : 'OTP send to your email',
     FAILED_SEND_OTP : 'Failed to send OTP.',
     OTP_VERIFIED : "OTP verified! Set a new password.",

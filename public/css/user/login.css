@@ -11,8 +11,9 @@ body {
     align-items: center;
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
-    height: 100vh;
-
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
 }
 
 h1 {
@@ -53,7 +54,8 @@ button {
     padding: 12px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: transform 80ms ease-in;
+    transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 button:hover {
@@ -86,9 +88,10 @@ form {
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 0 50px;
+    padding: 0 30px;
     height: 100%;
     text-align: center;
+    width: 100%;
 }
 
 input {
@@ -97,6 +100,7 @@ input {
     padding: 12px 15px;
     margin: 8px 0;
     width: 100%;
+    border-radius: 4px;
 }
 
 .container {
@@ -109,6 +113,7 @@ input {
     width: 768px;
     max-width: 100%;
     min-height: 480px;
+    margin: 0 auto;
 }
 
 .form-container {
@@ -116,6 +121,7 @@ input {
     top: 0;
     height: 100%;
     transition: all 0.6s ease-in-out;
+    width: 50%;
 }
 
 .sign-in-container {
@@ -143,15 +149,11 @@ input {
 }
 
 @keyframes show {
-
-    0%,
-    49.99% {
+    0%, 49.99% {
         opacity: 0;
         z-index: 1;
     }
-
-    50%,
-    100% {
+    50%, 100% {
         opacity: 1;
         z-index: 5;
     }
@@ -174,7 +176,6 @@ input {
 
 .overlay {
     background: #060318;
-    background: -webkit-linear-gradient(to right, #060318, #060318);
     background: linear-gradient(to right, #060318, #060318);
     background-repeat: no-repeat;
     background-size: cover;
@@ -237,18 +238,22 @@ input {
     margin: 0 5px;
     height: 40px;
     width: 40px;
+    transition: all 0.2s ease;
+}
+
+.social-container a:hover {
+    background-color: #f0f0f0;
 }
 
 footer {
     background-color: #222;
     color: #fff;
     font-size: 14px;
-    bottom: 0;
-    position: fixed;
-    left: 0;
-    right: 0;
+    padding: 10px 0;
     text-align: center;
-    z-index: 999;
+    width: 100%;
+    position: relative;
+    margin-top: 20px;
 }
 
 footer p {
@@ -270,12 +275,12 @@ footer a {
 }
 
 .input-error {
-    border-color: red;
+    border: 1px solid red;
 }
 
 .google-signin-button {
     background-color: #ffffff;
-    border-color: #060318;
+    border: 1px solid #060318;
     color: #060318;
     padding: 10px 15px;
     border-radius: 5px;
@@ -286,6 +291,7 @@ footer a {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
 }
 
 .google-signin-button:hover {
@@ -303,7 +309,112 @@ footer a {
     font-weight: bold;
     margin: 10px 0;
     text-align: center;
+    width: 100%;
     max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        min-height: auto;
+        margin: 20px 0;
+    }
+
+    .form-container {
+        position: relative;
+        width: 100%;
+    }
+
+    .sign-in-container,
+    .sign-up-container {
+        width: 100%;
+        position: relative;
+        opacity: 1;
+    }
+
+    .container.right-panel-active .sign-in-container {
+        transform: translateX(0);
+        display: none;
+    }
+
+    .container.right-panel-active .sign-up-container {
+        transform: translateX(0);
+        display: block;
+    }
+
+    .overlay-container {
+        display: none;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    button {
+        padding: 10px 30px;
+    }
+
+    .social-container {
+        margin: 15px 0;
+    }
+
+    .social-container a {
+        height: 35px;
+        width: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    p {
+        font-size: 12px;
+        margin: 15px 0 20px;
+    }
+
+    input {
+        padding: 10px 12px;
+    }
+
+    button {
+        padding: 8px 25px;
+        font-size: 11px;
+    }
+
+    .error-message {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+
+    .google-signin-button {
+        height: 38px;
+        font-size: 11px;
+    }
 }

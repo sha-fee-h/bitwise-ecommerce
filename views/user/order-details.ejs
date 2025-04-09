@@ -109,9 +109,9 @@
 
         <h3>Shipping Address</h3>
         <div class="address-section">
-            <p><%= order.address.firstName %> <%= order.address.lastName %><br>
-               <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %><br>
-               <%= order.address.country %></p>
+            <p><%= order.address?.firstName %> <%= order.address?.lastName %><br>
+               <%= order.address?.street %>, <%= order.address?.city %>, <%= order.address?.state %> <%= order.address?.postalCode %><br>
+               <%= order.address?.country %></p>
         </div>
     </div>
     <%- include('./partials/footer.ejs') %>

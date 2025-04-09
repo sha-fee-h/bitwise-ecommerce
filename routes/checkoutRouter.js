@@ -11,15 +11,15 @@ router.post('/place-order',userAuthJson, checkoutController.placeOrder)
 router.post('/create-razorpay-order', userAuthJson, checkoutController.createRazorpayOrder);
 
 router.get('/address/:id',userAuth,checkoutController.getSingleAddress);
-router.post('/add-address',userAuth,checkoutController.addAddress)
-router.put('/address/:id',userAuth,checkoutController.updateAddress)
+router.post('/add-address',userAuthJson,checkoutController.addAddress)
+router.put('/address/:id',userAuthJson,checkoutController.updateAddress)
 
 router.post('/apply-coupon', userAuthJson,checkoutController.applyCoupon);
 router.post('/remove-coupon',userAuthJson, checkoutController.removeCoupon);
 
 router.get('/order-success',userAuth, checkoutController.getOrderSuccess);
 router.get('/order-failure',userAuth, checkoutController.getOrderFailure);
-router.post('/retry-payment',userAuth, checkoutController.retryPayment);
+router.post('/retry-payment',userAuthJson, checkoutController.retryPayment);
 
 
 module.exports = router;

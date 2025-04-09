@@ -33,7 +33,7 @@
     /* Side Panel */
     .side-panel {
         width: 250px;
-        height: 475px;
+        height: 355px;
         background: white;
         border-radius: var(--border-radius);
         box-shadow: var(--shadow);
@@ -462,45 +462,111 @@
     }
 
 
-    /* Responsive Design */
-    @media (max-width: 992px) {
-        .dashboard-container {
-            flex-direction: column;
-        }
-
-        .side-panel {
-            width: 100%;
-            position: static;
-        }
-
-        .side-panel ul {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .side-panel li {
-            flex: 1;
-            min-width: 150px;
-        }
+    /* Medium devices (tablets, 768px and down) */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+        margin: 30px auto;
+        padding: 0 10px;
     }
 
-    @media (max-width: 576px) {
-        .profile-imagee img {
-            width: 100px;
-            height: 100px;
-        }
-
-        .profile-container h2, .address-section h2, .orders-section h2 {
-            font-size: 1.5rem;
-        }
-
-        .order-item p {
-            font-size: 0.9rem;
-        }
-
-        .product-image {
-            width: 40px;
-            height: 40px;
-        }
+    .side-panel {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        order: 2;
     }
+
+    .profile-container {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .cropperr-container {
+        max-width: 95%;
+        padding: 15px;
+    }
+
+    .cropperr-preview {
+        width: 100px;
+        height: 100px;
+    }
+
+    .profile-imagee img {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* Small devices (phones, 480px and down) */
+@media (max-width: 480px) {
+    .dashboard-container {
+        gap: 20px;
+    }
+
+    .side-panel a {
+        font-size: 0.9rem;
+        padding: 8px 12px;
+    }
+
+    .profile-container h2,
+    .address-section h2,
+    .orders-section h2 {
+        font-size: 1.3rem;
+    }
+
+    .profile-imagee img {
+        width: 80px;
+        height: 80px;
+    }
+
+    .profile-imagee label,
+    .profile-imagee button,
+    .edit-btn,
+    .view-details-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+
+    .user-info p,
+    .address-section p,
+    .order-item p {
+        font-size: 0.9rem;
+    }
+
+    .cropper-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .cropper-buttons button {
+        width: 100%;
+    }
+}
+
+/* Ultra small devices (360px and below — already present, just complete it) */
+@media (max-width: 360px) {
+    .profile-container h2,
+    .address-section h2,
+    .orders-section h2 {
+        font-size: 1rem;
+    }
+
+    .user-info p,
+    .address-section p,
+    .order-item p {
+        font-size: 0.85rem;
+    }
+
+    .order-item {
+        padding: 10px;
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
+    }
+}
+

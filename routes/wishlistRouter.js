@@ -7,7 +7,7 @@ const {userAuth , adminAuth, isLoggedIn, userAuthJson} = require('../middlewares
 
 router.get('/',userAuth,wishlistController.loadWishlistPage)
 
-router.get("/data",userAuth, wishlistController.getWishlistData);
+router.get("/data",userAuthJson, wishlistController.getWishlistData);
 
 router.post("/add",userAuthJson, wishlistController.addToWishlist);
 

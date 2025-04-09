@@ -368,26 +368,10 @@ const resetPassword = async (req, res) => {
     }
 };
 
-// const googleAuth = (req, res) => {
-//     if (req.user.isBlocked) {
-//         console.log('here')
-        
-//         req.logout((err) => {
-//             if (err) {
-//                 console.log("Logout error:", err);
-//                 return res.redirect('/pageNotFound');
-//             }
-//             res.render("user/login",{message:MESSAGES.BLOCKED_USER});
-//         });
-//     } else {
 
-//         req.session.userData = 
-//         res.redirect("/"); 
-//     }
-// }
 
 const googleAuth = (req, res, next) => {
-    const preservedAdmin = req.session.admin; // 🧷 Step 1: Save admin before Passport messes with session
+    const preservedAdmin = req.session.admin; 
 
     passport.authenticate('google', { failureRedirect: '/auth/login' }, (err, user, info) => {
         if (err || !user) return res.redirect('/auth/login');
@@ -409,8 +393,8 @@ const googleAuth = (req, res, next) => {
         req.login(user, (err) => {
             if (err) return next(err);
 
-            req.session.userData = user; // ✅ Save user info in session
-            if (preservedAdmin) req.session.admin = preservedAdmin; // 🔁 Restore admin session
+            req.session.userData = user; 
+            if (preservedAdmin) req.session.admin = preservedAdmin; 
 
             return res.redirect('/');
         });

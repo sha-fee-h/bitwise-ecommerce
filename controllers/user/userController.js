@@ -557,33 +557,33 @@ const getCoupons = async (req, res) => {
           return res.status(STATUS_CODES.UNAUTHORIZED).redirect('/auth/login');
       }
 
-      // Find all orders for the user where a coupon was used
+      
       const ordersWithCoupons = await Order.find(
           { userId, couponCode: { $ne: null } },
-          { couponCode: 1, _id: 0 } // Only select the couponCode field
+          { couponCode: 1, _id: 0 } 
       );
 
-      // Extract the list of used coupon codes
+      
       const usedCouponCodes = ordersWithCoupons.map(order => order.couponCode);
-      console.log('Used coupon codes:', usedCouponCodes);
+      // console.log('Used coupon codes:', usedCouponCodes);
 
-      // Fetch global coupons (not used by the user)
+      
       const globalCoupons = await Coupon.find({
           isActive: true,
           expiryDate: { $gte: new Date() },
           userId: null,
-          code: { $nin: usedCouponCodes }, // Exclude used coupons
+          code: { $nin: usedCouponCodes }, 
       });
       console.log('Global coupons (after filtering):', globalCoupons);
 
-      // Fetch user-specific coupons (not used by the user)
+      
       const userCoupons = await Coupon.find({
           isActive: true,
           expiryDate: { $gte: new Date() },
           userId: userId,
-          code: { $nin: usedCouponCodes }, // Exclude used coupons
+          code: { $nin: usedCouponCodes }, 
       });
-      console.log('User coupons (after filtering):', userCoupons);
+      // console.log('User coupons (after filtering):', userCoupons);
 
       res.render('user/coupon', {
           user,

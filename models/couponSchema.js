@@ -29,7 +29,7 @@ const couponSchema = new Schema(
         },
         minimumSpend: {
             type: Number,
-            default: 0,
+            required: true,
         },
         isActive: {
             type: Boolean,

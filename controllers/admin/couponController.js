@@ -16,7 +16,10 @@ const createCoupon = async (req, res) => {
         return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('User') });
       }
     }
-
+    if(minimumSpend<=discount){
+      // console.log('minimum spend is ', minimumSpend)
+      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_MIN_SPEND });
+    }
 
     const couponCode = 'COUPON' + uuidv4().slice(0, 8).toUpperCase();
 

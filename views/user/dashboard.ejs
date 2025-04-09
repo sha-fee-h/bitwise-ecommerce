@@ -29,9 +29,7 @@
                 <li class="<%= page === 'orders' ? 'active' : '' %>">
                     <a href="/orders/history">Order History</a>
                 </li>
-                <li class="<%= page === 'track-order' ? 'active' : '' %>">
-                    <a href="/user/track-order">Track Order</a>
-                </li>
+                
                 <li class="<%= page === 'cart' ? 'active' : '' %>">
                     <a href="/cart">Shopping Cart</a>
                 </li>
@@ -47,9 +45,7 @@
                 <li class="<%= page === 'address' ? 'active' : '' %>">
                     <a href="/user/profile/address">Address</a>
                 </li>
-                <li class="<%= page === 'browsing-history' ? 'active' : '' %>">
-                    <a href="/user/browsing-history">Browsing History</a>
-                </li>
+                
             </ul>
         </div>
 
@@ -138,7 +134,7 @@
                                     <% if (order.paymentMethod === 'Razorpay' && order.paymentId) { %>
                                         <p><strong>Payment ID:</strong> <%= order.paymentId %></p>
                                     <% } %>
-                                    <p><strong>Total:</strong> $<%= order.total.toFixed(2) %>
+                                    <p><strong>Total:</strong> ₹<%= order.total.toFixed(2) %>
                                         <% if (order.shippingCost > 0 || order.couponDiscount > 0 || order.offerDiscount > 0) { %>
                                             <small>
                                                 (Base: Rs. <%= (order.total - order.shippingCost + order.couponDiscount + order.offerDiscount).toFixed(2) %>
@@ -167,7 +163,7 @@
                                         </div>
                                         </p>
                                         <p><strong>Shipping To:</strong> 
-                                            <%= order.address.street %>, <%= order.address.city %>, <%= order.address.state %> <%= order.address.postalCode %>
+                                            <%= order.address?.street %>, <%= order.address?.city %>, <%= order.address?.state %> <%= order.address?.postalCode %>
                                         </p>
                                     </div>
                                     <% if (order.deliveryStatus === 'Cancelled' && order.cancellationReason) { %>

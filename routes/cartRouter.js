@@ -5,13 +5,13 @@ const {userAuth , adminAuth, isLoggedIn, userAuthJson} = require('../middlewares
 
 
 
-router.get("/",userAuthJson, cartController.loadCartPage);
+router.get("/",userAuth, cartController.loadCartPage);
 
-router.get("/data",userAuth, cartController.getCartData);
+router.get("/data",userAuthJson, cartController.getCartData);
 
 router.delete('/clear',userAuthJson, cartController.clearCart)
 
-router.get('/validate-stock',userAuth, cartController.validateStock);
+router.get('/validate-stock',userAuthJson, cartController.validateStock);
 
 router.post("/add",userAuthJson, cartController.addToCart);
 

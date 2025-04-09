@@ -1,4 +1,3 @@
-<!-- views/admin/offerManagement.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -297,12 +296,19 @@
             <h3>Add Product Offer</h3>
             <form id="productOfferForm">
                 <div class="form-group">
+                    <label for="categoryFilter">Select Category:</label>
+                    <select id="categoryFilter" name="categoryFilter" required>
+                        <option value="">-- Select Category --</option>
+                        <% categories.forEach(category => { %>
+                            <option value="<%= category._id %>"><%= category.name %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group">
                     <label for="productId">Select Product:</label>
                     <select id="productId" name="productId" required>
                         <option value="">-- Select Product --</option>
-                        <% products.forEach(product => { %>
-                            <option value="<%= product._id %>"><%= product.name %></option>
-                        <% }) %>
+                        <!-- Products will be populated dynamically -->
                     </select>
                 </div>
                 <div class="form-group">
@@ -380,14 +386,40 @@
 </div>
 
 <script>
-    // Declare currentPage in the global scope
+    // Store all products for filtering
+    const allProducts = <%- JSON.stringify(products) %>;
     let currentPage = 1;
-    const defaultLimit = 5; // Consistent limit across functions
+    const defaultLimit = 5;
+
+    // Function to filter products by category
+    function filterProductsByCategory(categoryId) {
+        const productSelect = document.getElementById('productId');
+        productSelect.innerHTML = '<option value="">-- Select Product --</option>';
+        
+        if (categoryId) {
+            const filteredProducts = allProducts.filter(product => 
+                product.category && product.category.toString() === categoryId
+            );
+            
+            filteredProducts.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product._id;
+                option.textContent = product.name;
+                productSelect.appendChild(option);
+            });
+        }
+    }
+
+    // Add event listener for category filter
+    document.getElementById('categoryFilter').addEventListener('change', (e) => {
+        const categoryId = e.target.value;
+        filterProductsByCategory(categoryId);
+    });
 
     // Load existing offers with pagination
     async function loadOffers(page = 1, limit = defaultLimit) {
         try {
-            currentPage = page; // Update the current page
+            currentPage = page;
             const response = await fetch(`/admin/offers?page=${page}&limit=${limit}`);
             const result = await response.json();
 
@@ -397,9 +429,8 @@
 
             const { offers, currentPage: serverPage, totalPages, totalOffers } = result;
 
-            // Render offers in the table
             const tbody = document.querySelector('#offersTableBody');
-            tbody.innerHTML = ''; // Clear existing rows
+            tbody.innerHTML = '';
 
             offers.forEach(offer => {
                 const row = document.createElement('tr');
@@ -420,15 +451,12 @@
                 tbody.appendChild(row);
             });
 
-            // Render pagination info
             const paginationInfo = document.getElementById('paginationInfo');
             paginationInfo.textContent = `Showing ${offers.length} of ${totalOffers} offers`;
 
-            // Render pagination links
             const paginationLinks = document.getElementById('paginationLinks');
             paginationLinks.innerHTML = '';
 
-            // Previous link
             if (currentPage > 1) {
                 const prevLink = document.createElement('a');
                 prevLink.href = '#';
@@ -440,7 +468,6 @@
                 paginationLinks.appendChild(prevLink);
             }
 
-            // Page number links
             for (let i = 1; i <= totalPages; i++) {
                 const pageLink = document.createElement('a');
                 pageLink.href = '#';
@@ -453,7 +480,6 @@
                 paginationLinks.appendChild(pageLink);
             }
 
-            // Next link
             if (currentPage < totalPages) {
                 const nextLink = document.createElement('a');
                 nextLink.href = '#';
@@ -507,7 +533,7 @@
                     confirmButtonColor: '#00a8e8'
                 });
                 e.target.reset();
-                loadOffers(1, defaultLimit); // Go to page 1 to show the new offer (since it's the latest)
+                loadOffers(1, defaultLimit);
             } else {
                 await Swal.fire({
                     title: 'Error!',
@@ -551,7 +577,7 @@
                     confirmButtonColor: '#00a8e8'
                 });
                 e.target.reset();
-                loadOffers(1, defaultLimit); // Go to page 1 to show the new offer (since it's the latest)
+                loadOffers(1, defaultLimit);
             } else {
                 await Swal.fire({
                     title: 'Error!',
@@ -590,7 +616,7 @@
                     icon: 'success',
                     confirmButtonColor: '#00a8e8'
                 });
-                loadOffers(currentPage, defaultLimit); // Stay on the current page
+                loadOffers(currentPage, defaultLimit);
             } else {
                 await Swal.fire({
                     title: 'Error!',
@@ -604,7 +630,7 @@
 
     // Load offers on page load
     document.addEventListener('DOMContentLoaded', () => {
-        loadOffers(1, defaultLimit); // Fetch first page with default limit
+        loadOffers(1, defaultLimit);
     });
 </script>
 </body>

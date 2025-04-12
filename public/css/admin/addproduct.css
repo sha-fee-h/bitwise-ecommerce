@@ -1,14 +1,14 @@
 :root {
-    --primary-color: #00a8e8; /* Cool cyan for a futuristic touch */
-    --secondary-color: #ff006e; /* Vibrant pink for contrast */
-    --bg-color: #0d1117; /* Deep black-blue for a true dark mode */
-    --sidebar-bg: #161b22; /* Slightly lighter for distinction */
-    --table-bg: #1f2937; /* Darker table background for a subtle contrast */
-    --text-color: #e0e0e0; /* Soft white for comfortable reading */
-    --header-bg: #21262d; /* A bit lighter than bg for a smooth gradient */
-    --low-stock-color: #ffcc00; /* Bright yellow for high visibility */
-    --active-status: #00ff44; /* Neon green for an eye-catching active status */
-    --blocked-status: #ff3a30; /* Bright red for clear blocked indication */
+    --primary-color: #00a8e8;
+    --secondary-color: #ff006e;
+    --bg-color: #0d1117;
+    --sidebar-bg: #161b22;
+    --table-bg: #1f2937;
+    --text-color: #e0e0e0;
+    --header-bg: #21262d;
+    --low-stock-color: #ffcc00;
+    --active-status: #00ff44;
+    --blocked-status: #ff3a30;
 }
 
 body {
@@ -69,7 +69,6 @@ body {
     flex-grow: 2;
     width: 60%;
     padding: 20px;
-
 }
 
 .product-list-container h1 {
@@ -113,9 +112,7 @@ body {
 .form-group {
     margin-bottom: 15px;
     width: 48%;
-    /* Adjust width to fit two columns */
     padding: 5px;
-    /* Optional: adds some spacing around form groups */
 }
 
 label {
@@ -168,43 +165,103 @@ input[type="file"] {
     box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
+.error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    border-left: 4px solid #c62828;
+    display: block;
+}
+
+.success-message {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+    border-left: 4px solid #2e7d32;
+    display: block;
+}
+
+.form-error {
+    color: #c62828;
+    font-size: 0.9em;
+    margin-top: 5px;
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .unique-sidebar {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .product-list-container {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
     #product-form {
         padding: 15px;
     }
 
     .form-group {
         width: 100%;
-        /* Stacks elements on smaller screens */
     }
 }
 
-.error-message {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    margin: 10px 0;
-    text-align: center;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+@media (max-width: 768px) {
+    .unique-sidebar {
+        padding: 15px;
+    }
+
+    .unique-sidebar-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .product-list-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .breadcrumbs {
+        font-size: 0.8rem;
+    }
 }
 
-.success-message {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-    padding: 10px 15px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-    margin: 10px 0;
-    text-align: center;
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+@media (max-width: 480px) {
+    .unique-sidebar {
+        padding: 10px;
+    }
+
+    .unique-sidebar-menu li a {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .product-list-container {
+        padding: 10px;
+    }
+
+    #product-form {
+        margin-top: 20px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .error-message,
+    .success-message {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
 }

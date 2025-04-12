@@ -1,0 +1,233 @@
+:root {
+    --primary-color: #060318;
+    --hover-color: #565564;
+    --secondary-color: #16a34a;
+    --text-color: #1f2937;
+    --light-bg: #f9fafb;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --border-radius: 12px;
+    --gray-light: #6b7280;
+    --gray-dark: #374151;
+    --base-font-size: clamp(16px, 2vw, 18px);
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+    color: var(--text-color);
+    font-size: var(--base-font-size);
+    line-height: 1.6;
+}
+
+.containerr {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: clamp(2rem, 6vw, 2.5rem);
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: clamp(30px, 5vw, 40px);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Coupon Sections */
+.coupon-section {
+    margin-bottom: clamp(40px, 8vw, 50px);
+}
+
+.coupon-section h2 {
+    font-size: clamp(1.5rem, 4vw, 1.8rem);
+    font-weight: 600;
+    color: var(--secondary-color);
+    margin-bottom: clamp(15px, 3vw, 20px);
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: clamp(3px, 1vw, 5px);
+    text-align: center;
+}
+
+/* Coupon Cards */
+.coupon-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(15px, 3vw, 20px);
+    justify-content: center;
+}
+
+.coupon-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: clamp(15px, 3vw, 20px);
+    width: calc(33.333% - clamp(15px, 3vw, 20px));
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--gray-light);
+    box-sizing: border-box;
+}
+
+.coupon-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(6, 3, 24, 0.2);
+}
+
+.coupon-card h3 {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: clamp(8px, 2vw, 10px);
+    text-align: center;
+}
+
+.coupon-code {
+    font-size: clamp(1rem, 2.2vw, 1.1rem);
+    color: var(--text-color);
+    background: var(--light-bg);
+    padding: clamp(4px, 1vw, 5px) clamp(8px, 2vw, 10px);
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: clamp(8px, 2vw, 10px);
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.coupon-details p {
+    font-size: clamp(0.85rem, 2vw, 0.9rem);
+    margin: clamp(4px, 1vw, 5px) 0;
+    color: var(--gray-light);
+    text-align: center;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, var(--secondary-color), #15803d);
+    color: white;
+    border: none;
+    padding: clamp(6px, 1.5vw, 8px) clamp(12px, 2.5vw, 15px);
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: background 0.3s ease, transform 0.3s ease;
+    display: block;
+    margin: clamp(8px, 2vw, 10px) auto 0;
+}
+
+.copy-btn:hover {
+    background: linear-gradient(135deg, #15803d, var(--secondary-color));
+    transform: scale(1.05);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    color: #e74c3c;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    margin-top: clamp(15px, 3vw, 20px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .coupon-card {
+        width: calc(50% - clamp(10px, 2vw, 15px));
+    }
+
+    .containerr {
+        max-width: 90%;
+    }
+}
+
+@media (max-width: 768px) {
+    .coupon-card {
+        width: calc(100% - clamp(10px, 2vw, 15px));
+    }
+
+    h1 {
+        font-size: clamp(1.8rem, 5vw, 2rem);
+    }
+
+    .coupon-section h2 {
+        font-size: clamp(1.3rem, 3.5vw, 1.5rem);
+    }
+
+    .containerr {
+        padding: clamp(50px, 8vw, 60px) clamp(10px, 2vw, 15px) clamp(30px, 5vw, 40px);
+    }
+
+    .coupon-list {
+        gap: clamp(10px, 2vw, 15px);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --border-radius: 8px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .containerr {
+        padding: clamp(40px, 7vw, 50px) clamp(8px, 1.5vw, 10px) clamp(20px, 4vw, 30px);
+    }
+
+    h1 {
+        font-size: clamp(1.5rem, 4vw, 1.8rem);
+        margin-bottom: clamp(20px, 4vw, 30px);
+    }
+
+    .coupon-section {
+        margin-bottom: clamp(30px, 6vw, 40px);
+    }
+
+    .coupon-card {
+        padding: clamp(10px, 2vw, 15px);
+    }
+
+    .coupon-card h3 {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .coupon-code {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+
+    .coupon-details p {
+        font-size: clamp(0.8rem, 1.8vw, 0.85rem);
+    }
+
+    .copy-btn {
+        padding: clamp(5px, 1.2vw, 6px) clamp(10px, 2vw, 12px);
+        font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+    }
+
+    .empty-state {
+        font-size: clamp(0.9rem, 2vw, 1rem);
+    }
+}
+
+/* Accessibility for high contrast */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #000;
+        --secondary-color: #006400;
+        --text-color: #000;
+        --gray-light: #444;
+        --gray-dark: #222;
+        --light-bg: #fff;
+    }
+
+    .copy-btn {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .coupon-card,
+    .copy-btn {
+        transition: none;
+        transform: none;
+    }
+}

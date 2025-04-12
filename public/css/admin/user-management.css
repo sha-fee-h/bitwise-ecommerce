@@ -522,3 +522,199 @@ input[type="file"] {
     margin-right: auto;
     /* Optional: center the box horizontally */
 }
+
+/* Responsive adjustments */
+
+/* Tablets and smaller screens (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        flex-direction: column; /* Stack sidebar and content vertically */
+    }
+
+    .unique-sidebar {
+        width: 100%; /* Full width for sidebar */
+        padding: 15px;
+    }
+
+    .unique-sidebar-header h2 {
+        font-size: 1.3rem; /* Slightly smaller header */
+    }
+
+    .product-list-container {
+        padding: 15px;
+    }
+
+    .product-list-container h1 {
+        font-size: 1.5rem; /* Adjust heading size */
+    }
+
+    .product-search-filter {
+        flex-direction: column; /* Stack search and button */
+        gap: 10px; /* Space between elements */
+    }
+
+    .search-div {
+        width: 100%; /* Full width for search */
+    }
+
+    .search-input {
+        width: 100%; /* Full width input */
+    }
+
+    .add-product-btn {
+        width: 100%; /* Full width button */
+        text-align: center;
+    }
+
+    .product-table {
+        font-size: 0.9rem; /* Slightly smaller text */
+    }
+
+    .modal-content {
+        width: 80%; /* Adjust modal width */
+        margin: 20% auto; /* Center with more top margin */
+    }
+}
+
+/* Mobile screens (max-width: 768px) */
+@media (max-width: 768px) {
+    .unique-sidebar {
+        padding: 10px;
+    }
+
+    .unique-sidebar-menu li a {
+        padding: 8px; /* Smaller padding for links */
+        font-size: 0.9rem; /* Smaller text */
+    }
+
+    .product-list-container h1 {
+        font-size: 1.3rem;
+    }
+
+    .breadcrumbs {
+        font-size: 0.8rem; /* Smaller breadcrumbs */
+    }
+
+    /* Make table scrollable horizontally */
+    .product-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 8px; /* Smaller padding */
+        font-size: 0.85rem; /* Smaller text */
+    }
+
+    .action-btn {
+        padding: 6px 8px; /* Smaller buttons */
+        font-size: 0.8rem;
+    }
+
+    .status-btn {
+        padding: 6px 10px; /* Adjust status button size */
+        font-size: 0.8rem;
+    }
+
+    .pagination {
+        flex-direction: column; /* Stack pagination */
+        gap: 10px;
+    }
+
+    .pagination-buttons {
+        flex-wrap: wrap; /* Allow buttons to wrap */
+        justify-content: center;
+    }
+
+    .page-btn {
+        padding: 8px 10px; /* Smaller pagination buttons */
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        width: 90%; /* Almost full width for modal */
+        padding: 15px;
+    }
+
+    .form-group select,
+    #cat-name,
+    #cat-description,
+    #add-cat-name,
+    #add-cat-description,
+    #add-image,
+    #edit-cat-name,
+    #edit-cat-description,
+    #edit-image,
+    #add-status {
+        width: 100%; /* Full width for form inputs */
+    }
+
+    .updateCategory-btn {
+        padding: 8px; /* Smaller button padding */
+    }
+}
+
+/* Small mobile screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .unique-sidebar-header h2 {
+        font-size: 1.1rem; /* Even smaller header */
+    }
+
+    .unique-sidebar-menu li a {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .product-list-container {
+        padding: 10px;
+    }
+
+    .product-list-container h1 {
+        font-size: 1.1rem;
+    }
+
+    .search-input {
+        padding: 8px; /* Smaller input padding */
+    }
+
+    .add-product-btn {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 6px;
+        font-size: 0.8rem;
+    }
+
+    .action-btn,
+    .status-btn {
+        padding: 5px 6px;
+        font-size: 0.75rem;
+    }
+
+    .pagination a {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+
+    .modal-content {
+        width: 95%;
+        margin: 30% auto; /* More top margin for small screens */
+        padding: 10px;
+    }
+
+    .close {
+        font-size: 24px; /* Smaller close button */
+    }
+
+    .error-message,
+    .success-message {
+        font-size: 0.8rem; /* Smaller message text */
+        padding: 8px;
+        max-width: 100%; /* Full width for messages */
+    }
+}

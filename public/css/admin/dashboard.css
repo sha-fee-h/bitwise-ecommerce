@@ -1,3 +1,4 @@
+/* Dashboard Styles */
 :root {
     --primary-color: #00a8e8; /* Cool cyan */
     --secondary-color: #ff006e; /* Vibrant pink */
@@ -8,77 +9,45 @@
     --border-color: #5c59e8; /* Purple border highlight */
     --error-color: #ff3a30; /* Bright red for errors */
     --success-color: #00ff44; /* Neon green for success */
+    --secondary-hover: #d1005a; /* Darker pink for logout hover */
 }
 
+/* General Reset and Base Styles */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background-color: var(--bg-color);
+    color: var(--text-color);
 }
 
+/* Dashboard Layout */
 .dashboard-container {
     display: flex;
     min-height: 100vh;
-}
-
-/* Sidebar */
-.unique-sidebar {
-    width: 250px;
-    background-color: var(--sidebar-bg);
-    padding: 20px;
-}
-
-.unique-sidebar-header h2 {
-    font-size: 1.5rem;
-    color: var(--primary-color);
-    text-align: center;
-}
-
-.unique-sidebar-menu {
-    list-style: none;
-    padding: 0;
-}
-
-.unique-sidebar-menu li {
-    margin: 10px 0;
-}
-
-.unique-sidebar-menu li a {
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: bold;
-    padding: 10px;
-    display: block;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-
-.unique-sidebar-menu li a:hover {
-    background-color: rgba(0, 0, 0, 0.1);
-    transform: scale(1.05);
-}
-
-.unique-sidebar-menu li.active a {
-    background-color: var(--primary-color);
-    color: white;
+    position: relative;
+    box-sizing: border-box;
 }
 
 /* Main Content */
 .product-list-container {
     flex-grow: 1;
-    padding: 20px;
+    padding: clamp(10px, 3vw, 20px);
+    margin-left: 250px; /* Matches sidebar width */
+    background: var(--bg-color);
+    box-sizing: border-box;
 }
 
 .product-list-container h1 {
-    font-size: 1.8rem;
+    font-size: clamp(1.5rem, 4vw, 1.8rem);
     color: var(--text-color);
+    margin-bottom: clamp(10px, 2vw, 15px);
 }
 
 /* Breadcrumbs */
 .breadcrumbs {
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
     color: var(--text-color);
-    margin-bottom: 15px;
+    margin-bottom: clamp(10px, 2vw, 15px);
 }
 
 .breadcrumbs a {
@@ -95,52 +64,262 @@ body {
     margin-right: 5px;
 }
 
+/* Search and Filter */
 .product-search-filter {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px;
+    align-items: center;
+    margin-bottom: clamp(10px, 2vw, 20px);
+    flex-wrap: wrap;
+    gap: clamp(10px, 2vw, 15px);
 }
 
 .search-div {
     display: flex;
+    flex-grow: 1;
+    max-width: 600px;
 }
 
 .search-input {
-    padding: 10px;
-    border: 1px solid #ddd;
+    padding: clamp(8px, 2vw, 10px);
+    border: 1px solid var(--input-bg);
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: clamp(0.9rem, 3vw, 1rem);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
-.add-product-btn {
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    color: white;
+.search-input:focus {
+    border-color: var(--border-color);
+    outline: none;
+}
+
+/* Buttons */
+.add-product-btn,
+.logout-btn {
+    padding: clamp(8px, 2vw, 10px) clamp(15px, 3vw, 20px);
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: clamp(0.9rem, 3vw, 1rem);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    white-space: nowrap;
+}
+
+.add-product-btn {
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .add-product-btn:hover {
-    background-color: #4e54d4;
+    background-color: #0086b3;
     transform: scale(1.05);
 }
 
 .logout-btn {
-    padding: 10px 20px;
     background-color: var(--secondary-color);
     color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
 }
 
 .logout-btn:hover {
-    background-color: var(--blocked-status);
+    background-color: var(--secondary-hover);
     transform: scale(1.05);
+}
+
+/* Chart Section */
+.chart-section {
+    background: var(--container-bg);
+    padding: clamp(10px, 3vw, 20px);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: clamp(10px, 2vw, 20px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.chart-section h2 {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    color: var(--primary-color);
+    margin-bottom: clamp(10px, 2vw, 15px);
+}
+
+.filter-form {
+    display: flex;
+    gap: clamp(10px, 2vw, 15px);
+    align-items: center;
+    margin-bottom: clamp(10px, 2vw, 20px);
+    flex-wrap: wrap;
+}
+
+select {
+    padding: clamp(8px, 2vw, 10px);
+    border: none;
+    background: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 5px;
+    font-size: clamp(0.9rem, 3vw, 1rem);
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+}
+
+select:focus {
+    border: 2px solid var(--border-color);
+    outline: none;
+}
+
+canvas {
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    background: var(--input-bg);
+    padding: clamp(5px, 1.5vw, 10px);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+/* Top Selling Sections */
+.top-selling-section {
+    background: var(--container-bg);
+    padding: clamp(10px, 3vw, 20px);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: clamp(10px, 2vw, 20px);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.top-selling-section h2 {
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
+    color: var(--secondary-color);
+    margin-bottom: clamp(10px, 2vw, 15px);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: clamp(3px, 1vw, 5px);
+}
+
+.top-selling-list {
+    list-style: none;
+    padding: 0;
+}
+
+.top-selling-item {
+    padding: clamp(8px, 2vw, 10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.top-selling-item:last-child {
+    border-bottom: none;
+}
+
+.top-selling-item span {
+    color: var(--text-color);
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+}
+
+.top-selling-item .revenue {
+    color: var(--success-color);
+}
+
+/* Responsive Dashboard */
+@media (max-width: 1024px) {
+    .product-list-container {
+        margin-left: 200px;
+    }
+
+    .product-list-container h1 {
+        font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+    }
+
+    .search-input,
+    select {
+        max-width: 100%;
+    }
+
+    .top-selling-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .product-list-container {
+        margin-left: 0;
+    }
+
+    .product-search-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-div {
+        max-width: 100%;
+    }
+
+    .add-product-btn,
+    .logout-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .chart-section h2,
+    .top-selling-section h2 {
+        font-size: clamp(1.1rem, 3.5vw, 1.3rem);
+    }
+
+    .top-selling-item {
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .product-list-container {
+        padding: clamp(5px, 2vw, 10px);
+    }
+
+    .product-list-container h1 {
+        font-size: clamp(1.2rem, 3vw, 1.4rem);
+    }
+
+    .breadcrumbs {
+        font-size: clamp(0.7rem, 2vw, 0.8rem);
+    }
+
+    .search-input,
+    select {
+        padding: clamp(6px, 1.5vw, 8px);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+
+    .add-product-btn,
+    .logout-btn {
+        padding: clamp(6px, 1.5vw, 8px) clamp(10px, 2vw, 15px);
+        font-size: clamp(0.8rem, 2vw, 0.9rem);
+    }
+
+    .chart-section,
+    .top-selling-section {
+        padding: clamp(5px, 2vw, 10px);
+    }
+
+    .chart-section h2,
+    .top-selling-section h2 {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+    }
+
+    .top-selling-item span {
+        font-size: clamp(0.75rem, 2vw, 0.85rem);
+    }
 }

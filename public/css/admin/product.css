@@ -158,8 +158,6 @@ body {
 }
 
 .product-table tr {
-    /* display: flex;
-    align-items: center; */
     height: 55px;
 }
 
@@ -180,7 +178,6 @@ body {
 .edit-btn:hover {
     background-color: #cd820b;
     transform: scale(1.05);
-
 }
 
 .delete-btn {
@@ -277,15 +274,12 @@ body {
     outline: 2px solid #5c59e8;
 }
 
-
 /* Error message styling */
 .error-message {
     font-size: 0.9rem;
     color: red;
     margin-top: -10px;
-    /* Space above error message */
     margin-bottom: 10px;
-    /* Space below error message */
 }
 
 .pagination {
@@ -298,7 +292,6 @@ body {
     margin: 0 5px;
     padding: 8px 12px;
     background-color: #5c59e8;
-    /* Primary color */
     color: white;
     border-radius: 5px;
     text-decoration: none;
@@ -306,65 +299,183 @@ body {
 
 .pagination a.active {
     background-color: #c21000;
-    /* Secondary color */
 }
 
 .pagination a:hover {
     background-color: #333;
-    /* Darken on hover */
 }
 
 .error-message {
-
     background-color: #f8d7da;
-    /* Light red background */
     color: #721c24;
-    /* Dark red text color */
     border: 1px solid #f5c6cb;
-    /* Border matching the background color */
     padding: 10px 15px;
-    /* Padding for spacing inside the box */
     border-radius: 5px;
-    /* Rounded corners */
     font-size: 14px;
-    /* Font size */
     font-weight: bold;
-    /* Bold text */
     margin: 10px 0;
-    /* Margin to separate from other elements */
     text-align: center;
-    /* Center the text */
     max-width: 400px;
-    /* Optional: to control the width */
     margin-left: auto;
-    /* Optional: center the box horizontally */
     margin-right: auto;
-    /* Optional: center the box horizontally */
 }
 
 .success-message {
     background-color: #d4edda;
-    /* Light green background */
     color: #155724;
-    /* Dark green text color */
     border: 1px solid #c3e6cb;
-    /* Border matching the background color */
     padding: 10px 15px;
-    /* Padding for spacing inside the box */
     border-radius: 5px;
-    /* Rounded corners */
     font-size: 14px;
-    /* Font size */
     font-weight: bold;
-    /* Bold text */
     margin: 10px 0;
-    /* Margin to separate from other elements */
     text-align: center;
-    /* Center the text */
     max-width: 400px;
-    /* Optional: to control the width */
     margin-left: auto;
-    /* Optional: center the box horizontally */
     margin-right: auto;
-    /* Optional: center the box horizontally */
+}
+
+/* Media Queries for Responsiveness */
+
+/* Tablets and smaller screens (max-width: 768px) */
+@media (max-width: 768px) {
+    .dashboard-container {
+        flex-direction: column;
+    }
+
+    .unique-sidebar {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .unique-sidebar-header h2 {
+        font-size: 1.3rem;
+    }
+
+    .unique-sidebar-menu li a {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .product-list-container {
+        padding: 15px;
+    }
+
+    .product-list-container h1 {
+        font-size: 1.5rem;
+    }
+
+    .product-search-filter {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .search-div {
+        width: 100%;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .add-product-btn {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .product-table {
+        font-size: 0.85rem;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 8px;
+    }
+
+    .action-btn {
+        padding: 6px 8px;
+        font-size: 0.8rem;
+    }
+
+    .status-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .pagination-buttons {
+        justify-content: center;
+    }
+
+    .page-btn {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Mobile screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .unique-sidebar {
+        padding: 10px;
+    }
+
+    .unique-sidebar-header h2 {
+        font-size: 1.2rem;
+    }
+
+    .unique-sidebar-menu li a {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .product-list-container h1 {
+        font-size: 1.3rem;
+    }
+
+    .breadcrumbs {
+        font-size: 0.8rem;
+    }
+
+    .product-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .product-table th,
+    .product-table td {
+        font-size: 0.8rem;
+        padding: 6px;
+    }
+
+    .action-btn {
+        padding: 5px 7px;
+        font-size: 0.75rem;
+    }
+
+    .status-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+
+    .error-message,
+    .success-message {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+        max-width: 100%;
+    }
+
+    .page-btn {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+
+    .pagination a {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
 }

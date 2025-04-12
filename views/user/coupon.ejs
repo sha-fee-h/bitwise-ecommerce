@@ -7,179 +7,14 @@
     <title>Coupons | Bitwise</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        :root {
-            --primary-color: #007bff; /* Bright blue */
-            --secondary-color: #ff6f61; /* Coral */
-            --bg-color: #f4f7fa; /* Light gray-blue background */
-            --card-bg: #ffffff; /* White card background */
-            --text-color: #333; /* Dark text */
-            --text-light: #666; /* Light text for descriptions */
-            --border-color: #ddd; /* Light border */
-            --success-color: #28a745; /* Green for success */
-            --error-color: #dc3545; /* Red for errors */
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .containerr {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 20px 40px; /* Extra top padding for header */
-        }
-
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* Coupon Sections */
-        .coupon-section {
-            margin-bottom: 50px;
-        }
-
-        .coupon-section h2 {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--secondary-color);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 5px;
-            text-align: center;
-        }
-
-        /* Coupon Cards */
-        .coupon-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .coupon-card {
-            background: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            width: calc(33.333% - 20px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid var(--border-color);
-        }
-
-        .coupon-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 123, 255, 0.2);
-        }
-
-        .coupon-card h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .coupon-code {
-            font-size: 1.1rem;
-            color: var(--text-color);
-            background: #f1f5f9;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-bottom: 10px;
-            text-align: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .coupon-details p {
-            font-size: 0.9rem;
-            margin: 5px 0;
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        .copy-btn {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-            text-transform: uppercase;
-            transition: background-color 0.3s, transform 0.3s;
-            display: block;
-            margin: 10px auto 0;
-        }
-
-        .copy-btn:hover {
-            background: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            color: var(--error-color);
-            font-size: 1.2rem;
-            margin-top: 20px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .coupon-card {
-                width: calc(100% - 20px);
-            }
-            h1 {
-                font-size: 2rem;
-            }
-            .containerr {
-                padding: 60px 20px 40px;
-            }
-        }
-    </style>
-    <link rel="icon" type="image/png" href="images/icons/favicon.png" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/font-awesome-4.7.0/css/font-awesome.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/iconic/css/material-design-iconic-font.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/fonts/linearicons-v1.0.0/icon-font.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animate/animate.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/css-hamburgers/hamburgers.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/animsition/css/animsition.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/select2/select2.min.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/daterangepicker/daterangepicker.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/slick/slick.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/MagnificPopup/magnific-popup.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/vendor/perfect-scrollbar/perfect-scrollbar.css" />
-    <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/css/user/util.css" />
-    <link rel="stylesheet" type="text/css" href="/css/user/main.css" />
+    
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/user/header.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/coupon.css" />
+    <link rel="stylesheet" type="text/css" href="/css/user/footer.css" />
+
 </head>
 <body>
     <%- include('./partials/header.ejs') %>
@@ -242,6 +77,7 @@
             <% } %>
         </div>
     </div>
+    <%- include('./partials/footer.ejs') %>
 
     <script>
         function copyCode(code) {

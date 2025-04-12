@@ -11,32 +11,7 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     </head>
     <style>
-        .error-message {
-            background-color: #ffebee;
-            color: #c62828;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border-left: 4px solid #c62828;
-            display: block;
-        }
-    
-        .success-message {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            padding: 10px 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            border-left: 4px solid #2e7d32;
-            display: block;
-        }
-    
-        .form-error {
-            color: #c62828;
-            font-size: 0.9em;
-            margin-top: 5px;
-            display: none;
-        }
+        
     </style>
     <body>
         <div class="dashboard-container">
@@ -280,8 +255,8 @@
                 const previewContainer = document.getElementById("image-previews");
                 const imageError = document.getElementById("image-error");
                 
-                if (files.length > 3) {
-                    imageError.textContent = "Please select a maximum of 3 images.";
+                if (files.length > 4 || files.length < 3) {
+                    imageError.textContent = "Please select a minimum of 3 and a maximum of 4 images.";
                     imageError.style.display = "block";
                     input.value = ""; // Clear the input
                     previewContainer.innerHTML = "";

@@ -9,6 +9,8 @@ const createCoupon = async (req, res) => {
   try {
     const { userId, discount, expiryDate, usageLimit, minimumSpend } = req.body;
 
+    const discountNum = Number(discount);
+    const minimumSpendNum = Number(minimumSpend)
 
     if (userId) {
       const user = await User.findById(userId);
@@ -16,9 +18,12 @@ const createCoupon = async (req, res) => {
         return res.status(STATUS_CODES.NOT_FOUND).json({ success: false, message: MESSAGES.NOT_FOUND('User') });
       }
     }
-    if(minimumSpend<=discount){
-      // console.log('minimum spend is ', minimumSpend)
-      return res.status(STATUS_CODES.BAD_REQUEST).json({ success: false, message: MESSAGES.COUPON_MIN_SPEND });
+    if (minimumSpendNum < discountNum) {
+      console.log(`minimumSpendNum: ${minimumSpendNum} (${typeof minimumSpendNum}), discountNum: ${discountNum} (${typeof discountNum})`);
+      return res.status(STATUS_CODES.BAD_REQUEST).json({
+        success: false,
+        message: MESSAGES.COUPON_MIN_SPEND,
+      });
     }
 
     const couponCode = 'COUPON' + uuidv4().slice(0, 8).toUpperCase();
@@ -26,10 +31,10 @@ const createCoupon = async (req, res) => {
     const coupon = new Coupon({
       code: couponCode,
       userId: userId || null,
-      discount,
+      discount: discountNum, 
       expiryDate,
       usageLimit: usageLimit || undefined,
-      minimumSpend: minimumSpend || 0,
+      minimumSpend: minimumSpendNum, 
     });
 
     await coupon.save();
@@ -43,21 +48,21 @@ const createCoupon = async (req, res) => {
 
 const getAllCoupons = async (req, res) => {
   try {
-      // Pagination parameters from query
-      const page = parseInt(req.query.page) || 1; // Default to page 1
-      const limit = parseInt(req.query.limit) || 5; // Default to 5 coupons per page
+      
+      const page = parseInt(req.query.page) || 1; 
+      const limit = parseInt(req.query.limit) || 5; 
       const skip = (page - 1) * limit;
 
-      // Count total coupons for pagination
+      
       const totalCoupons = await Coupon.countDocuments();
 
-      // Calculate total pages
+      
       const totalPages = Math.ceil(totalCoupons / limit);
 
-      // Fetch paginated coupons, sorted by createdAt (newest first)
+      
       const coupons = await Coupon.find()
-          .populate('userId', 'userName') // Populate userId to get userName
-          .sort({ createdAt: -1 }) // Sort by createdAt in descending order (newest first)
+          .populate('userId', 'userName') 
+          .sort({ createdAt: -1 }) 
           .skip(skip)
           .limit(limit);
 

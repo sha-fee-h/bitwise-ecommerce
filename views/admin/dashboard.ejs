@@ -6,141 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bitwise | Dashboard</title>
     <link rel="stylesheet" href="/css/admin/dashboard.css">
+    <link rel="stylesheet" href="/css/admin/sidepanel.css">
+
     <!-- Include Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Inherit styles from dashboard.css and add custom styles */
-        :root {
-            --primary-color: #00a8e8; /* Cool cyan */
-            --secondary-color: #ff006e; /* Vibrant pink */
-            --bg-color: #0d1117; /* Deep black-blue for dark mode */
-            --container-bg: #161b22; /* Sidebar-like background */
-            --text-color: #e0e0e0; /* Soft white */
-            --input-bg: #1f2937; /* Dark input field */
-            --border-color: #5c59e8; /* Purple border highlight */
-            --error-color: #ff3a30; /* Bright red for errors */
-            --success-color: #00ff44; /* Neon green for success */
-        }
-
-        /* Chart Section */
-        .chart-section {
-            background: var(--container-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .chart-section h2 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .filter-form {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        select {
-            padding: 10px;
-            border: none;
-            background: var(--input-bg);
-            color: var(--text-color);
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-        select:focus {
-            border: 2px solid var(--border-color);
-            outline: none;
-        }
-
-        canvas {
-            max-width: 100%;
-            background: var(--input-bg);
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        /* Top Selling Sections */
-        .top-selling-section {
-            background: var(--container-bg);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .top-selling-section h2 {
-            font-size: 1.5rem;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 5px;
-        }
-
-        .top-selling-list {
-            list-style: none;
-            padding: 0;
-        }
-
-        .top-selling-item {
-            padding: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .top-selling-item:last-child {
-            border-bottom: none;
-        }
-
-        .top-selling-item span {
-            color: var(--text-color);
-        }
-
-        .top-selling-item .revenue {
-            color: var(--success-color);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .filter-form {
-                flex-direction: column;
-            }
-            .top-selling-section h2 {
-                font-size: 1.3rem;
-            }
-            .top-selling-item {
-                font-size: 0.9rem;
-            }
-        }
+        
     </style>
 </head>
 
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="unique-sidebar">
-            <div class="unique-sidebar-header">
-                <h2>Bitwise</h2>
-            </div>
-            <ul class="unique-sidebar-menu">
-                <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
-                <li><a href="/admin/user-management">Users</a></li>
-                <li><a href="/admin/product-management">Products</a></li>
-                <li><a href="/admin/orders/manage">Orders</a></li>
-                <li><a href="/admin/category-management">Categories</a></li>
-                <li><a href="/admin/coupon-management">Coupon</a></li>
-                <li><a href="/admin/offer-management">Offers</a></li>
-                <li><a href="/admin/inventory">Inventory</a></li>
-                <li><a href="/admin/sales-report">Sales</a></li>
-                <li><a href="/admin/transactions">Transactions</a></li>
-            </ul>
-        </aside>
+    <%- include('./partials/sidepanel.ejs') %>
+        
         <!-- Main Content -->
         <div class="product-list-container">
             <h1>Dashboard</h1>
@@ -225,6 +104,13 @@
 </div>
 </div>
 </div>
+
+<script>
+    document.querySelector('.sidebar-toggle').addEventListener('click', function () {
+    this.classList.toggle('active');
+    document.querySelector('.unique-sidebar').classList.toggle('active');
+});
+</script>
 
 <script>
 // Sales Chart using Chart.js

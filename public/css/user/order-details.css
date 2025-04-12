@@ -8,6 +8,9 @@
     --border-radius: 12px;
     --gray-light: #6b7280;
     --gray-dark: #374151;
+    /* Fluid typography variables */
+    --base-font-size: clamp(16px, 2vw, 18px);
+    --heading-scale: 1.2;
 }
 
 body {
@@ -15,40 +18,41 @@ body {
     background-color: white;
     color: var(--text-color);
     line-height: 1.6;
+    font-size: var(--base-font-size);
+    margin: 0;
+    padding: 0;
 }
 
 .order-details {
     max-width: 960px;
-    margin: 2rem auto 4rem auto;
-    padding: 2rem;
+    margin: clamp(1rem, 5vw, 2rem) auto clamp(2rem, 8vw, 4rem);
+    padding: clamp(1rem, 4vw, 2rem);
     background-color: #fff;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, padding 0.3s ease;
 }
 
-
-
 .order-details h2 {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2rem);
     font-weight: 700;
     color: var(--text-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: clamp(1rem, 3vw, 1.5rem);
     border-bottom: 2px solid var(--primary-color);
-    padding-bottom: 0.5rem;
+    padding-bottom: clamp(0.3rem, 1vw, 0.5rem);
 }
 
 .order-info {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.5rem;
-    padding-bottom: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(180px, 45vw, 220px), 1fr));
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding-bottom: clamp(1rem, 3vw, 1.5rem);
     border-bottom: 1px solid var(--gray-light);
 }
 
 .order-info p {
-    margin: 0.4rem 0;
-    font-size: 1rem;
+    margin: clamp(0.2rem, 1vw, 0.4rem) 0;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
 }
 
 .order-info strong {
@@ -59,15 +63,16 @@ body {
 .retry-btn {
     background: linear-gradient(135deg, var(--secondary-color), #15803d);
     color: white;
-    padding: 12px 24px;
+    padding: clamp(10px, 2vw, 12px) clamp(20px, 4vw, 24px);
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 15px;
+    font-size: clamp(14px, 2.5vw, 15px);
     font-weight: 600;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    margin-top: 20px;
+    margin-top: clamp(15px, 3vw, 20px);
+    width: fit-content;
 }
 
 .retry-btn:hover {
@@ -77,17 +82,17 @@ body {
 }
 
 h3 {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 4vw, 1.5rem);
     font-weight: 600;
     color: var(--gray-dark);
-    margin: 2rem 0 1rem;
+    margin: clamp(1.5rem, 5vw, 2rem) 0 clamp(0.8rem, 2vw, 1rem);
 }
 
 .items-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    margin-top: 1rem;
+    margin-top: clamp(0.8rem, 2vw, 1rem);
     background-color: #fff;
     border-radius: var(--border-radius);
     overflow: hidden;
@@ -96,9 +101,9 @@ h3 {
 
 .items-table th,
 .items-table td {
-    padding: 1rem;
+    padding: clamp(0.8rem, 2.5vw, 1rem);
     text-align: left;
-    font-size: 0.95rem;
+    font-size: clamp(0.85rem, 2.2vw, 0.95rem);
     border-bottom: 1px solid var(--gray-light);
     transition: background-color 0.2s ease;
 }
@@ -108,19 +113,18 @@ h3 {
     color: var(--gray-dark);
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.85rem;
+    font-size: clamp(0.75rem, 2vw, 0.85rem);
 }
-
 
 .product-info {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: clamp(0.5rem, 2vw, 0.75rem);
 }
 
 .product-image {
-    width: 48px;
-    height: 48px;
+    width: clamp(40px, 10vw, 48px);
+    height: clamp(40px, 10vw, 48px);
     object-fit: cover;
     border-radius: 6px;
     border: 1px solid var(--gray-light);
@@ -133,7 +137,7 @@ h3 {
 
 .cancelled {
     color: #e74c3c;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
     font-style: italic;
 }
 
@@ -145,10 +149,10 @@ h3 {
 .btn-cancel-item {
     background-color: #e74c3c;
     color: #fff;
-    padding: 0.5rem 1rem;
+    padding: clamp(0.4rem, 1.5vw, 0.5rem) clamp(0.8rem, 2vw, 1rem);
     border: none;
     border-radius: 6px;
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
 }
@@ -159,16 +163,16 @@ h3 {
 }
 
 .price-breakdown {
-    margin-top: 1.5rem;
-    padding: 1.25rem;
+    margin-top: clamp(1rem, 3vw, 1.5rem);
+    padding: clamp(1rem, 3vw, 1.25rem);
     background-color: var(--light-bg);
     border-radius: var(--border-radius);
     border: 1px solid var(--gray-light);
 }
 
 .price-breakdown p {
-    margin: 0.6rem 0;
-    font-size: 1rem;
+    margin: clamp(0.4rem, 1.5vw, 0.6rem) 0;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -176,43 +180,158 @@ h3 {
 
 .price-breakdown .total {
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 3vw, 1.1rem);
     color: var(--primary-color);
     border-top: 1px solid var(--gray-light);
-    padding-top: 0.75rem;
-    margin-top: 0.75rem;
+    padding-top: clamp(0.5rem, 2vw, 0.75rem);
+    margin-top: clamp(0.5rem, 2vw, 0.75rem);
 }
 
 .address-section p {
-    margin: 0.4rem 0;
-    font-size: 1rem;
+    margin: clamp(0.2rem, 1vw, 0.4rem) 0;
+    font-size: clamp(0.9rem, 2.5vw, 1rem);
     color: var(--text-color);
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .order-details {
-        margin: 4rem 1rem;
-        padding: 1.5rem;
+        max-width: 90%;
+        margin: clamp(1.5rem, 4vw, 3rem) auto;
     }
 
     .order-info {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     }
 
     .items-table th,
     .items-table td {
-        font-size: 0.85rem;
-        padding: 0.75rem;
+        padding: clamp(0.6rem, 2vw, 0.8rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .order-details {
+        margin: clamp(2rem, 6vw, 3rem) clamp(0.5rem, 2vw, 1rem);
+        padding: clamp(1rem, 3vw, 1.5rem);
+    }
+
+    .order-info {
+        grid-template-columns: 1fr;
+        gap: clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .items-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .items-table th,
+    .items-table td {
+        font-size: clamp(0.8rem, 2vw, 0.85rem);
+        padding: clamp(0.5rem, 1.5vw, 0.75rem);
+        min-width: 120px;
     }
 
     .product-image {
-        width: 40px;
-        height: 40px;
+        width: clamp(36px, 8vw, 40px);
+        height: clamp(36px, 8vw, 40px);
     }
 
     .btn-cancel-item {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
+        padding: clamp(0.3rem, 1vw, 0.4rem) clamp(0.6rem, 1.5vw, 0.8rem);
+        font-size: clamp(0.75rem, 1.8vw, 0.85rem);
+    }
+
+    .retry-btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --border-radius: 8px;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .order-details {
+        margin: clamp(1rem, 5vw, 2rem) clamp(0.5rem, 2vw, 0.75rem);
+        padding: clamp(0.8rem, 3vw, 1rem);
+    }
+
+    .order-details h2 {
+        font-size: clamp(1.2rem, 4vw, 1.5rem);
+        margin-bottom: clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .order-info p,
+    .price-breakdown p,
+    .address-section p {
+        font-size: clamp(0.85rem, 2.2vw, 0.95rem);
+    }
+
+    .items-table th,
+    .items-table td {
+        font-size: clamp(0.75rem, 1.8vw, 0.8rem);
+        padding: clamp(0.4rem, 1.2vw, 0.6rem);
+        min-width: 100px;
+    }
+
+    .product-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: clamp(0.3rem, 1vw, 0.5rem);
+    }
+
+    .product-image {
+        width: clamp(32px, 7vw, 36px);
+        height: clamp(32px, 7vw, 36px);
+    }
+
+    h3 {
+        font-size: clamp(1rem, 3.5vw, 1.2rem);
+    }
+
+    .btn-cancel-item,
+    .retry-btn {
+        font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+        padding: clamp(0.3rem, 1vw, 0.4rem) clamp(0.5rem, 1.5vw, 0.7rem);
+    }
+
+    .price-breakdown {
+        padding: clamp(0.8rem, 2vw, 1rem);
+    }
+
+    .price-breakdown .total {
+        font-size: clamp(0.9rem, 2.5vw, 1rem);
+    }
+}
+
+/* Ensure accessibility for high contrast */
+@media (prefers-contrast: high) {
+    :root {
+        --primary-color: #000;
+        --secondary-color: #006400;
+        --text-color: #000;
+        --gray-light: #444;
+        --gray-dark: #222;
+        --light-bg: #fff;
+    }
+
+    .retry-btn,
+    .btn-cancel-item {
+        border: 2px solid #000;
+    }
+}
+
+/* Ensure smooth animations for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .order-details,
+    .retry-btn,
+    .btn-cancel-item {
+        transition: none;
+        transform: none;
     }
 }

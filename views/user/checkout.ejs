@@ -377,7 +377,8 @@ function applyCouponFromModal(code) {
         });
 
         async function applyCoupon() {
-            const couponCode = document.getElementById("couponCode").value.trim();
+            const couponInput = document.getElementById("couponCode");
+        const couponCode = couponInput.value.trim();
             if (!couponCode) {
                 Swal.fire({ icon: "warning", title: "Empty Coupon", text: "Please enter a coupon code!" });
                 return;
@@ -414,10 +415,12 @@ function applyCouponFromModal(code) {
                     `;
                 } else {
                     Swal.fire({ icon: "error", title: "Error", text: result.message });
+                    couponInput.value = '';
                 }
             } catch (error) {
                 console.error("Error applying coupon:", error);
                 Swal.fire({ icon: "error", title: "Error", text: "Failed to apply coupon" });
+                couponInput.value = ''; 
             }
         }
 
@@ -460,6 +463,8 @@ function applyCouponFromModal(code) {
                         couponSection.innerHTML = `
                             <input type="text" id="couponCode" class="coupon-input" placeholder="Enter Coupon Code">
                             <button class="apply-coupon-btn" onclick="applyCoupon()">Apply Coupon</button>
+                            <button class="view-coupons-btn" onclick="openCouponModal()">View Coupons</button>
+
                         `;
                     } else {
                         Swal.fire({ icon: "error", title: "Error", text: result.message });

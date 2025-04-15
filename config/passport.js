@@ -7,7 +7,7 @@ const referralController = require('../controllers/user/referralController')
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "/auth/google/callback"
+  callbackURL: "https://bitwise.shafeeh.shop/auth/google/callback"
 },
   async (req, accessToken, refreshToken, profile, done) => {
     try {

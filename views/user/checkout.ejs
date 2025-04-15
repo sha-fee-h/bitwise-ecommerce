@@ -310,71 +310,135 @@ function applyCouponFromModal(code) {
         }
 
         function openAddressModal(mode = 'add', address = null) {
-            const modal = document.getElementById("addressModal");
-            const form = document.getElementById("addressForm");
-            const title = document.getElementById("modalTitle");
+    const modal = document.getElementById("addressModal");
+    const form = document.getElementById("addressForm");
+    const title = document.getElementById("modalTitle");
 
-            modal.style.display = "block";
-            title.innerText = mode === 'add' ? "Add New Address" : "Edit Address";
+    modal.style.display = "block";
+    title.innerText = mode === 'add' ? "Add New Address" : "Edit Address";
 
-            if (mode === 'edit' && address) {
-                document.getElementById("addressId").value = address._id;
-                document.getElementById("firstName").value = address.firstName;
-                document.getElementById("lastName").value = address.lastName || '';
-                document.getElementById("phoneNumber").value = address.phoneNumber;
-                document.getElementById("street").value = address.street;
-                document.getElementById("city").value = address.city;
-                document.getElementById("state").value = address.state;
-                document.getElementById("postalCode").value = address.postalCode;
-                document.getElementById("country").value = address.country;
-                document.getElementById("additionalInfo").value = address.additionalInfo || '';
-                document.getElementById("isDefault").checked = address.isDefault;
-            } else {
-                form.reset();
-                document.getElementById("addressId").value = '';
-            }
-        }
+    if (mode === 'edit' && address) {
+        document.getElementById("addressId").value = address._id;
+        document.getElementById("firstName").value = address.firstName;
+        document.getElementById("lastName").value = address.lastName || '';
+        document.getElementById("phoneNumber").value = address.phoneNumber;
+        document.getElementById("street").value = address.street;
+        document.getElementById("city").value = address.city;
+        document.getElementById("state").value = address.state;
+        document.getElementById("postalCode").value = address.postalCode;
+        document.getElementById("country").value = address.country;
+        document.getElementById("additionalInfo").value = address.additionalInfo || '';
+        document.getElementById("isDefault").checked = address.isDefault;
+    } else {
+        form.reset();
+        document.getElementById("addressId").value = '';
+    }
+}
 
-        function closeAddressModal() {
-            document.getElementById("addressModal").style.display = "none";
-        }
+function closeAddressModal() {
+    document.getElementById("addressModal").style.display = "none";
+}
 
-        async function editAddress(addressId) {
-            const response = await fetch(`/checkout/address/${addressId}`);
-            const result = await response.json();
-            const address = result.address;
-            openAddressModal('edit', address);
-        }
+async function editAddress(addressId) {
+    const response = await fetch(`/checkout/address/${addressId}`);
+    const result = await response.json();
+    const address = result.address;
+    openAddressModal('edit', address);
+}
 
-        document.getElementById("addressForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const addressData = Object.fromEntries(formData);
+document.getElementById("addressForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-            addressData.isDefault = addressData.isDefault === "on" ? true : false;
+    // Collect form data
+    const formData = new FormData(e.target);
+    const addressData = Object.fromEntries(formData);
 
-            const method = addressData.addressId ? 'PUT' : 'POST';
-            const url = addressData.addressId ? `/checkout/address/${addressData.addressId}` : '/checkout/add-address';
+    // Validate phone number and postal code
+    const phoneNumber = addressData.phoneNumber?.trim();
+    const postalCode = addressData.postalCode?.trim();
+    let isValid = true;
 
-            try {
-                const response = await fetch(url, {
-                    method: method,
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(addressData)
-                });
+    // Clear previous error messages
+    clearErrors();
 
-                const result = await response.json();
-                if (result.success) {
-                    closeAddressModal();
-                    await loadAddresses();
-                } else {
-                    alert(result.message || "Failed to save address");
-                }
-            } catch (error) {
-                console.error("Error saving address:", error);
-                alert("An error occurred while saving the address");
-            }
+    // Phone number validation (US format: 10 digits)
+    const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+    if (!phoneNumber || !phoneRegex.test(phoneNumber)) {
+        displayError("phoneNumber", "Please enter a valid phone number (e.g., 123-456-7890).");
+        isValid = false;
+    }
+
+    // Postal code validation (exactly 6 digits)
+    const postalRegex = /^\d{6}$/;
+    if (!postalCode || !postalRegex.test(postalCode)) {
+        displayError("postalCode", "Please enter a valid 6-digit postal code (e.g., 123456).");
+        isValid = false;
+    }
+
+    // Stop if validation fails
+    if (!isValid) {
+        return;
+    }
+
+    // Proceed with form submission
+    addressData.isDefault = addressData.isDefault === "on" ? true : false;
+
+    const method = addressData.addressId ? 'PUT' : 'POST';
+    const url = addressData.addressId ? `/checkout/address/${addressData.addressId}` : '/checkout/add-address';
+
+    try {
+        const response = await fetch(url, {
+            method: method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(addressData)
         });
+
+        const result = await response.json();
+        if (result.success) {
+            closeAddressModal();
+            await loadAddresses();
+        } else {
+            displayFormError(result.message || "Failed to save address");
+        }
+    } catch (error) {
+        console.error("Error saving address:", error);
+        displayFormError("An error occurred while saving the address");
+    }
+});
+
+// Helper function to display error below a field
+function displayError(fieldId, message) {
+    const field = document.getElementById(fieldId);
+    let errorElement = document.getElementById(`${fieldId}-error`);
+    if (!errorElement) {
+        errorElement = document.createElement("span");
+        errorElement.id = `${fieldId}-error`;
+        errorElement.className = "error-message";
+        field.parentNode.appendChild(errorElement); // Append to form-group
+    }
+    errorElement.textContent = message;
+}
+
+// Helper function to display form-wide errors
+function displayFormError(message) {
+    const form = document.getElementById("addressForm");
+    let errorElement = document.getElementById("form-error");
+    if (!errorElement) {
+        errorElement = document.createElement("span");
+        errorElement.id = "form-error";
+        errorElement.className = "error-message";
+        form.insertBefore(errorElement, form.firstChild);
+    }
+    errorElement.textContent = message;
+}
+
+// Helper function to clear all error messages
+function clearErrors() {
+    const errorElements = document.querySelectorAll("#phoneNumber-error, #postalCode-error, #form-error");
+    errorElements.forEach((el) => {
+        el.textContent = "";
+    });
+}
 
         async function applyCoupon() {
             const couponInput = document.getElementById("couponCode");

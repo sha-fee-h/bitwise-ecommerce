@@ -523,3 +523,25 @@
         .coupon-section { flex-direction: column; }
         .coupon-input { width: 100%; }
     }
+    .error-message {
+        color: #d32f2f;
+        font-size: 0.85em;
+        display: block;
+        margin-top: 5px;
+        line-height: 1.2;
+    }
+    
+    .form-group {
+        margin-bottom: 15px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+    }
+    
+    .form-group input:invalid + .error-message:not(:empty) {
+        display: block;
+    }

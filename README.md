@@ -13,9 +13,9 @@ Bitwise offers a seamless shopping experience for customers and powerful managem
 ## ✨ Features
 
 ### **User Side**
-- User authentication (sign up, login, logout)
+- User authentication (sign up, login, logout) - Integrated Google Authentication
 - Profile management (edit profile, change avatar, update address)
-- Product browsing, category & brand filtering
+- Product browsing, price , date and name sorting and category & brand filtering 
 - Shopping cart & wishlist
 - Wallet system for transactions
 - Coupons & discounts
